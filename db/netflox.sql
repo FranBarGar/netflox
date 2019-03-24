@@ -229,16 +229,16 @@ VALUES ('AWS')
      , ('uTorrent');
 
 INSERT INTO archivos (link, gestor_id)
-VALUES ('user.jpeg', 2)
-     , ('jedi.jpg', 2)
-     , ('jedi.mp4', 2)
-     , ('interestelar.jpg', 2)
-     , ('interestelar.mp4', 2)
-     , ('endgame.jpg', 2)
-     , ('endgame.mp4', 2)
-     , ('ahs.jpg', 2)
-     , ('ahs.mp4', 2)
-     , ('marvel.jpg', 2);
+VALUES ('uploads/user.jpeg', 2)
+     , ('uploads/jedi.jpg', 2)
+     , ('uploads/jedi.mp4', 2)
+     , ('uploads/interestelar.jpg', 2)
+     , ('uploads/interestelar.mp4', 2)
+     , ('uploads/endgame.jpg', 2)
+     , ('uploads/endgame.mp4', 2)
+     , ('uploads/ahs.jpg', 2)
+     , ('uploads/ahs.mp4', 2)
+     , ('uploads/marvel.jpg', 2);
 
 INSERT INTO usuarios (nick, email, imagen_id, password)
 VALUES ('pepe', 'pepe@pepe.com', 1, crypt('pepe', gen_salt('bf', 10)))
