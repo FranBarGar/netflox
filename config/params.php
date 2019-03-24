@@ -1,5 +1,6 @@
 <?php
 
 return [
-    'adminEmail' => 'admin@example.com',
+    'adminEmail' => 'netflox.barba@gmail.com',
+    'smtpUsername' => 'netflox.barba@gmail.com',
 ];

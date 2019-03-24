@@ -2,12 +2,16 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\helpers\Utility;
 use app\models\Usuarios;
 use app\models\UsuariosSearch;
+use Yii;
+use yii\filters\VerbFilter;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
 
 /**
  * UsuariosController implements the CRUD actions for Usuarios model.
@@ -46,7 +50,7 @@ class UsuariosController extends Controller
 
     /**
      * Displays a single Usuarios model.
-     * @param integer $id
+     * @param int $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -64,10 +68,32 @@ class UsuariosController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Usuarios();
+        $model = new Usuarios(['scenario' => Usuarios::SCENARIO_CREATE]);
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ActiveForm::validate($model);
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            $url = Url::to([
+                'usuarios/activar',
+                'id' => $model->id,
+                'token' => $model->token,
+            ], true);
+
+            $cuerpo = <<<EOT
+            <h3>Pulsa el siguiente enlace para activar al usuario:</h3>
+            <a href="$url">Validar usuario</a>
+EOT;
+
+            if (Utility::enviarMail($cuerpo, $model->email, 'Activar usuario')) {
+                Yii::$app->session->setFlash('success', 'Se ha enviado un correo a su cuenta de email, por favor verifique su cuenta.');
+            } else {
+                Yii::$app->session->setFlash('error', 'Ha habido un error al mandar el correo.');
+            }
+
+            return $this->redirect('site/index');
         }
 
         return $this->render('create', [
@@ -78,7 +104,7 @@ class UsuariosController extends Controller
     /**
      * Updates an existing Usuarios model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     * @param int $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -98,7 +124,7 @@ class UsuariosController extends Controller
     /**
      * Deletes an existing Usuarios model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     * @param int $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -110,9 +136,27 @@ class UsuariosController extends Controller
     }
 
     /**
+     * Activa una cuenta que se aun no ha sido verificada.
+     * @param  int    $id    ID de la cuenta a verificar.
+     * @param  string $token Token asociado a la cuenta aun no verificada
+     */
+    public function actionActivar($id, $token)
+    {
+        $usuario = $this->findModel($id);
+        if ($usuario->token === $token) {
+            $usuario->token = null;
+            $usuario->save();
+            Yii::$app->session->setFlash('success', 'Usuario validado. Inicie sesión.');
+            return $this->redirect(['site/login']);
+        }
+        Yii::$app->session->setFlash('error', 'La validación no es correcta.');
+        return $this->redirect(['site/index']);
+    }
+
+    /**
      * Finds the Usuarios model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param int $id
      * @return Usuarios the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
