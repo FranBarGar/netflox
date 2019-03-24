@@ -14,31 +14,31 @@ CREATE TABLE gestores_archivos
 DROP TABLE IF EXISTS archivos CASCADE;
 CREATE TABLE archivos
 (
-    id            BIGSERIAL  PRIMARY KEY
-  , link          TEXT       UNIQUE
-  , gestor_id     BIGINT     NOT NULL
-                             REFERENCES gestores_archivos (id)
-                             ON DELETE NO ACTION
-                             ON UPDATE CASCADE
+    id            BIGSERIAL PRIMARY KEY
+  , link          TEXT      UNIQUE
+  , gestor_id     BIGINT    NOT NULL
+                            REFERENCES gestores_archivos (id)
+                            ON DELETE NO ACTION
+                            ON UPDATE CASCADE
 );
 
 -- Usuarios
 DROP TABLE IF EXISTS usuarios CASCADE;
 CREATE TABLE usuarios
 (
-    id         BIGSERIAL      PRIMARY KEY
-  , nick       VARCHAR(50)    NOT NULL UNIQUE
-                              CONSTRAINT ck_nick_sin_espacios
-                              CHECK (nick NOT LIKE '% %')
-  , email      VARCHAR(255)   NOT NULL UNIQUE
+    id         BIGSERIAL    PRIMARY KEY
+  , nick       VARCHAR(50)  NOT NULL UNIQUE
+                            CONSTRAINT ck_nick_sin_espacios
+                            CHECK (nick NOT LIKE '% %')
+  , email      VARCHAR(255) NOT NULL UNIQUE
   , biografia  VARCHAR(255)
-  , imagen_id  BIGINT         NOT NULL REFERENCES archivos (id)
-                              ON DELETE NO ACTION
-                              ON UPDATE CASCADE
-  , created_at TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP
+  , imagen_id  BIGINT       NOT NULL REFERENCES archivos (id)
+                            ON DELETE NO ACTION
+                            ON UPDATE CASCADE
+  , created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
   , banned_at  TIMESTAMP
   , token      VARCHAR(32)
-  , password   VARCHAR(60)    NOT NULL
+  , password   VARCHAR(60)  NOT NULL
 );
 
 DROP TABLE IF EXISTS seguidores CASCADE;
@@ -112,31 +112,31 @@ CREATE TABLE generos
 DROP TABLE IF EXISTS shows_generos CASCADE;
 CREATE TABLE shows_generos
 (
-    id           BIGSERIAL  PRIMARY KEY
-  , show_id      BIGINT     NOT NULL 
-                            REFERENCES shows (id)
-                            ON DELETE NO ACTION
-                            ON UPDATE CASCADE
-  , genero_id    BIGINT     NOT NULL
-                            REFERENCES generos (id)
-                            ON DELETE NO ACTION
-                            ON UPDATE CASCADE
+    id        BIGSERIAL PRIMARY KEY
+  , show_id   BIGINT    NOT NULL 
+                        REFERENCES shows (id)
+                        ON DELETE NO ACTION
+                        ON UPDATE CASCADE
+  , genero_id BIGINT    NOT NULL
+                        REFERENCES generos (id)
+                        ON DELETE NO ACTION
+                        ON UPDATE CASCADE
   , UNIQUE (show_id, genero_id)
 );
 
 DROP TABLE IF EXISTS shows_descargas CASCADE;
 CREATE TABLE shows_descargas
 (
-    id                              BIGSERIAL  PRIMARY KEY
-  , num_descargas                   BIGINT     DEFAULT 0
-  , archivo_id           BIGINT     NOT NULL 
-                                    REFERENCES archivos (id)
-                                    ON DELETE NO ACTION
-                                    ON UPDATE CASCADE
-  , show_id              BIGINT     NOT NULL 
-                                    REFERENCES shows (id)
-                                    ON DELETE NO ACTION
-                                    ON UPDATE CASCADE
+    id            BIGSERIAL  PRIMARY KEY
+  , num_descargas BIGINT     DEFAULT 0
+  , archivo_id    BIGINT     NOT NULL 
+                             REFERENCES archivos (id)
+                             ON DELETE NO ACTION
+                             ON UPDATE CASCADE
+  , show_id       BIGINT     NOT NULL 
+                             REFERENCES shows (id)
+                             ON DELETE NO ACTION
+                             ON UPDATE CASCADE
   , UNIQUE (show_id, archivo_id)
 );
 
@@ -225,6 +225,7 @@ INSERT INTO gestores_archivos (nombre)
 VALUES ('AWS')
      , ('Local')
      , ('MEGA')
+     , ('EMBED')
      , ('uTorrent');
 
 INSERT INTO archivos (link, gestor_id)
@@ -335,16 +336,18 @@ VALUES (1, 2, 1)
      , (3, 2, 3)
      , (3, 1, 3);
 
--- INSERT comentarios TERMINAR
 INSERT INTO comentarios (cuerpo, valoracion, show_id, padre_id, usuario_id)
-VALUES ('Pelicula muy buena!', 4, 1, NULL, 3)
-     , ('Pelicula muy buena!', 4, 1, NULL, 3)
-     , ('Pelicula muy buena!', 4, 1, NULL, 3)
-     , ('Pelicula muy buena!', 4, 1, NULL, 3);
+VALUES ('Pelicula muy buena!', 5, 2, NULL, 3)
+     , ('Una de las mejores sagas bajo mi criterio', 4, 3, NULL, 4)
+     , ('Saga poco cientifica, dejando eso de lado, bien', 3, 3, NULL, 1)
+     , ('No me gusta el terror', 1, 1, NULL, 2)
+     , ('Eso lo diras tu, caranchoa', NULL, 1, 3, 3);
 
--- INSERT votos TERMINAR
 INSERT INTO votos (usuario_id, comentario_id, votacion)
 VALUES (1, 2, 1)
      , (2, 1, 1)
+     , (2, 2, 1)
+     , (2, 3, 1)
+     , (2, 4, 1)
      , (3, 2, -1)
      , (3, 1, -1);
