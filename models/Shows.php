@@ -142,6 +142,7 @@ class Shows extends \yii\db\ActiveRecord
 
     /**
      * @return \yii\db\ActiveQuery
+     * @throws \yii\base\InvalidConfigException
      */
     public function getArchivos()
     {
@@ -158,9 +159,61 @@ class Shows extends \yii\db\ActiveRecord
 
     /**
      * @return \yii\db\ActiveQuery
+     * @throws \yii\base\InvalidConfigException
      */
     public function getGeneros()
     {
         return $this->hasMany(Generos::className(), ['id' => 'genero_id'])->viaTable('shows_generos', ['show_id' => 'id']);
+    }
+
+    /**
+     * @return bool
+     */
+    public function tieneImagen()
+    {
+        return $this->imagen_id!==null;
+    }
+
+    /**
+     * @return Shows[]|bool
+     */
+    public function tieneHijos()
+    {
+        $shows = $this->shows;
+        return empty($shows)?false:$shows;
+    }
+
+    /**
+     * @return Generos[]|bool
+     */
+    public function tieneGeneros()
+    {
+        $generos = $this->generos;
+        if (!empty($generos)) {
+            return $generos;
+        } elseif ($this->show_id!==null) {
+            return $this->show->tieneGeneros();
+        }
+        return false;
+    }
+
+    /**
+     * @return Generos[]|bool
+     */
+    public function getPadreGeneros()
+    {
+        return $this->show->tieneGeneros();
+    }
+
+    /**
+     * @param int $id
+     * @return \yii\db\ActiveQuery
+     */
+    public static function findChildrens($id)
+    {
+        return self::find()
+            ->joinWith(['comentarios'])
+            ->andWhere(['shows.show_id' => $id])
+            ->orderBy('lanzamiento');
     }
 }

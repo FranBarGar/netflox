@@ -40,7 +40,7 @@ class ShowsSearch extends Shows
      */
     public function search($params)
     {
-        $query = Shows::find();
+        $query = Shows::find()->where(['show_id' => null]);
 
         // add conditions that should always apply here
 

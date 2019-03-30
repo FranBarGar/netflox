@@ -45,10 +45,10 @@ class Utility
 
     /**
      * Envia un email.
-     * @param  string $cuerpo  Archivo con el cuerpo del email
-     * @param  array  $params  Array de parámetros pasados al archivo
-     * @param  string $dest    Email de destino
-     * @param  string $asunto  Asunto del email
+     * @param  string $cuerpo Archivo con el cuerpo del email
+     * @param  array $params Array de parámetros pasados al archivo
+     * @param  string $dest Email de destino
+     * @param  string $asunto Asunto del email
      * @return bool            True si el email se ha enviado con éxito
      */
     public static function enviarMail($cuerpo, $dest, $asunto, $params = [])

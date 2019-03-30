@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use yii\widgets\ListView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ShowsSearch */
@@ -18,27 +18,15 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Shows', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?= $this->render('_search', ['model' => $searchModel]); ?>
 
-    <?= GridView::widget([
+    <?= ListView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'titulo',
-            'sinopsis:ntext',
-            'lanzamiento',
-            'duracion',
-            //'imagen_id',
-            //'trailer_id',
-            //'tipo_id',
-            //'show_id',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
+        'itemOptions' => ['class' => 'item'],
+        'itemView' => function ($model, $key, $index, $widget) {
+            return $this->render('_smallView.php', ['model' => $model]);
+        },
+    ]) ?>
 
 
 </div>
