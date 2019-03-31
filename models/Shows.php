@@ -67,12 +67,12 @@ class Shows extends \yii\db\ActiveRecord
             'id' => 'ID',
             'titulo' => 'Titulo',
             'sinopsis' => 'Sinopsis',
-            'lanzamiento' => 'Lanzamiento',
+            'lanzamiento' => 'Fecha de lanzamiento',
             'duracion' => 'Duracion',
             'imagen_id' => 'Imagen ID',
             'trailer_id' => 'Trailer ID',
-            'tipo_id' => 'Tipo ID',
-            'show_id' => 'Show ID',
+            'tipo_id' => 'Tipo de show',
+            'show_id' => 'Show al que pertenece',
         ];
     }
 

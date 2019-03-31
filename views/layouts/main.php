@@ -43,6 +43,7 @@ AppAsset::register($this);
         ];
     } else {
         $menu = [
+            ['label' => 'Shows', 'url' => ['/shows/index']],
             '<li>'
             . Html::beginForm(['/site/logout'], 'post')
             . Html::submitButton(

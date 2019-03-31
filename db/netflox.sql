@@ -271,11 +271,10 @@ VALUES ('peliculas')
      , ('paginas');
 
 INSERT INTO tipos (tipo, duracion_id, padre_id)
-VALUES ('Pelicula', 5, 5)
-     , ('Serie', 2, NULL)
+VALUES ('Pelicula', 5, NULL)
      , ('Temporada', 3, 2)
-     , ('Episodio', 5, 3)
-     , ('Saga de peliculas', 1, NULL);
+     , ('Serie', 2, NULL)
+     , ('Episodio', 5, 3);
 
 INSERT INTO shows (titulo, imagen_id, trailer_id, lanzamiento, duracion, sinopsis, tipo_id, show_id)
 VALUES ('Los últimos Jedi', 2, 11, '2016-06-23', 204, 'La Primera Orden ha acorralado a los últimos miembros de la resistencia. Su última esperanza es que Finn se introduzca en la nave de Snoke y desactive el radar que les permite localizarlos. Mientras él trata, en compañía de una soldado de la Resistencia, de cumplir esta misión imposible, Rey se encuentra lejos, intentando convencer a Luke Skywalker de que la entrene y la convierta en la última jedi.', 1, NULL) -- Pelicula: id=1

@@ -1,27 +1,41 @@
 <?php
 
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
-
 /* @var $this yii\web\View */
-/* @var $model app\models\Usuarios */
-/* @var $form yii\widgets\ActiveForm */
+/* @var $form yii\bootstrap\ActiveForm */
+
+/* @var $model app\models\LoginForm */
+
+use app\helpers\Utility;
+use yii\helpers\Html;
+use yii\bootstrap\ActiveForm;
+
+$this->title = 'Registrarse';
+$this->params['breadcrumbs'][] = $this->title;
+
+$this->registerJs(Utility::togglePassword());
 ?>
-
-<div class="usuarios-form">
-
+<div class="panel-body panel-custom">
     <?php $form = ActiveForm::begin(); ?>
-    <?= $form->field($model, 'nick')->textInput(['maxlength' => true]) ?>
-    <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
-    <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
-    <?= $form->field($model, 'password_repeat')->passwordInput(['maxlength' => true]) ?>
-    <?php // $form->field($model, 'biografia')->textInput(['maxlength' => true]) ?>
-    <?php // $form->field($model, 'imagen_id')->textInput() ?>
-
+    <?= $form->field($model, 'nick', [
+        'inputTemplate' => Utility::inputWithIcon('user'),
+    ])->textInput([
+        'autofocus' => true,
+        'inputTemplate'
+    ]) ?>
+    <?= $form->field($model, 'email', [
+        'inputTemplate' => Utility::inputWithIcon('envelope'),
+    ])->textInput([
+        'autofocus' => true,
+        'inputTemplate'
+    ]) ?>
+    <?= $form->field($model, 'password', [
+        'inputTemplate' => Utility::inputWithIcon('eye-close'),
+    ])->passwordInput() ?>
+    <?= $form->field($model, 'password_repeat', [
+        'inputTemplate' => Utility::inputWithIcon('eye-close'),
+    ])->passwordInput() ?>
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('Registrarse', ['class' => 'btn btn-block btn-primary', 'name' => 'login-button']) ?>
     </div>
-
     <?php ActiveForm::end(); ?>
-
 </div>

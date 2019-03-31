@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Crear Show', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?= $this->render('_search', ['model' => $searchModel]); ?>
+    <?= $this->render('_search', ['model' => $searchModel, 'listaTipos' => $listaTipos]); ?>
 
     <?= ListView::widget([
         'dataProvider' => $dataProvider,

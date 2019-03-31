@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Tipos;
 use Yii;
 use app\models\Shows;
 use app\models\ShowsSearch;
@@ -9,6 +10,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * ShowsController implements the CRUD actions for Shows model.
@@ -22,7 +24,7 @@ class ShowsController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -42,6 +44,7 @@ class ShowsController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'listaTipos' => $this->listaTiposSearch(),
         ]);
     }
 
@@ -78,6 +81,7 @@ class ShowsController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'listaTipos' => $this->listaTipos(),
         ]);
     }
 
@@ -105,8 +109,10 @@ class ShowsController extends Controller
      * Deletes an existing Shows model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
@@ -129,5 +135,45 @@ class ShowsController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * @return array
+     */
+    protected function listaTiposSearch()
+    {
+        return Tipos::find()
+            ->select('tipo')
+            ->where(['padre_id' => null])
+            ->indexBy('id')
+            ->column();
+    }
+
+    /**
+     * @return array
+     */
+    protected function listaTipos()
+    {
+        return Tipos::find()
+            ->select('tipo')
+            ->indexBy('id')
+            ->column();
+    }
+
+    /**
+     * @param $id
+     * @return array|bool
+     */
+    public function actionAjaxListaPadres($id)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        if (($padre_id = Tipos::findOne($id)->padre_id)!==null) {
+            return Shows::find()
+                ->select('titulo')
+                ->where(['tipo_id' => $padre_id])
+                ->indexBy('id')
+                ->column();
+        }
+        return false;
     }
 }
