@@ -3,6 +3,8 @@
 -- sus comentarios, manteniendo los comentarios que dependen de el gracias a 
 -- un usuario fantasma como por ejemplo: "Anonymous".
 
+CREATE EXTENSION pgcrypto;
+
 --Almacenamiento
 DROP TABLE IF EXISTS gestores_archivos CASCADE;
 CREATE TABLE gestores_archivos
@@ -71,7 +73,7 @@ CREATE TABLE tipos
   , duracion_id BIGINT       NOT NULL REFERENCES duraciones (id)
                              ON DELETE NO ACTION
                              ON UPDATE CASCADE
-  , padre_id  BIGINT
+  , padre_id    BIGINT
 );
 ALTER TABLE tipos
 ADD CONSTRAINT fk1_relacion_involutiva_tipos

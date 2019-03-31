@@ -15,14 +15,14 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Shows', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Crear Show', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= ListView::widget([
         'dataProvider' => $dataProvider,
-        'itemOptions' => ['class' => 'item'],
+        'itemOptions' => ['class' => 'shows-smallView col-md-6 media'],
         'itemView' => function ($model, $key, $index, $widget) {
             return $this->render('_smallView.php', ['model' => $model]);
         },

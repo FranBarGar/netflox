@@ -59,14 +59,13 @@ $this->registerCss($css);
 //            TODO: Que coja la valoracion media.
             \kartik\rating\StarRating::widget([
                 'name' => 'rating_20',
-                'value' => 2.5,
+                'value' => 5,
                 'pluginOptions' => [
+                    'size' => 'sm',
                     'stars' => 1,
                     'min' => 0,
                     'max' => 5,
-                    'readonly' => true,
-                    'showClear' => false,
-                    'showCaption' => true,
+                    'displayOnly' => true,
                 ],
             ]);?>
         </h1>
