@@ -82,10 +82,8 @@ class UsuariosController extends Controller
                 'token' => $model->token,
             ], true);
 
-            $cuerpo = <<<EOT
-            <h3>Pulsa el siguiente enlace para activar al usuario:</h3>
-            <a href="$url">Validar usuario</a>
-EOT;
+            $cuerpo = "<h3>Pulsa el siguiente enlace para activar al usuario:</h3>
+            <a href=\"$url\">Validar usuario</a>";
 
             if (Utility::enviarMail($cuerpo, $model->email, 'Activar usuario')) {
                 Yii::$app->session->setFlash('success', 'Se ha enviado un correo a su cuenta de email, por favor verifique su cuenta.');
@@ -127,6 +125,8 @@ EOT;
      * @param int $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
@@ -137,8 +137,10 @@ EOT;
 
     /**
      * Activa una cuenta que se aun no ha sido verificada.
-     * @param  int    $id    ID de la cuenta a verificar.
+     * @param  int $id ID de la cuenta a verificar.
      * @param  string $token Token asociado a la cuenta aun no verificada
+     * @return Response
+     * @throws NotFoundHttpException
      */
     public function actionActivar($id, $token)
     {

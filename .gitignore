@@ -40,4 +40,4 @@ tests/chromedriver
 .env
 
 # uploads
-/uploads
+uploads/*

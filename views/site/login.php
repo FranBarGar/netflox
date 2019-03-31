@@ -5,7 +5,6 @@
 /* @var $model app\models\LoginForm */
 
 use app\helpers\Utility;
-
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
