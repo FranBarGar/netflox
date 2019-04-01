@@ -16,6 +16,23 @@ $this->params['breadcrumbs'][] = 'Update';
 
     <?= $this->render('_form', [
         'model' => $model,
+        'listaTipos' => $listaTipos,
+        'listaGeneros' => $listaGeneros,
     ]) ?>
+<!--TODO-->
+<!--
+    if (isset($model->imagen->link)) {
+        $preview = ['pluginOptions' => [
+            'initialPreview'=>[
+                $model->imagen->link
+            ],
+            'initialPreviewAsData'=>true,
+            'initialCaption'=> $model->titulo,
+            'maxFileSize'=>2800
+            ]
+        ];
+    } else {
+        $preview = [];
+    }-->
 
 </div>

@@ -2,11 +2,16 @@
 
 namespace app\controllers;
 
+use app\models\Archivos;
+use app\models\Generos;
+use app\models\GestoresArchivos;
+use app\models\ShowsGeneros;
 use app\models\Tipos;
 use Yii;
 use app\models\Shows;
 use app\models\ShowsSearch;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -27,6 +32,15 @@ class ShowsController extends Controller
                 'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
                 ],
             ],
         ];
@@ -75,14 +89,30 @@ class ShowsController extends Controller
     {
         $model = new Shows();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($model->trailer_link != '') {
+                $archivo = new Archivos();
+                $archivo->link = $model->trailer_link;
+                $archivo->gestor_id = 1;
+                $archivo->save();
+                $model->trailer_id = $archivo->id;
+            }
+            if (!empty($model->listaGeneros)) {
+                foreach ($model->listaGeneros as $genero_id) {
+                    $show_generos = new ShowsGeneros();
+                    $show_generos->show_id = $model->id;
+                    $show_generos->genero_id = $genero_id;
+                    $show_generos->save();
+                }
+            }
+            $model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
-        return $this->render('create', [
-            'model' => $model,
+        return $this->render('create', ['model' => $model,
             'listaTipos' => $this->listaTipos(),
-        ]);
+            'listaGeneros' => $this->listaGeneros(),
+            'listaGestores' => $this->listaGestores(),]);
     }
 
     /**
@@ -92,7 +122,8 @@ class ShowsController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public
+    function actionUpdate($id)
     {
         $model = $this->findModel($id);
 
@@ -100,8 +131,12 @@ class ShowsController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
+        $listaPadres['listaPadres'] = $model->tipo->padre_id !== null ? $this->listaPadres($model->tipo->padre_id) : [];
+
         return $this->render('update', [
             'model' => $model,
+            'listaTipos' => $this->listaTipos(),
+            'listaGeneros' => $this->listaGeneros(),
         ]);
     }
 
@@ -114,7 +149,8 @@ class ShowsController extends Controller
      * @throws \Throwable
      * @throws \yii\db\StaleObjectException
      */
-    public function actionDelete($id)
+    public
+    function actionDelete($id)
     {
         $this->findModel($id)->delete();
 
@@ -128,7 +164,8 @@ class ShowsController extends Controller
      * @return Shows the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected
+    function findModel($id)
     {
         if (($model = Shows::findOne($id)) !== null) {
             return $model;
@@ -140,7 +177,8 @@ class ShowsController extends Controller
     /**
      * @return array
      */
-    protected function listaTiposSearch()
+    protected
+    function listaTiposSearch()
     {
         return Tipos::find()
             ->select('tipo')
@@ -152,7 +190,8 @@ class ShowsController extends Controller
     /**
      * @return array
      */
-    protected function listaTipos()
+    protected
+    function listaTipos()
     {
         return Tipos::find()
             ->select('tipo')
@@ -161,19 +200,64 @@ class ShowsController extends Controller
     }
 
     /**
+     * @return array
+     */
+    protected
+    function listaPadres($id)
+    {
+        return Shows::find()
+            ->select('titulo')
+            ->where(['tipo_id' => $id])
+            ->indexBy('id')
+            ->column();
+    }
+
+    /**
+     * @return array
+     */
+    protected
+    function listaGeneros()
+    {
+        return Generos::find()
+            ->select('genero')
+            ->indexBy('id')
+            ->column();
+    }
+
+    /**
+     * @return array
+     */
+    protected
+    function listaGestores()
+    {
+        return GestoresArchivos::find()
+            ->select('nombre')
+            ->indexBy('id')
+            ->column();
+    }
+
+    /**
      * @param $id
      * @return array|bool
      */
-    public function actionAjaxListaPadres($id)
+    public
+    function actionAjaxCreateInfo($id)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        if (($padre_id = Tipos::findOne($id)->padre_id)!==null) {
-            return Shows::find()
+
+        $tipo = Tipos::findOne($id);
+        $info = [$tipo->duracion->tipo];
+
+        if (($padre_id = $tipo->padre_id) !== null) {
+            $info[] = Shows::find()
                 ->select('titulo')
                 ->where(['tipo_id' => $padre_id])
                 ->indexBy('id')
                 ->column();
+        } else {
+            $info[] = false;
         }
-        return false;
+
+        return json_encode($info);
     }
 }

@@ -31,6 +31,12 @@ use Yii;
  */
 class Shows extends \yii\db\ActiveRecord
 {
+
+    public $listaGeneros;
+    public $imgUpload;
+    public $gestor_id;
+    public $trailer_link;
+
     /**
      * {@inheritdoc}
      */
@@ -51,12 +57,22 @@ class Shows extends \yii\db\ActiveRecord
             [['duracion', 'imagen_id', 'trailer_id', 'tipo_id', 'show_id'], 'default', 'value' => null],
             [['duracion', 'imagen_id', 'trailer_id', 'tipo_id', 'show_id'], 'integer'],
             [['titulo'], 'string', 'max' => 255],
+            [['listaGeneros'], 'each', 'rule' => ['integer']],
+            [['imgUpload'], 'image' ,'extensions' => 'jpg, gif, png, jpeg'],
+            [['gestor_id'], 'integer'],
+            [['trailer_link'], 'url'],
             [['imagen_id'], 'exist', 'skipOnError' => true, 'targetClass' => Archivos::className(), 'targetAttribute' => ['imagen_id' => 'id']],
             [['trailer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Archivos::className(), 'targetAttribute' => ['trailer_id' => 'id']],
             [['show_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shows::className(), 'targetAttribute' => ['show_id' => 'id']],
             [['tipo_id'], 'exist', 'skipOnError' => true, 'targetClass' => Tipos::className(), 'targetAttribute' => ['tipo_id' => 'id']],
         ];
     }
+
+    public function attributes()
+    {
+        return parent::attributes();
+    }
+
 
     /**
      * {@inheritdoc}
@@ -73,6 +89,10 @@ class Shows extends \yii\db\ActiveRecord
             'trailer_id' => 'Trailer ID',
             'tipo_id' => 'Tipo de show',
             'show_id' => 'Show al que pertenece',
+            'listaGeneros' => 'Generos',
+            'imgUpload' => 'Imagen',
+            'gestor_id' => 'Gestor de archivos',
+            'trailer_link' => 'Enlace del trailer (Youtube, Vimeo...)',
         ];
     }
 

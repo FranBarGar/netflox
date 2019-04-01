@@ -3,7 +3,7 @@
 -- sus comentarios, manteniendo los comentarios que dependen de el gracias a 
 -- un usuario fantasma como por ejemplo: "Anonymous".
 
-CREATE EXTENSION pgcrypto;
+-- CREATE EXTENSION pgcrypto;
 
 --Almacenamiento
 DROP TABLE IF EXISTS gestores_archivos CASCADE;
@@ -224,23 +224,22 @@ CREATE TABLE votos
 
 -- INSERT
 INSERT INTO gestores_archivos (nombre)
-VALUES ('AWS')
+VALUES ('EMBED')
      , ('Local')
-     , ('MEGA')
-     , ('EMBED')
-     , ('uTorrent');
+     , ('AWS')
+     , ('DropBox');
 
 INSERT INTO archivos (link, gestor_id)
 VALUES ('@localSrc/user.jpeg', 2)
-     , ('@uploads/jedi.jpg', 2)
-     , ('@uploads/jedi.mp4', 2)
-     , ('@uploads/interestelar.jpg', 2)
-     , ('@uploads/interestelar.mp4', 2)
-     , ('@uploads/endgame.jpg', 2)
-     , ('@uploads/endgame.mp4', 2)
-     , ('@uploads/ahs.jpg', 2)
-     , ('@uploads/ahs.mp4', 2)
-     , ('@uploads/marvel.jpg', 2)
+     , ('uploads/jedi.jpg', 2)
+     , ('uploads/jedi.mp4', 2)
+     , ('uploads/interestelar.jpg', 2)
+     , ('uploads/interestelar.mp4', 2)
+     , ('uploads/endgame.jpg', 2)
+     , ('uploads/endgame.mp4', 2)
+     , ('uploads/ahs.jpg', 2)
+     , ('uploads/ahs.mp4', 2)
+     , ('uploads/marvel.jpg', 2)
      , ('https://www.youtube.com/watch?v=anOJjqQb8x0', 4) -- Los ultimos jedi id:11
      , ('https://www.youtube.com/watch?v=JxdU76YYeMc', 4) -- Interestelar
      , ('https://www.dailymotion.com/video/x6yk4rd', 4) -- Avenger EndGame
@@ -272,8 +271,8 @@ VALUES ('peliculas')
 
 INSERT INTO tipos (tipo, duracion_id, padre_id)
 VALUES ('Pelicula', 5, NULL)
-     , ('Temporada', 3, 2)
      , ('Serie', 2, NULL)
+     , ('Temporada', 3, 2)
      , ('Episodio', 5, 3);
 
 INSERT INTO shows (titulo, imagen_id, trailer_id, lanzamiento, duracion, sinopsis, tipo_id, show_id)
