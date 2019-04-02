@@ -4,7 +4,6 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Shows;
 
 /**
  * ShowsSearch represents the model behind the search form of `app\models\Shows`.
@@ -17,7 +16,7 @@ class ShowsSearch extends Shows
     public function rules()
     {
         return [
-            [['id', 'duracion', 'imagen_id', 'trailer_id', 'tipo_id', 'show_id'], 'integer'],
+            [['tipo_id'], 'integer'],
             [['titulo', 'sinopsis', 'lanzamiento'], 'safe'],
         ];
     }
@@ -32,7 +31,7 @@ class ShowsSearch extends Shows
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * Creates data provider instance with search query applied.
      *
      * @param array $params
      *
@@ -60,11 +59,7 @@ class ShowsSearch extends Shows
         $query->andFilterWhere([
             'id' => $this->id,
             'lanzamiento' => $this->lanzamiento,
-            'duracion' => $this->duracion,
-            'imagen_id' => $this->imagen_id,
-            'trailer_id' => $this->trailer_id,
             'tipo_id' => $this->tipo_id,
-            'show_id' => $this->show_id,
         ]);
 
         $query->andFilterWhere(['ilike', 'titulo', $this->titulo])

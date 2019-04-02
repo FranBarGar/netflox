@@ -2,8 +2,6 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "shows".
  *
@@ -13,7 +11,7 @@ use Yii;
  * @property string $lanzamiento
  * @property int $duracion
  * @property int $imagen_id
- * @property int $trailer_id
+ * @property string $trailer
  * @property int $tipo_id
  * @property int $show_id
  *
@@ -31,11 +29,9 @@ use Yii;
  */
 class Shows extends \yii\db\ActiveRecord
 {
-
     public $listaGeneros;
     public $imgUpload;
     public $gestor_id;
-    public $trailer_link;
 
     /**
      * {@inheritdoc}
@@ -58,12 +54,11 @@ class Shows extends \yii\db\ActiveRecord
             [['duracion', 'imagen_id', 'trailer_id', 'tipo_id', 'show_id'], 'integer'],
             [['titulo'], 'string', 'max' => 255],
             [['listaGeneros'], 'each', 'rule' => ['integer']],
-            [['imgUpload'], 'image' ,'extensions' => 'jpg, gif, png, jpeg'],
-            [['gestor_id'], 'integer'],
+            [['imgUpload'], 'image', 'extensions' => 'jpg, gif, png, jpeg'],
             [['trailer_link'], 'url'],
+            [['gestor_id'], 'integer'],
             [['imagen_id'], 'exist', 'skipOnError' => true, 'targetClass' => Archivos::className(), 'targetAttribute' => ['imagen_id' => 'id']],
-            [['trailer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Archivos::className(), 'targetAttribute' => ['trailer_id' => 'id']],
-            [['show_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shows::className(), 'targetAttribute' => ['show_id' => 'id']],
+            [['show_id'], 'exist', 'skipOnError' => true, 'targetClass' => self::className(), 'targetAttribute' => ['show_id' => 'id']],
             [['tipo_id'], 'exist', 'skipOnError' => true, 'targetClass' => Tipos::className(), 'targetAttribute' => ['tipo_id' => 'id']],
         ];
     }
@@ -133,7 +128,7 @@ class Shows extends \yii\db\ActiveRecord
      */
     public function getShow()
     {
-        return $this->hasOne(Shows::className(), ['id' => 'show_id'])->inverseOf('shows');
+        return $this->hasOne(self::className(), ['id' => 'show_id'])->inverseOf('shows');
     }
 
     /**
@@ -141,7 +136,7 @@ class Shows extends \yii\db\ActiveRecord
      */
     public function getShows()
     {
-        return $this->hasMany(Shows::className(), ['show_id' => 'id'])->inverseOf('show');
+        return $this->hasMany(self::className(), ['show_id' => 'id'])->inverseOf('show');
     }
 
     /**
@@ -191,7 +186,7 @@ class Shows extends \yii\db\ActiveRecord
      */
     public function tieneImagen()
     {
-        return $this->imagen_id!==null;
+        return $this->imagen_id !== null;
     }
 
     /**
@@ -200,7 +195,7 @@ class Shows extends \yii\db\ActiveRecord
     public function tieneHijos()
     {
         $shows = $this->shows;
-        return empty($shows)?false:$shows;
+        return empty($shows) ? false : $shows;
     }
 
     /**
@@ -211,7 +206,7 @@ class Shows extends \yii\db\ActiveRecord
         $generos = $this->generos;
         if (!empty($generos)) {
             return $generos;
-        } elseif ($this->show_id!==null) {
+        } elseif ($this->show_id !== null) {
             return $this->show->tieneGeneros();
         }
         return false;

@@ -12,15 +12,15 @@ $js = <<<EOJS
     div = $('div.field-shows-show_id');
     select = div.children('select');
     duracion = $('span#tipo_duracion');
-    
+
     div.hide();
-    
-    function changeTipo(e) 
+
+    function changeTipo(e)
     {
         select.empty();
-        
+
         var tipoId = this.value;
-        
+
         if (tipoId == '') {
             div.hide();
         } else {
@@ -44,7 +44,7 @@ $js = <<<EOJS
             }
             });
         }
-        
+
     }
 EOJS;
 $this->registerJs($js);
@@ -116,7 +116,7 @@ $this->registerJs($js);
         'options' => ['accept' => 'image/*'],
         ]);
     ?>
-    <?= $form->field($model, 'trailer_link')->textInput(['placeholder' => "Introduzca el enlace a el trailer..."]) ?>
+    <?= $form->field($model, 'trailer')->textInput(['placeholder' => "Introduzca el enlace a el trailer..."]) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

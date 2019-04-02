@@ -3988,16 +3988,16 @@
         },
         {
             "name": "scrivo/highlight.php",
-            "version": "v9.15.6.0",
+            "version": "v9.15.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scrivo/highlight.php.git",
-                "reference": "5b5fc5eddb43845036f65e47f8d157ce5754511f"
+                "reference": "00cf4aa63dd5c214660f628d3082ab231db50f48"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scrivo/highlight.php/zipball/5b5fc5eddb43845036f65e47f8d157ce5754511f",
-                "reference": "5b5fc5eddb43845036f65e47f8d157ce5754511f",
+                "url": "https://api.github.com/repos/scrivo/highlight.php/zipball/00cf4aa63dd5c214660f628d3082ab231db50f48",
+                "reference": "00cf4aa63dd5c214660f628d3082ab231db50f48",
                 "shasum": ""
             },
             "require": {
@@ -4008,11 +4008,18 @@
                 "phpunit/phpunit": "^4.8|^5.7",
                 "symfony/finder": "^2.8"
             },
+            "suggest": {
+                "ext-dom": "Needed to make use of the features in the utilities namespace"
+            },
             "type": "library",
             "autoload": {
                 "psr-0": {
-                    "Highlight\\": ""
-                }
+                    "Highlight\\": "",
+                    "HighlightUtilities\\": ""
+                },
+                "files": [
+                    "HighlightUtilities/functions.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -4043,7 +4050,7 @@
                 "highlight.php",
                 "syntax"
             ],
-            "time": "2019-03-06T07:43:42+00:00"
+            "time": "2019-03-31T21:09:11+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",

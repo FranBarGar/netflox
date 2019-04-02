@@ -90,9 +90,9 @@ $this->registerCss($css);
         </p>
 
         <?php
-        if ($model->trailer_id!==null) {
+        if ($model->trailer!==null) {
             echo '<div class="media-object">';
-            echo \Embed\Embed::create($model->trailer->link)->getCode();
+            echo \Embed\Embed::create($model->trailer)->getCode();
             echo '</div>';
         }
         ?>
