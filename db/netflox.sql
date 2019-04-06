@@ -222,22 +222,21 @@ CREATE TABLE votos
 
 -- INSERT
 INSERT INTO gestores_archivos (nombre)
-VALUES ('EMBED')
-     , ('Local')
+VALUES ('DropBox')
      , ('AWS')
-     , ('DropBox');
+     , ('Local');
 
 INSERT INTO archivos (link, gestor_id)
-VALUES ('@localSrc/user.jpeg', 2)
-     , ('uploads/jedi.jpg', 2)
-     , ('uploads/jedi.mp4', 2)
-     , ('uploads/interestelar.jpg', 2)
-     , ('uploads/interestelar.mp4', 2)
-     , ('uploads/endgame.jpg', 2)
-     , ('uploads/endgame.mp4', 2)
-     , ('uploads/ahs.jpg', 2)
-     , ('uploads/ahs.mp4', 2)
-     , ('uploads/marvel.jpg', 2);
+VALUES ('@localSrc/user.jpeg', 3)
+     , ('uploads/jedi.jpg', 3)
+     , ('uploads/jedi.mp4', 3)
+     , ('uploads/interestelar.jpg', 3)
+     , ('uploads/interestelar.mp4', 3)
+     , ('uploads/endgame.jpg', 3)
+     , ('uploads/endgame.mp4', 3)
+     , ('uploads/ahs.jpg', 3)
+     , ('uploads/ahs.mp4', 3)
+     , ('uploads/marvel.jpg', 3);
 
 INSERT INTO usuarios (nick, email, imagen_id, password)
 VALUES ('pepe', 'pepe@pepe.com', 1, crypt('pepe', gen_salt('bf', 10)))
@@ -292,7 +291,7 @@ VALUES ('Los últimos Jedi', 2, 'https://www.youtube.com/watch?v=anOJjqQb8x0', '
      , ('Tricks and Treats', NULL, NULL, '2016-06-23', 42, '', 4, 18) -- Capitulo: id=20
      , ('The Origins of Monstrosity', NULL, NULL, '2016-06-23', 42, '', 4, 18) -- Capitulo: id=21
      , ('Dark Coussins', NULL, NULL, '2016-06-23', 42, '', 4, 18) -- Capitulo: id=22
-     , ('Covem', 8, 'https://www.youtube.com/watch?v=-9KZr2Vn7CQ', '2013-06-23', 13, 'La temática de la historia es acerca de la brujería. Se sitúa en 2013, con flashbacks del siglo XIX. Cuando la familia de Zoe Benson descubre que tiene habilidades diferentes es enviada a Miss Robicheaux Academy, instituto que presenta una crisis debido a la posible extinción de las descendientes de Salem, donde encuentra a tres jóvenes brujas más, la caprichosa y vanidosa Madison Montgomery, Queenie, una muñeca vudú humana, y Nan, quien posee clarividencia. Cordelia Foxx, directora del instituto y su madre Fiona Goode, bruja Suprema del aquelarre (la más poderosa). Hacen lo posible por mantener su linaje en pie, luchando contra sus enemigos, los cazadores de brujas y la reina Vudú Marie Laveau. Mientras que Fiona, en la búsqueda de sus intereses personales se encuentra con la sádica racista Delphine LaLaurie, inmortal debido a un hechizo Vudú desde el siglo XIX por culpa de Laveau. La historia se complica con los intentos de la bruja fanática de la moda y líder del Consejo de brujas Myrtle Snow de sacar a flote las perversas intenciones de Fiona, así como también la llegada de la resucitada bruja del pantano Misty Day. Sus temas principales son la opresión y sobre usar todo el potencial que tenemos, así como también la necesidad de reconocer y pertenecer a una "tribu".', 3, 5); -- Temporada: id=23
+     , ('Covem', 8, 'https://www.youtube.com/watch?v=-9KZr2Vn7CQ', '2013-06-23', 13, 'La temática de la historia es acerca de la brujería. Se sitúa en 2013, con flashbacks del siglo XIX. Cuando la familia de Zoe Benson descubre que tiene habilidades diferentes es enviada a Miss Robicheaux Academy, instituto que presenta una crisis debido a la posible extinción de las descendientes de Salem, donde encuentra a tres jóvenes brujas más, la caprichosa y vanidosa Madison Montgomery, Queenie, una muñeca vudú humana, y Nan, quien posee clarividencia. Cordelia Foxx, directora del instituto y su madre Fiona Goode, bruja Suprema del aquelarre (la más poderosa). Hacen lo posible por mantener su linaje en pie, luchando contra sus enemigos, los cazadores de brujas y la reina Vudú Marie Laveau. Mientras que Fiona, en la búsqueda de sus intereses personales se encuentra con la sádica racista Delphine LaLaurie, inmortal debido a un hechizo Vudú desde el siglo XIX por culpa de Laveau. La historia se complica con los intentos de la bruja fanática de la moda y líder del Consejo de brujas Myrtle Snow de sacar a flote las perversas intenciones de Fiona, así como también la llegada de la resucitada bruja del pantano Misty Day. Sus temas principales son la opresión y sobre usar todo el potencial que tenemos, así como también la necesidad de reconocer y pertenecer a una "tribu".', 3, 4); -- Temporada: id=23
 
 INSERT INTO generos (genero)
 VALUES ('Comedia')
@@ -308,13 +307,13 @@ VALUES (1, 3), (2, 3), (2, 4)
      , (23, 2);
 
 INSERT INTO shows_descargas (show_id, archivo_id)
-VALUES (1, 3), (2, 5), (4, 7)
+VALUES (1, 3), (2, 5), (3, 7)
      , (7, 9), (8, 9), (9, 9)
      , (10, 9), (11, 9), (12, 9)
      , (13, 9), (14, 9), (15, 9)
      , (16, 9), (17, 9), (18, 9)
      , (20, 9), (21, 9), (22, 9)
-     , (23, 9);
+     , (6, 9);
 
 -- INSERT personas RELLENAR
 INSERT INTO personas (nombre)

@@ -7,6 +7,7 @@ use app\models\Generos;
 use app\models\GestoresArchivos;
 use app\models\ShowsGeneros;
 use app\models\Tipos;
+use app\models\UploadForm;
 use Yii;
 use app\models\Shows;
 use app\models\ShowsSearch;
@@ -16,6 +17,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
+use yii\web\UploadedFile;
 
 /**
  * ShowsController implements the CRUD actions for Shows model.
@@ -90,13 +92,23 @@ class ShowsController extends Controller
         $model = new Shows();
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            if ($model->trailer_link != '') {
-                $archivo = new Archivos();
-                $archivo->link = $model->trailer_link;
-                $archivo->gestor_id = 1;
-                $archivo->save();
-                $model->trailer_id = $archivo->id;
+            /**
+             * Subimos la imagen y se la añadimos a el modelo.
+             */
+            $model->imgUpload = UploadedFile::getInstance($model, 'imgUpload');
+            if ($model->imgUpload !== null) {
+                $model->uploadImg();
+                $model->imgUpload = null;
             }
+
+            /**
+             * Guardamos el modelo tras añadirle todos los campos necesarios para obtener el ID.
+             */
+            $model->save();
+
+            /**
+             * Añadimos generos al show actual.
+             */
             if (!empty($model->listaGeneros)) {
                 foreach ($model->listaGeneros as $genero_id) {
                     $show_generos = new ShowsGeneros();
@@ -105,7 +117,16 @@ class ShowsController extends Controller
                     $show_generos->save();
                 }
             }
-            $model->save();
+
+            /**
+             * Añadimos los links de descarga al show.
+             */
+            $model->showUpload = UploadedFile::getInstance($model, 'showUpload');
+            if ($model->showUpload !== null) {
+                $model->uploadShow();
+                $model->showUpload = null;
+            }
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

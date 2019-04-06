@@ -1,5 +1,7 @@
 <?php
 
+use app\helpers\Utility;
+use kartik\tabs\TabsX;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -25,11 +27,11 @@ $this->registerCss($css);
 <div class="shows-view media">
 
     <?php
-        if ($model->tieneImagen()) {
-            echo '<div class="media-left media-top text-center">';
-            echo Html::img($model->imagen->link, ['alt' => 'Enlace roto', 'width' => '200px', 'class' => 'media-object']);
+    if ($model->tieneImagen()) {
+        echo '<div class="media-left media-top text-center">';
+        echo Html::img($model->imagen->link, ['alt' => 'Enlace roto', 'width' => '200px', 'class' => 'media-object']);
 
-            echo '<label class="control-label">Rating</label>';
+        echo '<label class="control-label">Rating</label>';
 //            echo \kartik\rating\StarRating::widget([
 //                    'model' => $model, 'attribute' => 'getValoracionMedia',
 //                    'pluginOptions' => [
@@ -40,17 +42,17 @@ $this->registerCss($css);
 //                    ]
 //                ]);
 
-            echo \kartik\rating\StarRating::widget([
-                'name' => 'my_rating_' . $model->id,
-                'value' => 2.8,
-                'pluginOptions' => [
-                    'readonly' => false,
-                    'showClear' => false,
-                    'showCaption' => true,
-                ],
-            ]);
-            echo '</div>';
-        }
+        echo \kartik\rating\StarRating::widget([
+            'name' => 'my_rating_' . $model->id,
+            'value' => 2.8,
+            'pluginOptions' => [
+                'readonly' => false,
+                'showClear' => false,
+                'showCaption' => true,
+            ],
+        ]);
+        echo '</div>';
+    }
     ?>
 
     <div class="media-body">
@@ -67,7 +69,7 @@ $this->registerCss($css);
                     'max' => 5,
                     'displayOnly' => true,
                 ],
-            ]);?>
+            ]); ?>
         </h1>
         <div class="info">
             <p>
@@ -85,35 +87,60 @@ $this->registerCss($css);
             </p>
         </div>
 
-        <p>
-        <?= Html::encode($model->sinopsis) ?>
-        </p>
+        <?php
+        $items = [];
+        if (!empty($model->sinopsis)) {
+            $items[] = Utility::tabXOption('Sinopsis', "<p>$model->sinopsis</p>");
+        }
+
+        if ($model->trailer !== null && ($trailer = \Embed\Embed::create($model->trailer)->getCode()) != '') {
+            $items[] = array_merge($items, Utility::tabXOption('Trailer', "<div class='media-object'>$trailer</div>"));
+        }
+
+        // Participantes
+
+        echo TabsX::widget([
+            'items' => $items,
+            'position' => TabsX::POS_ABOVE,
+            'bordered' => true,
+            'encodeLabels' => false
+        ]) . '<br>';
+        ?>
 
         <?php
-        if ($model->trailer!==null) {
-            echo '<div class="media-object">';
-            echo \Embed\Embed::create($model->trailer)->getCode();
-            echo '</div>';
+        if (!empty($model->archivos)) {
+            echo "<li class='list-group-item active'>
+                    <span class='badge'>
+                        $model->duracion 
+                    </span>
+                    Links de descarga 
+                    </li>";
+            echo TabsX::widget([
+                'items' => Utility::tabXArchivos($model->archivos),
+                'position'=>TabsX::POS_LEFT,
+                'bordered' => true,
+                'encodeLabels' => false
+            ]) . '<br>';
         }
         ?>
 
-        <?php if (($numHijos = $dataProvider->getCount())>=1): ?>
-        <ul class="list-group">
-            <li class="list-group-item active">
-                <span class="badge">
-                    <?= $numHijos . '/' . $model->duracion ?>
-                </span>
-                Lista de <?= $model->tipo->duracion->tipo ?>
-            </li>
-            <?= \yii\widgets\ListView::widget([
-                'dataProvider' => $dataProvider,
-                'summary' => '',
-                'itemOptions' => ['class' => 'item'],
-                'itemView' => function ($model, $key, $index, $widget) {
-                    return $this->render('_reducedView.php', ['model' => $model]);
-                },
-            ])  ?>
-        </ul>
+        <?php if (($numHijos = $dataProvider->getCount()) >= 1): ?>
+            <ul class="list-group">
+                <li class="list-group-item active">
+                    <span class="badge">
+                        <?= $numHijos . '/' . $model->duracion ?>
+                    </span>
+                    Lista de <?= $model->tipo->duracion->tipo ?>
+                </li>
+                <?= \yii\widgets\ListView::widget([
+                    'dataProvider' => $dataProvider,
+                    'summary' => '',
+                    'itemOptions' => ['class' => 'item'],
+                    'itemView' => function ($model, $key, $index, $widget) {
+                        return $this->render('_reducedView.php', ['model' => $model]);
+                    },
+                ]) ?>
+            </ul>
         <?php endif; ?>
     </div>
 

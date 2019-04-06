@@ -2,6 +2,10 @@
 
 namespace app\models;
 
+use Imagine\Gd\Imagine;
+use Imagine\Image\Box;
+use Yii;
+
 /**
  * This is the model class for table "shows".
  *
@@ -18,7 +22,6 @@ namespace app\models;
  * @property Comentarios[] $comentarios
  * @property Participantes[] $participantes
  * @property Archivos $imagen
- * @property Archivos $trailer
  * @property Shows $show
  * @property Shows[] $shows
  * @property Tipos $tipo
@@ -31,6 +34,7 @@ class Shows extends \yii\db\ActiveRecord
 {
     public $listaGeneros;
     public $imgUpload;
+    public $showUpload;
     public $gestor_id;
 
     /**
@@ -48,18 +52,19 @@ class Shows extends \yii\db\ActiveRecord
     {
         return [
             [['titulo', 'lanzamiento', 'tipo_id'], 'required'],
-            [['sinopsis'], 'string'],
-            [['lanzamiento'], 'safe'],
-            [['duracion', 'imagen_id', 'trailer_id', 'tipo_id', 'show_id'], 'default', 'value' => null],
-            [['duracion', 'imagen_id', 'trailer_id', 'tipo_id', 'show_id'], 'integer'],
             [['titulo'], 'string', 'max' => 255],
+            [['lanzamiento'], 'date', 'format' => 'php:Y-m-d'],
+            [['sinopsis'], 'string'],
+            [['trailer'], 'url'],
+            [['duracion', 'imagen_id', 'tipo_id', 'show_id'], 'integer'],
+            [['duracion', 'imagen_id', 'trailer', 'tipo_id', 'show_id'], 'default', 'value' => null],
             [['listaGeneros'], 'each', 'rule' => ['integer']],
             [['imgUpload'], 'image', 'extensions' => 'jpg, gif, png, jpeg'],
-            [['trailer_link'], 'url'],
+            [['showUpload'], 'file', 'extensions' => 'owm, mp4, flv, avi'],
             [['gestor_id'], 'integer'],
-            [['imagen_id'], 'exist', 'skipOnError' => true, 'targetClass' => Archivos::className(), 'targetAttribute' => ['imagen_id' => 'id']],
-            [['show_id'], 'exist', 'skipOnError' => true, 'targetClass' => self::className(), 'targetAttribute' => ['show_id' => 'id']],
-            [['tipo_id'], 'exist', 'skipOnError' => true, 'targetClass' => Tipos::className(), 'targetAttribute' => ['tipo_id' => 'id']],
+            [['imagen_id'], 'exist', 'skipOnError' => true, 'targetClass' => Archivos::class, 'targetAttribute' => ['imagen_id' => 'id']],
+            [['show_id'], 'exist', 'skipOnError' => true, 'targetClass' => self::class, 'targetAttribute' => ['show_id' => 'id']],
+            [['tipo_id'], 'exist', 'skipOnError' => true, 'targetClass' => Tipos::class, 'targetAttribute' => ['tipo_id' => 'id']],
         ];
     }
 
@@ -81,14 +86,73 @@ class Shows extends \yii\db\ActiveRecord
             'lanzamiento' => 'Fecha de lanzamiento',
             'duracion' => 'Duracion',
             'imagen_id' => 'Imagen ID',
-            'trailer_id' => 'Trailer ID',
             'tipo_id' => 'Tipo de show',
             'show_id' => 'Show al que pertenece',
             'listaGeneros' => 'Generos',
-            'imgUpload' => 'Imagen',
-            'gestor_id' => 'Gestor de archivos',
-            'trailer_link' => 'Enlace del trailer (Youtube, Vimeo...)',
+            'imgUpload' => 'Imagen de portada',
+            'showUpload' => 'Show a subir',
+            'gestor_id' => 'Gestor de archivos (AWS por defecto)',
+            'trailer' => 'Enlace del trailer (Youtube, Vimeo...)',
         ];
+    }
+
+    /**
+     * Sube una imagen en principio a local
+     * @return bool
+     */
+    public function uploadImg()
+    {
+        if ($this->imgUpload !== null) {
+            $fileName = Yii::getAlias('@uploads/' . $this->imgUpload->baseName . '.' . $this->imgUpload->extension);
+            $this->imgUpload->saveAs($fileName);
+
+            $imagine = new Imagine();
+            $image = $imagine->open($fileName);
+            $image->resize(new Box(200, 200))->save($fileName);
+
+            /**
+             * Guardamos la ruta del archivo en la base de datos y ponemos su id en el show a crear
+             */
+            $archivo = new Archivos();
+            $archivo->gestor_id = 3; //TODO: gestor a elegir y cambiar el nombre del fichero
+            $archivo->link = $fileName;
+
+            if ($archivo->save()) {
+                $this->imagen_id = $archivo->id;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Sube una imagen en principio a local
+     * @return bool
+     */
+    public function uploadShow()
+    {
+        if ($this->showUpload !== null) {
+            $fileName = Yii::getAlias('@uploads/' . $this->showUpload->baseName . '.' . $this->showUpload->extension);
+            $this->showUpload->saveAs($fileName);
+
+            /**
+             * Guardamos la ruta del archivo en la base de datos y ponemos su id en el show a crear
+             */
+            $archivo = new Archivos();
+            $archivo->gestor_id = $this->gestor_id ?: 3; //TODO: gestor a elegir y cambiar el nombre del fichero
+            $archivo->link = $fileName;
+
+            if ($archivo->save()) {
+                $showsDescargas = new ShowsDescargas();
+                $showsDescargas->show_id = $this->id;
+                $showsDescargas->archivo_id = $archivo->id;
+                $showsDescargas->save();
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -113,14 +177,6 @@ class Shows extends \yii\db\ActiveRecord
     public function getImagen()
     {
         return $this->hasOne(Archivos::className(), ['id' => 'imagen_id'])->inverseOf('shows');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getTrailer()
-    {
-        return $this->hasOne(Archivos::className(), ['id' => 'trailer_id'])->inverseOf('shows0');
     }
 
     /**

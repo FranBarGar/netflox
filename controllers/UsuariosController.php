@@ -33,6 +33,7 @@ class UsuariosController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::class,
+                'only' => ['delete', 'update', 'view', 'index'],
                 'rules' => [
                     [
                         'allow' => true,

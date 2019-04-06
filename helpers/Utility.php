@@ -2,7 +2,9 @@
 
 namespace app\helpers;
 
+use app\models\Archivos;
 use Yii;
+use yii\helpers\Url;
 
 /**
  * Clase Utility.
@@ -59,5 +61,31 @@ class Utility
             ->setSubject($asunto)
             ->setHtmlBody($cuerpo)
             ->send();
+    }
+
+    public static function tabXOption($label, $contenido)
+    {
+        return [
+            'label' => $label,
+            'content' => $contenido,
+        ];
+    }
+
+    public static function tabXArchivos($archivos)
+    {
+        $items = [];
+        foreach ($archivos as $archivo) {
+            $items[] = self::tabXOption($archivo->gestor->nombre, Url::to($archivo->link));
+        }
+        return $items;
+    }
+
+    public static function fixParticipantes($participantes)
+    {
+        $items = [];
+        foreach ($participantes as $participante) {
+
+        }
+        return $items;
     }
 }
