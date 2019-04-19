@@ -49,17 +49,119 @@ $js = <<<EOJS
             }
             });
         }
+    }
 
+    tableParticipantes = $('tbody#custom-table-participantes');
+    inputParticipantes = $('input#listaParticipantes');
+    rolId = $('select#input-roles');
+    rolNombre = $('span#select2-input-roles-container');
+    rolError = $('div#empty-rol');
+    personaId = $('select#input-personas');
+    personaNombre = $('span#select2-input-personas-container');
+    personaError = $('div#empty-persona');
+    registroDuplicado = $('div#registro-duplicado');
+    participantes = [];
+    
+    $('button#custom-button-add').on('click', (e) => {
+        e.preventDefault();
+        
+        if(!hasErrors()) {
+            if(participantes[rolId.val()] !== undefined) {
+                participantes[rolId.val()].push(personaId.val());
+            } else {
+                participantes[rolId.val()] = [];
+                participantes[rolId.val()].push(personaId.val());
+            }
+            
+            inputParticipantes.val(JSON.stringify(participantes));
+            
+            addRow(rolId.val(), rolNombre.html(), personaId.val(), personaNombre.html());
+        }
+    });
+    
+    function addRow(rolId, rol, personaId, nombre)
+    {
+        $('<tr>')
+        .attr('id', 'custom-row-' + rolId + '-' + personaId)
+        .append(
+            $('<td>')
+            .html(nombre)
+        )
+        .append(
+            $('<td>')
+            .html(rol)
+        )
+        .append(
+            $('<td>')
+            .append(
+                $('<span>')
+                .data({
+                    rol: rolId,
+                    persona: personaId
+                })
+                .addClass('glyphicon glyphicon-trash')
+                .on('click', (e) => {
+                    e.preventDefault();
+                    target = $(e.target);
+                    participantes[target.data('rol')].splice(participantes[target.data('rol')].indexOf(target.data('persona')), 1);
+                    inputParticipantes.val(JSON.stringify(participantes));
+                    $(e.target).parents('tr').remove();
+                })
+            )
+        )
+        .appendTo(tableParticipantes);
+    }
+
+    function hasErrors()
+    {
+        error = false;
+        
+        if(rolId.val() == '') {
+            rolError.show();
+            error = true;
+        }
+        
+        if(personaId.val() == '') {
+            personaError.show();
+            error = true;
+        }
+        
+        if(!error) {
+            if(tableParticipantes.children('#custom-row-' + rolId.val() + '-' + personaId.val()).length !== 0) {
+                registroDuplicado.show();
+                error = true;
+            }
+        }
+        
+        return error; 
+    }
+    
+    if(inputParticipantes.val() !== '') {
+        lista = JSON.parse(inputParticipantes.val());
+        $.each(lista, (i, value) => {
+            if (Array.isArray(value) && value.length) {
+                $.each(value, (j, value) => {
+                    addRow(i, rolId.children(i).html(), value, personaId.children(value).html());
+                });
+            }
+        });
     }
 EOJS;
-$this->registerJs($js);
 
+$css = <<<EOCSS
+    .custom-error {
+        color: #E84747;
+        display: none;
+    }
+EOCSS;
+
+$this->registerCss($css);
 ?>
 
 <div class="shows-form">
 
     <?php $form = ActiveForm::begin([
-        'options'=>['enctype'=>'multipart/form-data']
+        'options' => ['enctype' => 'multipart/form-data']
     ]); ?>
 
     <?php
@@ -116,7 +218,7 @@ $this->registerJs($js);
         ]) .
         $form->field($model, 'duracion')
             ->textInput(['placeholder' => "Introduzca la duración del show..."])
-            ->label('Duracion en <span id="tipo_duracion"></span>') .
+            ->label('Duracion en <span id="tipo_duracion">...</span>') .
         $form->field($model, 'listaGeneros')
             ->widget(Select2::class, [
                 'data' => $listaGeneros,
@@ -127,18 +229,18 @@ $this->registerJs($js);
                     'allowClear' => true,
                     'multiple' => true,
                 ],
-            ])
-    );
-
-    $items[] = Utility::tabXOption('Uploads',
+            ]) .
         $form->field($model, 'imgUpload')->widget(FileInput::class, [
             'options' => ['accept' => 'image/*'],
             'pluginOptions' => [
                 'showUpload' => false
             ]
         ]) .
-        $form->field($model, 'trailer')->textInput(['placeholder' => "Introduzca el enlace a el trailer..."]) .
-        $form->field($model, 'gestor_id')
+        $form->field($model, 'trailer')->textInput(['placeholder' => "Introduzca el enlace a el trailer..."])
+    );
+
+    $items[] = Utility::tabXOption('Uploads',
+        $form->field($model, 'gestorId')
             ->widget(\kartik\select2\Select2::class, [
                 'data' => $listaGestores,
                 'options' => [
@@ -146,11 +248,58 @@ $this->registerJs($js);
                 ]
             ]) .
         $form->field($model, 'showUpload')->widget(FileInput::class, [
-            'options' => ['accept' => 'image/*'],
+            'options' => ['accept' => 'video/*'],
             'pluginOptions' => [
                 'showUpload' => false
             ]
         ])
+    );
+
+    $items[] = Utility::tabXOption('Participantes',
+        '<label class="control-label">Personas</label>' .
+        Select2::widget([
+            'name' => 'persona',
+            'id' => 'input-personas',
+            'data' => $listaPersonas,
+            'options' => [
+                'placeholder' => 'Select provinces ...',
+            ],
+            'pluginEvents' => [
+                "change" => "function() {
+                    personaError.hide();
+                    registroDuplicado.hide();
+                }"
+            ]
+        ]) .
+        '<div id="empty-persona" class="help-block custom-error">Personas no puede estar vacio.</div>' .
+        $form->field($model, 'listaParticipantes')->hiddenInput(['id' => 'listaParticipantes'])->label(false) .
+        '<label class="control-label">Roles</label>' .
+        Select2::widget([
+            'name' => 'rol',
+            'id' => 'input-roles',
+            'data' => $listaRoles,
+            'options' => [
+                'placeholder' => 'Select provinces ...',
+            ],
+            'pluginEvents' => [
+                "change" => "function() {
+                    rolError.hide();
+                    registroDuplicado.hide();
+                }"
+            ]
+        ]) .
+        '<div id="empty-rol" class="help-block custom-error">Roles no puede estar vacio.</div>' .
+        '<div id="registro-duplicado" class="help-block custom-error">No pueden existir registros duplicados.</div>' .
+        '<button id="custom-button-add" type="button" class="btn btn-success" style="margin-top: 15px">Añadir</button>
+        <table class="table table-bordered table-striped" style="margin-top: 20px">
+            <thead>
+                <th>Nombre</th>
+                <th>Rol</th>
+                <th>Acciones</th>            
+            </thead>
+            <tbody id="custom-table-participantes">
+            </tbody>
+        </table>'
     );
 
     echo TabsX::widget([
@@ -162,9 +311,13 @@ $this->registerJs($js);
     ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('Guardar', ['id' => 'botonGuardar', 'class' => 'btn btn-success']) ?>
     </div>
 
-    <?php ActiveForm::end(); ?>
+    <?php
+    ActiveForm::end();
+
+    $this->registerJs($js);
+    ?>
 
 </div>

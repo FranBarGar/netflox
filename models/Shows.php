@@ -33,9 +33,10 @@ use Yii;
 class Shows extends \yii\db\ActiveRecord
 {
     public $listaGeneros;
+    public $listaParticipantes;
     public $imgUpload;
     public $showUpload;
-    public $gestor_id;
+    public $gestorId;
 
     /**
      * {@inheritdoc}
@@ -59,9 +60,10 @@ class Shows extends \yii\db\ActiveRecord
             [['duracion', 'imagen_id', 'tipo_id', 'show_id'], 'integer'],
             [['duracion', 'imagen_id', 'trailer', 'tipo_id', 'show_id'], 'default', 'value' => null],
             [['listaGeneros'], 'each', 'rule' => ['integer']],
+            [['listaParticipantes'], 'safe'],
             [['imgUpload'], 'image', 'extensions' => 'jpg, gif, png, jpeg'],
             [['showUpload'], 'file', 'extensions' => 'owm, mp4, flv, avi'],
-            [['gestor_id'], 'integer'],
+            [['gestorId'], 'integer'],
             [['imagen_id'], 'exist', 'skipOnError' => true, 'targetClass' => Archivos::class, 'targetAttribute' => ['imagen_id' => 'id']],
             [['show_id'], 'exist', 'skipOnError' => true, 'targetClass' => self::class, 'targetAttribute' => ['show_id' => 'id']],
             [['tipo_id'], 'exist', 'skipOnError' => true, 'targetClass' => Tipos::class, 'targetAttribute' => ['tipo_id' => 'id']],
@@ -91,7 +93,7 @@ class Shows extends \yii\db\ActiveRecord
             'listaGeneros' => 'Generos',
             'imgUpload' => 'Imagen de portada',
             'showUpload' => 'Show a subir',
-            'gestor_id' => 'Gestor de archivos (AWS por defecto)',
+            'gestorId' => 'Gestor de archivos (AWS por defecto)',
             'trailer' => 'Enlace del trailer (Youtube, Vimeo...)',
         ];
     }
@@ -140,15 +142,14 @@ class Shows extends \yii\db\ActiveRecord
              * Guardamos la ruta del archivo en la base de datos y ponemos su id en el show a crear
              */
             $archivo = new Archivos();
-            $archivo->gestor_id = $this->gestor_id ?: 3; //TODO: gestor a elegir y cambiar el nombre del fichero
+            $archivo->gestor_id = $this->gestorId ?: 3; //TODO: gestor a elegir y cambiar el nombre del fichero
             $archivo->link = $fileName;
 
             if ($archivo->save()) {
                 $showsDescargas = new ShowsDescargas();
                 $showsDescargas->show_id = $this->id;
                 $showsDescargas->archivo_id = $archivo->id;
-                $showsDescargas->save();
-                return true;
+                return $showsDescargas->save();
             }
         }
 

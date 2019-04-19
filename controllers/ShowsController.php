@@ -5,9 +5,11 @@ namespace app\controllers;
 use app\models\Archivos;
 use app\models\Generos;
 use app\models\GestoresArchivos;
+use app\models\Participantes;
+use app\models\Personas;
+use app\models\Roles;
 use app\models\ShowsGeneros;
 use app\models\Tipos;
-use app\models\UploadForm;
 use Yii;
 use app\models\Shows;
 use app\models\ShowsSearch;
@@ -127,13 +129,34 @@ class ShowsController extends Controller
                 $model->showUpload = null;
             }
 
+            /**
+             * Añadimos los participantes
+             */
+            $model->listaParticipantes = json_decode($model->listaParticipantes);
+            if (!empty($model->listaParticipantes)) {
+                foreach ($model->listaParticipantes as $rolId => $personas) {
+                    if (!empty($personas)) {
+                        foreach ($personas as $personaId) {
+                            $participantes = new Participantes();
+                            $participantes->show_id = $model->id;
+                            $participantes->persona_id = $personaId;
+                            $participantes->rol_id = $rolId;
+                            $participantes->save();
+                        }
+                    }
+                }
+            }
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', ['model' => $model,
             'listaTipos' => $this->listaTipos(),
             'listaGeneros' => $this->listaGeneros(),
-            'listaGestores' => $this->listaGestores(),]);
+            'listaGestores' => $this->listaGestores(),
+            'listaPersonas' => $this->listaPersonas(),
+            'listaRoles' => $this->listaRoles(),
+        ]);
     }
 
     /**
@@ -143,8 +166,7 @@ class ShowsController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public
-    function actionUpdate($id)
+    public function actionUpdate($id)
     {
         $model = $this->findModel($id);
 
@@ -170,8 +192,7 @@ class ShowsController extends Controller
      * @throws \Throwable
      * @throws \yii\db\StaleObjectException
      */
-    public
-    function actionDelete($id)
+    public function actionDelete($id)
     {
         $this->findModel($id)->delete();
 
@@ -185,8 +206,7 @@ class ShowsController extends Controller
      * @return Shows the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected
-    function findModel($id)
+    protected function findModel($id)
     {
         if (($model = Shows::findOne($id)) !== null) {
             return $model;
@@ -198,8 +218,7 @@ class ShowsController extends Controller
     /**
      * @return array
      */
-    protected
-    function listaTiposSearch()
+    protected function listaTiposSearch()
     {
         return Tipos::find()
             ->select('tipo')
@@ -211,8 +230,7 @@ class ShowsController extends Controller
     /**
      * @return array
      */
-    protected
-    function listaTipos()
+    protected function listaTipos()
     {
         return Tipos::find()
             ->select('tipo')
@@ -223,8 +241,29 @@ class ShowsController extends Controller
     /**
      * @return array
      */
-    protected
-    function listaPadres($id)
+    protected function listaPersonas()
+    {
+        return Personas::find()
+            ->select('nombre')
+            ->indexBy('id')
+            ->column();
+    }
+
+    /**
+     * @return array
+     */
+    protected function listaRoles()
+    {
+        return Roles::find()
+            ->select('rol')
+            ->indexBy('id')
+            ->column();
+    }
+
+    /**
+     * @return array
+     */
+    protected function listaPadres($id)
     {
         return Shows::find()
             ->select('titulo')
@@ -236,8 +275,7 @@ class ShowsController extends Controller
     /**
      * @return array
      */
-    protected
-    function listaGeneros()
+    protected function listaGeneros()
     {
         return Generos::find()
             ->select('genero')
@@ -248,8 +286,7 @@ class ShowsController extends Controller
     /**
      * @return array
      */
-    protected
-    function listaGestores()
+    protected function listaGestores()
     {
         return GestoresArchivos::find()
             ->select('nombre')
@@ -261,8 +298,7 @@ class ShowsController extends Controller
      * @param $id
      * @return array|bool
      */
-    public
-    function actionAjaxCreateInfo($id)
+    public function actionAjaxCreateInfo($id)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 

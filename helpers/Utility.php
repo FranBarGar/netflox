@@ -3,6 +3,7 @@
 namespace app\helpers;
 
 use app\models\Archivos;
+use app\models\Participantes;
 use Yii;
 use yii\helpers\Url;
 
@@ -63,6 +64,12 @@ class Utility
             ->send();
     }
 
+    /**
+     * Crea un array con el contenido necesario para añadirselo a el widget TabX.
+     * @param $label     string Titulo de la pestaña.
+     * @param $contenido string Contenido de la pestaña.
+     * @return           array  Pestaña del widget TabX.
+     */
     public static function tabXOption($label, $contenido)
     {
         return [
@@ -71,6 +78,11 @@ class Utility
         ];
     }
 
+    /**
+     * Crea las pestañas para el widget TabX de un array de Archivos.
+     * @param $archivos array Array de Archivos.
+     * @return          array Devuelve las pestañas para el widget TabX.
+     */
     public static function tabXArchivos($archivos)
     {
         $items = [];
@@ -80,11 +92,17 @@ class Utility
         return $items;
     }
 
+    /**
+     * Organiza los participantes en un array de forma que la key es el nombre del rol y el valor es un array con los
+     * nombres de las personas con ese rol.
+     * @param $participantes    array Array de Participantes.
+     * @return                  array Participantes listos para mostrarlos en forma de lista.
+     */
     public static function fixParticipantes($participantes)
     {
         $items = [];
         foreach ($participantes as $participante) {
-
+            $items[$participante->rol->rol][] = $participante->persona->nombre;
         }
         return $items;
     }

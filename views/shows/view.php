@@ -98,30 +98,47 @@ $this->registerCss($css);
         }
 
         // Participantes
+        if (!empty($model->participantes)) {
+            $string = '<ul>';
+            $fixParticipantes = Utility::fixParticipantes($model->participantes);
+            foreach ($fixParticipantes as $rol => $personas) {
+                $string .= "<li>$rol: <ul>";
+                foreach ($personas as $nombre) {
+                    $string .= "<li>$nombre</li>";
+                }
+                $string .= '</li></ul>';
+            }
+            $string .= '</ul>';
+            $items[] = Utility::tabXOption('Participantes', $string);
+        }
 
-        echo TabsX::widget([
-            'items' => $items,
-            'position' => TabsX::POS_ABOVE,
-            'bordered' => true,
-            'encodeLabels' => false
-        ]) . '<br>';
         ?>
 
+        <?= TabsX::widget([
+        'items' => $items,
+        'position' => TabsX::POS_ABOVE,
+        'bordered' => true,
+        'encodeLabels' => false
+        ]);
+        ?>
+        <br>
+
         <?php
-        if (!empty($model->archivos)) {
-            echo "<li class='list-group-item active'>
-                    <span class='badge'>
-                        $model->duracion 
-                    </span>
-                    Links de descarga 
-                    </li>";
-            echo TabsX::widget([
+        if (!empty($model->archivos)) :
+        ?>
+            <li class='list-group-item active'>
+                <span class='badge'><?= $model->duracion ?></span>
+                Links de descarga
+            </li>
+            <?= TabsX::widget([
                 'items' => Utility::tabXArchivos($model->archivos),
                 'position'=>TabsX::POS_LEFT,
                 'bordered' => true,
                 'encodeLabels' => false
-            ]) . '<br>';
-        }
+            ]) ?>
+            <br>
+        <?php
+        endif;
         ?>
 
         <?php if (($numHijos = $dataProvider->getCount()) >= 1): ?>
