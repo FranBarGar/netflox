@@ -16,6 +16,8 @@ $url = \yii\helpers\Url::to(['shows/ajax-create-info']);
 $js = <<<EOJS
     div = $('div.field-shows-show_id');
     select = div.children('select');
+    divShowId = $('div.form-group.field-shows-show_id');
+    showId = $("select#shows-show_id");
     duracion = $('span#tipo_duracion');
 
     div.hide();
@@ -35,8 +37,8 @@ $js = <<<EOJS
             success: function (data) {
                 data = JSON.parse(data);
                 padres = data[1];
-                console.log(data);
                 if (padres === false) {
+                    showId.prop('required', false);
                     div.hide();
                 } else {
                     div.show();

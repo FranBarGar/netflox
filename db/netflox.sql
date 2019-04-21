@@ -115,11 +115,11 @@ CREATE TABLE shows_generos
     id        BIGSERIAL PRIMARY KEY
   , show_id   BIGINT    NOT NULL
                         REFERENCES shows (id)
-                        ON DELETE NO ACTION
+                        ON DELETE CASCADE
                         ON UPDATE CASCADE
   , genero_id BIGINT    NOT NULL
                         REFERENCES generos (id)
-                        ON DELETE NO ACTION
+                        ON DELETE CASCADE
                         ON UPDATE CASCADE
   , UNIQUE (show_id, genero_id)
 );
@@ -161,15 +161,15 @@ CREATE TABLE participantes
     id          BIGSERIAL PRIMARY KEY
   , show_id     BIGINT    NOT NULL
                           REFERENCES shows (id)
-                          ON DELETE NO ACTION
+                          ON DELETE CASCADE
                           ON UPDATE CASCADE
   , persona_id  BIGINT    NOT NULL
                           REFERENCES personas (id)
-                          ON DELETE NO ACTION
+                          ON DELETE CASCADE
                           ON UPDATE CASCADE
   , rol_id      BIGINT    NOT NULL
                           REFERENCES roles (id)
-                          ON DELETE NO ACTION
+                          ON DELETE CASCADE
                           ON UPDATE CASCADE
   , UNIQUE (show_id, persona_id, rol_id)
 );
@@ -186,7 +186,7 @@ CREATE TABLE comentarios
   , padre_id        BIGINT
   , show_id         BIGINT    NOT NULL
                               REFERENCES shows (id)
-                              ON DELETE NO ACTION
+                              ON DELETE CASCADE
                               ON UPDATE CASCADE
   , usuario_id      BIGINT    NOT NULL
                               REFERENCES usuarios (id)
@@ -271,7 +271,7 @@ VALUES ('Pelicula', 5, NULL)
 INSERT INTO shows (titulo, imagen_id, trailer, lanzamiento, duracion, sinopsis, tipo_id, show_id)
 VALUES ('Los últimos Jedi', 2, 'https://www.youtube.com/watch?v=anOJjqQb8x0', '2016-06-23', 204, 'La Primera Orden ha acorralado a los últimos miembros de la resistencia. Su última esperanza es que Finn se introduzca en la nave de Snoke y desactive el radar que les permite localizarlos. Mientras él trata, en compañía de una soldado de la Resistencia, de cumplir esta misión imposible, Rey se encuentra lejos, intentando convencer a Luke Skywalker de que la entrene y la convierta en la última jedi.', 1, NULL) -- Pelicula: id=1
      , ('Interestelar', 4, 'https://www.youtube.com/watch?v=JxdU76YYeMc', '2016-06-23', 204, 'Gracias a un descubrimiento, un grupo de científicos y exploradores, encabezados por Cooper, se embarcan en un viaje espacial para encontrar un lugar con las condiciones necesarias para reemplazar a la Tierra y comenzar una nueva vida allí.', 1, NULL) -- Pelicula: id=2
-     , ('Avengers: ENDGAME', 6, 'https://www.dailymotion.com/video/x6yk4rd', '2016-06-23', NULL, 'El grave curso de los acontecimientos puestos en marcha por Thanos, que destruyó a la mitad del universo y fracturó las filas de los Vengadores, obliga a los Vengadores restantes a prepararse para una última batalla en la gran conclusión de las 22 películas de Marvel Studios, Avengers: Endgame.', 1, NULL) -- Pelicula: id=3
+     , ('Avengers: ENDGAME', 6, 'https://www.dailymotion.com/video/x6yk4rd', '2016-06-23', 204, 'El grave curso de los acontecimientos puestos en marcha por Thanos, que destruyó a la mitad del universo y fracturó las filas de los Vengadores, obliga a los Vengadores restantes a prepararse para una última batalla en la gran conclusión de las 22 películas de Marvel Studios, Avengers: Endgame.', 1, NULL) -- Pelicula: id=3
      , ('American Horror Story', 8, 'https://www.youtube.com/watch?v=-9KZr2Vn7CQ', '2011-06-23', 8, 'American Horror Story esta es una serie de televisión de drama y horror creada y producida por Ryan Murphy y Brad Falchuk. Es una serie de antología, ya que cada temporada se realiza como una miniserie independiente, con un grupo de personajes diferentes, escenarios distintos y una trama que tiene su propio comienzo, desarrollo y final. Aun así, las temporadas están conectadas entre sí.', 2, NULL) -- Serie: id=4
      , ('Murder House', 8, 'https://www.youtube.com/watch?v=-9KZr2Vn7CQ', '2011-06-23', 12, 'La primera temporada, retitulada American Horror Story: Murder House tiene lugar en el 2011 y sigue a la familia Harmon: Ben de profesión psiquiatra, su esposa Vivien, y su hija adolescente Violet, quienes se mudan de Boston a Los Ángeles después de que Vivien tenga un aborto involuntario y Ben una aventura con una de sus alumnas. La familia se muda a una casa restaurada, y pronto se encontrarán con los antiguos residentes de la casa, los Langdon: Constance, su hija Addie y el desfigurado Larry Harvey. Ben y Vivien intentan reavivar su relación, mientras Violet está sufriendo de depresión, encuentra consuelo con Tate, un paciente de su padre. Los Langdon y Larry influyen con frecuencia en la vida de los Harmon, ya que la familia descubre que la casa está embrujada por todos los que murieron en ella. Entre los cuales están las fantasmas Moira, el ama de llaves y la primera dueña, Nora Montgomery.', 3, 4) -- Temporada: id=5
      , ('Pilot', NULL, NULL, '2016-06-23', 42, '', 4, 5) -- Capitulo: id=6

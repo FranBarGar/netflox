@@ -26,34 +26,23 @@ $this->registerCss($css);
 
 <div class="shows-view media">
 
-    <?php
-    if ($model->tieneImagen()) {
-        echo '<div class="media-left media-top text-center">';
-        echo Html::img($model->imagen->link, ['alt' => 'Enlace roto', 'width' => '200px', 'class' => 'media-object']);
+    <?php if ($model->tieneImagen()) : ?>
+        <div class="media-left media-top text-center">
+        <?= Html::img($model->imagen->link, ['alt' => 'Enlace roto', 'width' => '200px', 'class' => 'media-object']) ?>
 
-        echo '<label class="control-label">Rating</label>';
-//            echo \kartik\rating\StarRating::widget([
-//                    'model' => $model, 'attribute' => 'getValoracionMedia',
-//                    'pluginOptions' => [
-//                        'theme' => 'krajee-uni',
-//                        'filledStar' => '&#x2605;',
-//                        'emptyStar' => '&#x2606;'
-//
-//                    ]
-//                ]);
+        <label class="control-label">Tu valoración</label>
 
-        echo \kartik\rating\StarRating::widget([
+        <?= \kartik\rating\StarRating::widget([
             'name' => 'my_rating_' . $model->id,
-            'value' => 2.8,
+            'value' => 0,
             'pluginOptions' => [
-                'readonly' => false,
+                'readonly' => true,
                 'showClear' => false,
                 'showCaption' => true,
             ],
-        ]);
-        echo '</div>';
-    }
-    ?>
+        ]) ?>
+        </div>
+    <?php endif; ?>
 
     <div class="media-body">
         <h1 class="media-heading">
@@ -61,7 +50,7 @@ $this->registerCss($css);
 //            TODO: Que coja la valoracion media.
             \kartik\rating\StarRating::widget([
                 'name' => 'rating_20',
-                'value' => 5,
+                'value' => $model->valoracionMedia,
                 'pluginOptions' => [
                     'size' => 'sm',
                     'stars' => 1,
@@ -125,6 +114,7 @@ $this->registerCss($css);
 
         <?php
         if (!empty($model->archivos)) :
+            // TODO: badge
         ?>
             <li class='list-group-item active'>
                 <span class='badge'><?= $model->duracion ?></span>
@@ -137,9 +127,7 @@ $this->registerCss($css);
                 'encodeLabels' => false
             ]) ?>
             <br>
-        <?php
-        endif;
-        ?>
+        <?php endif; ?>
 
         <?php if (($numHijos = $dataProvider->getCount()) >= 1): ?>
             <ul class="list-group">

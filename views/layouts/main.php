@@ -1,6 +1,7 @@
 <?php
 
 /* @var $this \yii\web\View */
+
 /* @var $content string */
 
 use app\widgets\Alert;
@@ -36,23 +37,52 @@ AppAsset::register($this);
         ],
     ]);
 
+    $menu = [
+        ['label' => 'Shows', 'url' => ['/shows/index']],
+        [
+            'label' => 'Admin',
+            'items' => [
+                '<li class="dropdown-header">Personas</li>',
+                ['label' => 'Index', 'url' => ['/personas/index']],
+                ['label' => 'Crear', 'url' => ['/personas/create']],
+                '<li class="divider"></li>',
+                '<li class="dropdown-header">Roles</li>',
+                ['label' => 'Index', 'url' => ['/roles/index']],
+                ['label' => 'Crear', 'url' => ['/roles/create']],
+                '<li class="divider"></li>',
+                '<li class="dropdown-header">Generos</li>',
+                ['label' => 'Index', 'url' => ['/generos/index']],
+                ['label' => 'Crear', 'url' => ['/generos/create']],
+                '<li class="divider"></li>',
+                '<li class="dropdown-header">Tipos de shows</li>',
+                ['label' => 'Index', 'url' => ['/tipos/index']],
+                ['label' => 'Crear', 'url' => ['/tipos/create']],
+                '<li class="divider"></li>',
+                '<li class="dropdown-header">Gestores de archivos</li>',
+                ['label' => 'Index', 'url' => ['/gestores-archivos/index']],
+                ['label' => 'Crear', 'url' => ['/gestores-archivos/create']],
+                '<li class="divider"></li>',
+                '<li class="dropdown-header">Usuarios</li>',
+                ['label' => 'Index', 'url' => ['/usuarios/index']],
+                '<li class="divider"></li>',
+                '<li class="dropdown-header">Shows</li>',
+                ['label' => 'Crear', 'url' => ['/shows/create']],
+            ],
+        ],
+    ];
+
     if (Yii::$app->user->isGuest) {
-        $menu = [
-            ['label' => 'Registrarse', 'url' => ['usuarios/create']],
-            ['label' => 'Login', 'url' => ['/site/login']],
-        ];
+        $menu[] = ['label' => 'Registrarse', 'url' => ['usuarios/create']];
+        $menu[] = ['label' => 'Login', 'url' => ['/site/login']];
     } else {
-        $menu = [
-            ['label' => 'Shows', 'url' => ['/shows/index']],
-            '<li>'
+        $menu[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')
             . Html::submitButton(
                 'Logout (' . Yii::$app->user->identity->nick . ')',
                 ['class' => 'btn btn-link logout']
             )
             . Html::endForm()
-            . '</li>'
-        ];
+            . '</li>';
     }
 
     echo Nav::widget([
