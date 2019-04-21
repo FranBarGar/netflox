@@ -36,7 +36,6 @@ class Archivos extends \yii\db\ActiveRecord
         return [
             [['link'], 'string'],
             [['gestor_id'], 'required'],
-            [['gestor_id'], 'default', 'value' => null],
             [['gestor_id'], 'integer'],
             [['link'], 'unique'],
             [['gestor_id'], 'exist', 'skipOnError' => true, 'targetClass' => GestoresArchivos::className(), 'targetAttribute' => ['gestor_id' => 'id']],
@@ -74,14 +73,6 @@ class Archivos extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getShows0()
-    {
-        return $this->hasMany(Shows::className(), ['trailer_id' => 'id'])->inverseOf('trailer');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getShowsDescargas()
     {
         return $this->hasMany(ShowsDescargas::className(), ['archivo_id' => 'id'])->inverseOf('archivo');
@@ -89,6 +80,7 @@ class Archivos extends \yii\db\ActiveRecord
 
     /**
      * @return \yii\db\ActiveQuery
+     * @throws \yii\base\InvalidConfigException
      */
     public function getShows1()
     {

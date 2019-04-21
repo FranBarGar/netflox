@@ -15,27 +15,21 @@ use yii\widgets\ActiveForm;
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'id') ?>
-
     <?= $form->field($model, 'titulo') ?>
 
-    <?= $form->field($model, 'sinopsis') ?>
+    <?= $form->field($model, 'tipo_id')
+        ->widget(\kartik\select2\Select2::class,['data'=>$listaTipos,
+            'options'=>[
+                'placeholder'=> 'Selecciona un tipo de show...',
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]) ?>
 
-    <?= $form->field($model, 'lanzamiento') ?>
-
-    <?= $form->field($model, 'duracion') ?>
-
-    <?php // echo $form->field($model, 'imagen_id') ?>
-
-    <?php // echo $form->field($model, 'trailer_id') ?>
-
-    <?php // echo $form->field($model, 'tipo_id') ?>
-
-    <?php // echo $form->field($model, 'show_id') ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
+        <?= Html::submitButton('Buscar', ['class' => 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

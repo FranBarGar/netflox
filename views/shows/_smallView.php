@@ -59,7 +59,7 @@ $this->registerCss($css);
         Html::a(Html::encode($model->titulo), ['shows/view', 'id' => $model->id]) .
         \kartik\rating\StarRating::widget([
             'name' => 'rating_20',
-            'value' => 5,
+            'value' => $model->valoracionMedia,
             'pluginOptions' => [
                 'size' => 'sm',
                 'stars' => 1,

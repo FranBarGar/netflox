@@ -1,5 +1,7 @@
 <?php
 
+use app\helpers\Utility;
+use kartik\tabs\TabsX;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -24,34 +26,23 @@ $this->registerCss($css);
 
 <div class="shows-view media">
 
-    <?php
-        if ($model->tieneImagen()) {
-            echo '<div class="media-left media-top text-center">';
-            echo Html::img($model->imagen->link, ['alt' => 'Enlace roto', 'width' => '200px', 'class' => 'media-object']);
+    <?php if ($model->tieneImagen()) : ?>
+        <div class="media-left media-top text-center">
+        <?= Html::img($model->imagen->link, ['alt' => 'Enlace roto', 'width' => '200px', 'class' => 'media-object']) ?>
 
-            echo '<label class="control-label">Rating</label>';
-//            echo \kartik\rating\StarRating::widget([
-//                    'model' => $model, 'attribute' => 'getValoracionMedia',
-//                    'pluginOptions' => [
-//                        'theme' => 'krajee-uni',
-//                        'filledStar' => '&#x2605;',
-//                        'emptyStar' => '&#x2606;'
-//
-//                    ]
-//                ]);
+        <label class="control-label">Tu valoración</label>
 
-            echo \kartik\rating\StarRating::widget([
-                'name' => 'my_rating_' . $model->id,
-                'value' => 2.8,
-                'pluginOptions' => [
-                    'readonly' => false,
-                    'showClear' => false,
-                    'showCaption' => true,
-                ],
-            ]);
-            echo '</div>';
-        }
-    ?>
+        <?= \kartik\rating\StarRating::widget([
+            'name' => 'my_rating_' . $model->id,
+            'value' => 0,
+            'pluginOptions' => [
+                'readonly' => true,
+                'showClear' => false,
+                'showCaption' => true,
+            ],
+        ]) ?>
+        </div>
+    <?php endif; ?>
 
     <div class="media-body">
         <h1 class="media-heading">
@@ -59,7 +50,7 @@ $this->registerCss($css);
 //            TODO: Que coja la valoracion media.
             \kartik\rating\StarRating::widget([
                 'name' => 'rating_20',
-                'value' => 5,
+                'value' => $model->valoracionMedia,
                 'pluginOptions' => [
                     'size' => 'sm',
                     'stars' => 1,
@@ -67,7 +58,7 @@ $this->registerCss($css);
                     'max' => 5,
                     'displayOnly' => true,
                 ],
-            ]);?>
+            ]); ?>
         </h1>
         <div class="info">
             <p>
@@ -85,35 +76,76 @@ $this->registerCss($css);
             </p>
         </div>
 
-        <p>
-        <?= Html::encode($model->sinopsis) ?>
-        </p>
-
         <?php
-        if ($model->trailer_id!==null) {
-            echo '<div class="media-object">';
-            echo \Embed\Embed::create($model->trailer->link)->getCode();
-            echo '</div>';
+        $items = [];
+        if (!empty($model->sinopsis)) {
+            $items[] = Utility::tabXOption('Sinopsis', "<p>$model->sinopsis</p>");
         }
+
+        if ($model->trailer !== null && ($trailer = \Embed\Embed::create($model->trailer)->getCode()) != '') {
+            $items[] = array_merge($items, Utility::tabXOption('Trailer', "<div class='media-object'>$trailer</div>"));
+        }
+
+        // Participantes
+        if (!empty($model->participantes)) {
+            $string = '<ul>';
+            $fixParticipantes = Utility::fixParticipantes($model->participantes);
+            foreach ($fixParticipantes as $rol => $personas) {
+                $string .= "<li>$rol: <ul>";
+                foreach ($personas as $nombre) {
+                    $string .= "<li>$nombre</li>";
+                }
+                $string .= '</li></ul>';
+            }
+            $string .= '</ul>';
+            $items[] = Utility::tabXOption('Participantes', $string);
+        }
+
         ?>
 
-        <?php if (($numHijos = $dataProvider->getCount())>=1): ?>
-        <ul class="list-group">
-            <li class="list-group-item active">
-                <span class="badge">
-                    <?= $numHijos . '/' . $model->duracion ?>
-                </span>
-                Lista de <?= $model->tipo->duracion->tipo ?>
+        <?= TabsX::widget([
+        'items' => $items,
+        'position' => TabsX::POS_ABOVE,
+        'bordered' => true,
+        'encodeLabels' => false
+        ]);
+        ?>
+        <br>
+
+        <?php
+        if (!empty($model->archivos)) :
+            // TODO: badge
+        ?>
+            <li class='list-group-item active'>
+                <span class='badge'><?= $model->duracion ?></span>
+                Links de descarga
             </li>
-            <?= \yii\widgets\ListView::widget([
-                'dataProvider' => $dataProvider,
-                'summary' => '',
-                'itemOptions' => ['class' => 'item'],
-                'itemView' => function ($model, $key, $index, $widget) {
-                    return $this->render('_reducedView.php', ['model' => $model]);
-                },
-            ])  ?>
-        </ul>
+            <?= TabsX::widget([
+                'items' => Utility::tabXArchivos($model->archivos),
+                'position'=>TabsX::POS_LEFT,
+                'bordered' => true,
+                'encodeLabels' => false
+            ]) ?>
+            <br>
+        <?php endif; ?>
+
+        <?php if (($numHijos = $dataProvider->getCount()) >= 1): ?>
+            <ul class="list-group">
+                <li class="list-group-item active">
+                    <span class="badge">
+                        <?= $numHijos . '/' . $model->duracion ?>
+                    </span>
+                    Lista de <?= $model->tipo->duracion->tipo ?>
+                </li>
+                <?= \yii\widgets\ListView::widget([
+                    'dataProvider' => $dataProvider,
+                    'summary' => '',
+                    'itemOptions' => ['class' => 'item'],
+                    'itemView' => function ($model, $key, $index, $widget) {
+                        return $this->render('_reducedView.php', ['model' => $model]);
+                    },
+                ]) ?>
+            </ul>
         <?php endif; ?>
     </div>
 

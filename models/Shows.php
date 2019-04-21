@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use Imagine\Gd\Imagine;
+use Imagine\Image\Box;
 use Yii;
 
 /**
@@ -13,14 +15,13 @@ use Yii;
  * @property string $lanzamiento
  * @property int $duracion
  * @property int $imagen_id
- * @property int $trailer_id
+ * @property string $trailer
  * @property int $tipo_id
  * @property int $show_id
  *
  * @property Comentarios[] $comentarios
  * @property Participantes[] $participantes
  * @property Archivos $imagen
- * @property Archivos $trailer
  * @property Shows $show
  * @property Shows[] $shows
  * @property Tipos $tipo
@@ -31,6 +32,13 @@ use Yii;
  */
 class Shows extends \yii\db\ActiveRecord
 {
+    public $listaGeneros;
+    public $listaParticipantes;
+    public $imgUpload;
+    public $showUpload;
+    public $gestorId;
+    public $valoracionMedia = null;
+
     /**
      * {@inheritdoc}
      */
@@ -46,17 +54,28 @@ class Shows extends \yii\db\ActiveRecord
     {
         return [
             [['titulo', 'lanzamiento', 'tipo_id'], 'required'],
-            [['sinopsis'], 'string'],
-            [['lanzamiento'], 'safe'],
-            [['duracion', 'imagen_id', 'trailer_id', 'tipo_id', 'show_id'], 'default', 'value' => null],
-            [['duracion', 'imagen_id', 'trailer_id', 'tipo_id', 'show_id'], 'integer'],
             [['titulo'], 'string', 'max' => 255],
-            [['imagen_id'], 'exist', 'skipOnError' => true, 'targetClass' => Archivos::className(), 'targetAttribute' => ['imagen_id' => 'id']],
-            [['trailer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Archivos::className(), 'targetAttribute' => ['trailer_id' => 'id']],
-            [['show_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shows::className(), 'targetAttribute' => ['show_id' => 'id']],
-            [['tipo_id'], 'exist', 'skipOnError' => true, 'targetClass' => Tipos::className(), 'targetAttribute' => ['tipo_id' => 'id']],
+            [['lanzamiento'], 'date', 'format' => 'php:Y-m-d'],
+            [['sinopsis'], 'string'],
+            [['trailer'], 'url'],
+            [['duracion', 'imagen_id', 'tipo_id', 'show_id'], 'integer'],
+            [['duracion', 'imagen_id', 'trailer', 'tipo_id', 'show_id'], 'default', 'value' => null],
+            [['listaGeneros'], 'each', 'rule' => ['integer']],
+            [['listaParticipantes'], 'safe'],
+            [['imgUpload'], 'image', 'extensions' => 'jpg, gif, png, jpeg'],
+            [['showUpload'], 'file', 'extensions' => 'owm, mp4, flv, avi'],
+            [['gestorId'], 'integer'],
+            [['imagen_id'], 'exist', 'skipOnError' => true, 'targetClass' => Archivos::class, 'targetAttribute' => ['imagen_id' => 'id']],
+            [['show_id'], 'exist', 'skipOnError' => true, 'targetClass' => self::class, 'targetAttribute' => ['show_id' => 'id']],
+            [['tipo_id'], 'exist', 'skipOnError' => true, 'targetClass' => Tipos::class, 'targetAttribute' => ['tipo_id' => 'id']],
         ];
     }
+
+    public function attributes()
+    {
+        return parent::attributes();
+    }
+
 
     /**
      * {@inheritdoc}
@@ -67,13 +86,75 @@ class Shows extends \yii\db\ActiveRecord
             'id' => 'ID',
             'titulo' => 'Titulo',
             'sinopsis' => 'Sinopsis',
-            'lanzamiento' => 'Lanzamiento',
+            'lanzamiento' => 'Fecha de lanzamiento',
             'duracion' => 'Duracion',
             'imagen_id' => 'Imagen ID',
-            'trailer_id' => 'Trailer ID',
-            'tipo_id' => 'Tipo ID',
-            'show_id' => 'Show ID',
+            'tipo_id' => 'Tipo de show',
+            'show_id' => 'Show al que pertenece',
+            'listaGeneros' => 'Generos',
+            'imgUpload' => 'Imagen de portada',
+            'showUpload' => 'Show a subir',
+            'gestorId' => 'Gestor de archivos (AWS por defecto)',
+            'trailer' => 'Enlace del trailer (Youtube, Vimeo...)',
         ];
+    }
+
+    /**
+     * Sube una imagen en principio a local
+     * @return bool
+     */
+    public function uploadImg()
+    {
+        if ($this->imgUpload !== null) {
+            $fileName = Yii::getAlias('@uploads/' . $this->imgUpload->baseName . '.' . $this->imgUpload->extension);
+            $this->imgUpload->saveAs($fileName);
+
+            $imagine = new Imagine();
+            $image = $imagine->open($fileName);
+            $image->resize(new Box(200, 200))->save($fileName);
+
+            /**
+             * Guardamos la ruta del archivo en la base de datos y ponemos su id en el show a crear
+             */
+            $archivo = new Archivos();
+            $archivo->gestor_id = 3; //TODO: cambiar el nombre del fichero
+            $archivo->link = $fileName;
+
+            if ($archivo->save()) {
+                $this->imagen_id = $archivo->id;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Sube una imagen en principio a local
+     * @return bool
+     */
+    public function uploadShow()
+    {
+        if ($this->showUpload !== null) {
+            $fileName = Yii::getAlias('@uploads/' . $this->showUpload->baseName . '.' . $this->showUpload->extension);
+            $this->showUpload->saveAs($fileName);
+
+            /**
+             * Guardamos la ruta del archivo en la base de datos y ponemos su id en el show a crear
+             */
+            $archivo = new Archivos();
+            $archivo->gestor_id = $this->gestorId ?: 3; //TODO: gestor a elegir y cambiar el nombre del fichero
+            $archivo->link = $fileName;
+
+            if ($archivo->save()) {
+                $showsDescargas = new ShowsDescargas();
+                $showsDescargas->show_id = $this->id;
+                $showsDescargas->archivo_id = $archivo->id;
+                return $showsDescargas->save();
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -103,17 +184,9 @@ class Shows extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getTrailer()
-    {
-        return $this->hasOne(Archivos::className(), ['id' => 'trailer_id'])->inverseOf('shows0');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getShow()
     {
-        return $this->hasOne(Shows::className(), ['id' => 'show_id'])->inverseOf('shows');
+        return $this->hasOne(self::className(), ['id' => 'show_id'])->inverseOf('shows');
     }
 
     /**
@@ -121,7 +194,7 @@ class Shows extends \yii\db\ActiveRecord
      */
     public function getShows()
     {
-        return $this->hasMany(Shows::className(), ['show_id' => 'id'])->inverseOf('show');
+        return $this->hasMany(self::className(), ['show_id' => 'id'])->inverseOf('show');
     }
 
     /**
@@ -167,11 +240,44 @@ class Shows extends \yii\db\ActiveRecord
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getValoraciones()
+    {
+        return Comentarios::find()
+            ->andWhere(['not', ['valoracion' => null]])
+            ->andWhere(['id' => $this->id]);
+    }
+
+    /**
+     * @return int
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getValoracionMedia()
+    {
+        if ($this->valoracionMedia !== null) {
+            return $this->valoracionMedia;
+        } else {
+            $valoraciones = $this->getValoraciones();
+            $count = $valoraciones->count();
+
+            if ($count != 0) {
+                $this->valoracionMedia = array_sum($valoraciones->select('valoracion')->column())/$count;
+            } else {
+                $this->valoracionMedia = 0;
+            }
+
+            return $this->valoracionMedia;
+        }
+    }
+
+    /**
      * @return bool
      */
     public function tieneImagen()
     {
-        return $this->imagen_id!==null;
+        return $this->imagen_id !== null;
     }
 
     /**
@@ -180,7 +286,7 @@ class Shows extends \yii\db\ActiveRecord
     public function tieneHijos()
     {
         $shows = $this->shows;
-        return empty($shows)?false:$shows;
+        return empty($shows) ? false : $shows;
     }
 
     /**
@@ -191,7 +297,7 @@ class Shows extends \yii\db\ActiveRecord
         $generos = $this->generos;
         if (!empty($generos)) {
             return $generos;
-        } elseif ($this->show_id!==null) {
+        } elseif ($this->show_id !== null) {
             return $this->show->tieneGeneros();
         }
         return false;
@@ -215,5 +321,11 @@ class Shows extends \yii\db\ActiveRecord
             ->joinWith(['comentarios'])
             ->andWhere(['shows.show_id' => $id])
             ->orderBy('lanzamiento');
+    }
+
+    public function afterFind()
+    {
+        parent::afterFind(); // TODO: Change the autogenerated stub
+        $this->getValoracionMedia();
     }
 }
