@@ -99,7 +99,7 @@ CREATE TABLE shows
 );
 ALTER TABLE shows
 ADD CONSTRAINT fk1_relacion_involutiva_shows
-FOREIGN KEY (show_id) REFERENCES shows (id) ON DELETE NO ACTION ON UPDATE CASCADE;
+FOREIGN KEY (show_id) REFERENCES shows (id) ON DELETE CASCADE ON UPDATE CASCADE;
 CREATE INDEX idx_shows_lanzamiento ON shows (lanzamiento);
 
 DROP TABLE IF EXISTS generos CASCADE;
@@ -131,11 +131,11 @@ CREATE TABLE shows_descargas
   , num_descargas BIGINT     DEFAULT 0
   , archivo_id    BIGINT     NOT NULL
                              REFERENCES archivos (id)
-                             ON DELETE NO ACTION
+                             ON DELETE CASCADE
                              ON UPDATE CASCADE
   , show_id       BIGINT     NOT NULL
                              REFERENCES shows (id)
-                             ON DELETE NO ACTION
+                             ON DELETE CASCADE
                              ON UPDATE CASCADE
   , UNIQUE (show_id, archivo_id)
 );
@@ -190,7 +190,7 @@ CREATE TABLE comentarios
                               ON UPDATE CASCADE
   , usuario_id      BIGINT    NOT NULL
                               REFERENCES usuarios (id)
-                              ON DELETE NO ACTION
+                              ON DELETE CASCADE
                               ON UPDATE CASCADE
   -- TODO: En caso de ser una valoración, el usuario_id y el show_id en conjunto son uniques y la valoracion debe ser null
 );

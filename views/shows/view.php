@@ -41,7 +41,17 @@ $this->registerCss($css);
                 'showCaption' => true,
             ],
         ]) ?>
+
+        <?= Html::a('Actualizar', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Eliminar', ['delete', 'id' => $model->id], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                 'confirm' => '¿Estas seguro de eliminar este show? Esto eliminara todos sus contenidos asociados como comentarios, "hijos", etc...',
+                 'method' => 'post',
+             ],
+        ]) ?>
         </div>
+
     <?php endif; ?>
 
     <div class="media-body">
