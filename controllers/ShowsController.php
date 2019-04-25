@@ -40,10 +40,20 @@ class ShowsController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::class,
+                'only' => ['view', 'index', 'delete', 'update', 'create',],
                 'rules' => [
                     [
+                        'actions' => ['view', 'index',],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['delete', 'update', 'create',],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function ($rule, $action) {
+                            return Yii::$app->user->identity->rol == 'admin';
+                        }
                     ],
                 ],
             ],

@@ -29,10 +29,24 @@ class SeguidoresController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::class,
+                'only' => ['delete', 'update', 'view', 'index', 'create',],
                 'rules' => [
                     [
+                        'actions' => ['view', 'index', 'create',],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['delete', 'update',],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function ($rule, $action) {
+                            $relacion = Seguidores::findOne(Yii::$app->request->get('id'));
+                            if ($relacion !== null) {
+                                return $relacion->seguidor_id == Yii::$app->user->identity->id;
+                            }
+                            return false;
+                        }
                     ],
                 ],
             ],
