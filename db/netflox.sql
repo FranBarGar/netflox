@@ -39,6 +39,7 @@ CREATE TABLE usuarios
                             ON UPDATE CASCADE
   , created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
   , banned_at  TIMESTAMP
+  , rol        VARCHAR(255)
   , token      VARCHAR(32)
   , password   VARCHAR(60)  NOT NULL
 );
@@ -238,9 +239,12 @@ VALUES ('@localSrc/user.jpeg', 3)
      , ('uploads/ahs.mp4', 3)
      , ('uploads/marvel.jpg', 3);
 
+
+INSERT INTO usuarios (nick, email, imagen_id, password, rol)
+VALUES ('admin', 'admin@admin.com', 1, crypt('admin', gen_salt('bf', 10)), 'admin');
+
 INSERT INTO usuarios (nick, email, imagen_id, password)
 VALUES ('pepe', 'pepe@pepe.com', 1, crypt('pepe', gen_salt('bf', 10)))
-     , ('admin', 'admin@admin.com', 1, crypt('admin', gen_salt('bf', 10)))
      , ('juan', 'juan@juan.com', 1, crypt('juan', gen_salt('bf', 10)))
      , ('xhama', 'xhama@xhama.com', 1, crypt('xhama', gen_salt('bf', 10)))
      , ('hypra', 'hypra@hypra.com', 1, crypt('hypra', gen_salt('bf', 10)))

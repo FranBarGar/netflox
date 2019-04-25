@@ -3,6 +3,7 @@
 namespace app\helpers;
 
 use app\models\Archivos;
+use app\models\Comentarios;
 use app\models\Participantes;
 use Yii;
 use yii\helpers\Url;

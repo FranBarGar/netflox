@@ -33,6 +33,9 @@ class RolesController extends Controller
                     [
                         'allow' => true,
                         'roles' => ['@'],
+                        'matchCallback' => function ($rule, $action) {
+                            return Yii::$app->user->identity->rol == 'admin';
+                        }
                     ],
                 ],
             ],
