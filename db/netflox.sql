@@ -197,7 +197,7 @@ CREATE TABLE comentarios
 );
 ALTER TABLE comentarios
 ADD CONSTRAINT fk1_relacion_involutiva_comentarios
-FOREIGN KEY (padre_id) REFERENCES comentarios (id) ON DELETE NO ACTION ON UPDATE CASCADE;
+FOREIGN KEY (padre_id) REFERENCES comentarios (id) ON DELETE CASCADE ON UPDATE CASCADE;
 
 DROP TABLE IF EXISTS votos CASCADE;
 CREATE TABLE votos

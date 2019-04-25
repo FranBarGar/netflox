@@ -247,7 +247,7 @@ class Shows extends \yii\db\ActiveRecord
     {
         return Comentarios::find()
             ->andWhere(['not', ['valoracion' => null]])
-            ->andWhere(['id' => $this->id]);
+            ->andWhere(['show_id' => $this->id]);
     }
 
     /**
@@ -256,20 +256,17 @@ class Shows extends \yii\db\ActiveRecord
      */
     public function getValoracionMedia()
     {
-        if ($this->valoracionMedia !== null) {
-            return $this->valoracionMedia;
+
+        $valoraciones = $this->getValoraciones();
+        $count = $valoraciones->count();
+
+        if ($count != 0) {
+            $this->valoracionMedia = $valoraciones->sum('valoracion') / $count;
         } else {
-            $valoraciones = $this->getValoraciones();
-            $count = $valoraciones->count();
-
-            if ($count != 0) {
-                $this->valoracionMedia = array_sum($valoraciones->select('valoracion')->column())/$count;
-            } else {
-                $this->valoracionMedia = 0;
-            }
-
-            return $this->valoracionMedia;
+            $this->valoracionMedia = 0;
         }
+
+        return $this->valoracionMedia;
     }
 
     /**
