@@ -32,6 +32,8 @@ use Yii;
  */
 class Shows extends \yii\db\ActiveRecord
 {
+    const IMAGEN = 'images/default.png';
+
     public $listaGeneros;
     public $listaParticipantes;
     public $imgUpload;
@@ -123,10 +125,16 @@ class Shows extends \yii\db\ActiveRecord
             if ($archivo->save()) {
                 $this->imagen_id = $archivo->id;
                 return true;
+            } else {
+                return false;
             }
         }
 
-        return false;
+        /**
+         * Imagen por defecto si no se especifica ninguna.
+         */
+        $this->imagen_id = 2;
+        return true;
     }
 
     /**
@@ -247,7 +255,8 @@ class Shows extends \yii\db\ActiveRecord
     {
         return Comentarios::find()
             ->andWhere(['not', ['valoracion' => null]])
-            ->andWhere(['show_id' => $this->id]);
+            ->andWhere(['show_id' => $this->id])
+            ->orderBy('created_at');
     }
 
     /**
@@ -272,9 +281,13 @@ class Shows extends \yii\db\ActiveRecord
     /**
      * @return bool
      */
-    public function tieneImagen()
+    public function getImagenLink()
     {
-        return $this->imagen_id !== null;
+        if ($this->imagen_id !== null) {
+            return $this->imagen->link;
+        }
+
+        return self::IMAGEN;
     }
 
     /**
