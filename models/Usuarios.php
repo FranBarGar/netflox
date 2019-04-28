@@ -34,6 +34,8 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
      */
     const SCENARIO_CREATE = 'create';
 
+    const IMAGEN = 'images/user.jpeg';
+
     /**
      * Confirmar contraseña.
      * @var string

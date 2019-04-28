@@ -228,8 +228,7 @@ VALUES ('DropBox')
      , ('Local');
 
 INSERT INTO archivos (link, gestor_id)
-VALUES ('@localSrc/user.jpeg', 3)
-     , ('uploads/jedi.jpg', 3)
+VALUES  ('uploads/jedi.jpg', 3)
      , ('uploads/jedi.mp4', 3)
      , ('uploads/interestelar.jpg', 3)
      , ('uploads/interestelar.mp4', 3)
@@ -273,11 +272,11 @@ VALUES ('Pelicula', 5, NULL)
      , ('Episodio', 5, 3);
 
 INSERT INTO shows (titulo, imagen_id, trailer, lanzamiento, duracion, sinopsis, tipo_id, show_id)
-VALUES ('Los últimos Jedi', 2, 'https://www.youtube.com/watch?v=anOJjqQb8x0', '2016-06-23', 204, 'La Primera Orden ha acorralado a los últimos miembros de la resistencia. Su última esperanza es que Finn se introduzca en la nave de Snoke y desactive el radar que les permite localizarlos. Mientras él trata, en compañía de una soldado de la Resistencia, de cumplir esta misión imposible, Rey se encuentra lejos, intentando convencer a Luke Skywalker de que la entrene y la convierta en la última jedi.', 1, NULL) -- Pelicula: id=1
-     , ('Interestelar', 4, 'https://www.youtube.com/watch?v=JxdU76YYeMc', '2016-06-23', 204, 'Gracias a un descubrimiento, un grupo de científicos y exploradores, encabezados por Cooper, se embarcan en un viaje espacial para encontrar un lugar con las condiciones necesarias para reemplazar a la Tierra y comenzar una nueva vida allí.', 1, NULL) -- Pelicula: id=2
-     , ('Avengers: ENDGAME', 6, 'https://www.dailymotion.com/video/x6yk4rd', '2016-06-23', 204, 'El grave curso de los acontecimientos puestos en marcha por Thanos, que destruyó a la mitad del universo y fracturó las filas de los Vengadores, obliga a los Vengadores restantes a prepararse para una última batalla en la gran conclusión de las 22 películas de Marvel Studios, Avengers: Endgame.', 1, NULL) -- Pelicula: id=3
-     , ('American Horror Story', 8, 'https://www.youtube.com/watch?v=-9KZr2Vn7CQ', '2011-06-23', 8, 'American Horror Story esta es una serie de televisión de drama y horror creada y producida por Ryan Murphy y Brad Falchuk. Es una serie de antología, ya que cada temporada se realiza como una miniserie independiente, con un grupo de personajes diferentes, escenarios distintos y una trama que tiene su propio comienzo, desarrollo y final. Aun así, las temporadas están conectadas entre sí.', 2, NULL) -- Serie: id=4
-     , ('Murder House', 8, 'https://www.youtube.com/watch?v=-9KZr2Vn7CQ', '2011-06-23', 12, 'La primera temporada, retitulada American Horror Story: Murder House tiene lugar en el 2011 y sigue a la familia Harmon: Ben de profesión psiquiatra, su esposa Vivien, y su hija adolescente Violet, quienes se mudan de Boston a Los Ángeles después de que Vivien tenga un aborto involuntario y Ben una aventura con una de sus alumnas. La familia se muda a una casa restaurada, y pronto se encontrarán con los antiguos residentes de la casa, los Langdon: Constance, su hija Addie y el desfigurado Larry Harvey. Ben y Vivien intentan reavivar su relación, mientras Violet está sufriendo de depresión, encuentra consuelo con Tate, un paciente de su padre. Los Langdon y Larry influyen con frecuencia en la vida de los Harmon, ya que la familia descubre que la casa está embrujada por todos los que murieron en ella. Entre los cuales están las fantasmas Moira, el ama de llaves y la primera dueña, Nora Montgomery.', 3, 4) -- Temporada: id=5
+VALUES ('Los últimos Jedi', 1, 'https://www.youtube.com/watch?v=anOJjqQb8x0', '2016-06-23', 204, 'La Primera Orden ha acorralado a los últimos miembros de la resistencia. Su última esperanza es que Finn se introduzca en la nave de Snoke y desactive el radar que les permite localizarlos. Mientras él trata, en compañía de una soldado de la Resistencia, de cumplir esta misión imposible, Rey se encuentra lejos, intentando convencer a Luke Skywalker de que la entrene y la convierta en la última jedi.', 1, NULL) -- Pelicula: id=1
+     , ('Interestelar', 3, 'https://www.youtube.com/watch?v=JxdU76YYeMc', '2016-06-23', 204, 'Gracias a un descubrimiento, un grupo de científicos y exploradores, encabezados por Cooper, se embarcan en un viaje espacial para encontrar un lugar con las condiciones necesarias para reemplazar a la Tierra y comenzar una nueva vida allí.', 1, NULL) -- Pelicula: id=2
+     , ('Avengers: ENDGAME', 5, 'https://www.dailymotion.com/video/x6yk4rd', '2016-06-23', 204, 'El grave curso de los acontecimientos puestos en marcha por Thanos, que destruyó a la mitad del universo y fracturó las filas de los Vengadores, obliga a los Vengadores restantes a prepararse para una última batalla en la gran conclusión de las 22 películas de Marvel Studios, Avengers: Endgame.', 1, NULL) -- Pelicula: id=3
+     , ('American Horror Story', 7, 'https://www.youtube.com/watch?v=-9KZr2Vn7CQ', '2011-06-23', 8, 'American Horror Story esta es una serie de televisión de drama y horror creada y producida por Ryan Murphy y Brad Falchuk. Es una serie de antología, ya que cada temporada se realiza como una miniserie independiente, con un grupo de personajes diferentes, escenarios distintos y una trama que tiene su propio comienzo, desarrollo y final. Aun así, las temporadas están conectadas entre sí.', 2, NULL) -- Serie: id=4
+     , ('Murder House', 7, 'https://www.youtube.com/watch?v=-9KZr2Vn7CQ', '2011-06-23', 12, 'La primera temporada, retitulada American Horror Story: Murder House tiene lugar en el 2011 y sigue a la familia Harmon: Ben de profesión psiquiatra, su esposa Vivien, y su hija adolescente Violet, quienes se mudan de Boston a Los Ángeles después de que Vivien tenga un aborto involuntario y Ben una aventura con una de sus alumnas. La familia se muda a una casa restaurada, y pronto se encontrarán con los antiguos residentes de la casa, los Langdon: Constance, su hija Addie y el desfigurado Larry Harvey. Ben y Vivien intentan reavivar su relación, mientras Violet está sufriendo de depresión, encuentra consuelo con Tate, un paciente de su padre. Los Langdon y Larry influyen con frecuencia en la vida de los Harmon, ya que la familia descubre que la casa está embrujada por todos los que murieron en ella. Entre los cuales están las fantasmas Moira, el ama de llaves y la primera dueña, Nora Montgomery.', 3, 4) -- Temporada: id=5
      , ('Pilot', NULL, NULL, '2016-06-23', 42, '', 4, 5) -- Capitulo: id=6
      , ('Home Invasion', NULL, NULL, '2016-06-23', 42, '', 4, 5) -- Capitulo: id=7
      , ('Murder House', NULL, NULL, '2016-06-23', 42, '', 4, 5) -- Capitulo: id=8
@@ -290,12 +289,12 @@ VALUES ('Los últimos Jedi', 2, 'https://www.youtube.com/watch?v=anOJjqQb8x0', '
      , ('Smoldering Children', NULL, NULL, '2016-06-23', 42, '', 4, 5) -- Capitulo: id=15
      , ('Birth', NULL, NULL, '2016-06-23', 42, '', 4, 5) -- Capitulo: id=16
      , ('Afterbirth', NULL, NULL, '2016-06-23', 42, '', 4, 5) -- Capitulo: id=17
-     , ('Asylum', 8, 'https://www.youtube.com/watch?v=-9KZr2Vn7CQ', '2016-06-23', 13, 'La historia tiene lugar en 1964, en el Manicomio Católico Briarcliff, construido en 1908, que funcionó como el centro de tuberculosis más grande del país, donde murieron 46.000 personas. En 1962 el lugar es comprado por la Iglesia Católica y convertido en un manicomio para criminales dementes dirigido por el Monseñor Timothy Howard. Allí es enviado Kit Walker, un joven que trabajaba en una gasolinera, acusado de haber matado a su esposa Alma Walker. Kit es llevado al manicomio siendo confundido con el asesino en serie Bloody Face, quien despellejaba a sus víctimas (siempre mujeres) y les cortaba la cabeza. Pero en realidad, Alma fue secuestrada por extraterrestres junto con su esposo, regresando solo este último a la Tierra. Nadie cree la historia de Kit, excepto Grace, una interna. Dentro del manicomio, se encontrará con terroríficos personajes como el doctor Arthur Arden y la hermana Jude, quien encierra a Lana Winters, una periodista lesbiana curiosa acerca de Bloody Face. Las cosas se complican dentro del asilo cuando la hermana Mary Eunice, monja protegida de la hermana Jude, sufre una posesión satánica. Extraños sucesos tienen lugar en el manicomio, en donde reinan el horror, la injusticia, la demencia, el trato inhumano y el dolor.', 3, 4)  -- Temporada: id=18
+     , ('Asylum', 7, 'https://www.youtube.com/watch?v=-9KZr2Vn7CQ', '2016-06-23', 13, 'La historia tiene lugar en 1964, en el Manicomio Católico Briarcliff, construido en 1908, que funcionó como el centro de tuberculosis más grande del país, donde murieron 46.000 personas. En 1962 el lugar es comprado por la Iglesia Católica y convertido en un manicomio para criminales dementes dirigido por el Monseñor Timothy Howard. Allí es enviado Kit Walker, un joven que trabajaba en una gasolinera, acusado de haber matado a su esposa Alma Walker. Kit es llevado al manicomio siendo confundido con el asesino en serie Bloody Face, quien despellejaba a sus víctimas (siempre mujeres) y les cortaba la cabeza. Pero en realidad, Alma fue secuestrada por extraterrestres junto con su esposo, regresando solo este último a la Tierra. Nadie cree la historia de Kit, excepto Grace, una interna. Dentro del manicomio, se encontrará con terroríficos personajes como el doctor Arthur Arden y la hermana Jude, quien encierra a Lana Winters, una periodista lesbiana curiosa acerca de Bloody Face. Las cosas se complican dentro del asilo cuando la hermana Mary Eunice, monja protegida de la hermana Jude, sufre una posesión satánica. Extraños sucesos tienen lugar en el manicomio, en donde reinan el horror, la injusticia, la demencia, el trato inhumano y el dolor.', 3, 4)  -- Temporada: id=18
      , ('Welcome to Briarcliff', NULL, NULL, '2016-06-23', 42, '', 4, 18) -- Capitulo: id=19
      , ('Tricks and Treats', NULL, NULL, '2016-06-23', 42, '', 4, 18) -- Capitulo: id=20
      , ('The Origins of Monstrosity', NULL, NULL, '2016-06-23', 42, '', 4, 18) -- Capitulo: id=21
      , ('Dark Coussins', NULL, NULL, '2016-06-23', 42, '', 4, 18) -- Capitulo: id=22
-     , ('Covem', 8, 'https://www.youtube.com/watch?v=-9KZr2Vn7CQ', '2013-06-23', 13, 'La temática de la historia es acerca de la brujería. Se sitúa en 2013, con flashbacks del siglo XIX. Cuando la familia de Zoe Benson descubre que tiene habilidades diferentes es enviada a Miss Robicheaux Academy, instituto que presenta una crisis debido a la posible extinción de las descendientes de Salem, donde encuentra a tres jóvenes brujas más, la caprichosa y vanidosa Madison Montgomery, Queenie, una muñeca vudú humana, y Nan, quien posee clarividencia. Cordelia Foxx, directora del instituto y su madre Fiona Goode, bruja Suprema del aquelarre (la más poderosa). Hacen lo posible por mantener su linaje en pie, luchando contra sus enemigos, los cazadores de brujas y la reina Vudú Marie Laveau. Mientras que Fiona, en la búsqueda de sus intereses personales se encuentra con la sádica racista Delphine LaLaurie, inmortal debido a un hechizo Vudú desde el siglo XIX por culpa de Laveau. La historia se complica con los intentos de la bruja fanática de la moda y líder del Consejo de brujas Myrtle Snow de sacar a flote las perversas intenciones de Fiona, así como también la llegada de la resucitada bruja del pantano Misty Day. Sus temas principales son la opresión y sobre usar todo el potencial que tenemos, así como también la necesidad de reconocer y pertenecer a una "tribu".', 3, 4); -- Temporada: id=23
+     , ('Covem', 7, 'https://www.youtube.com/watch?v=-9KZr2Vn7CQ', '2013-06-23', 13, 'La temática de la historia es acerca de la brujería. Se sitúa en 2013, con flashbacks del siglo XIX. Cuando la familia de Zoe Benson descubre que tiene habilidades diferentes es enviada a Miss Robicheaux Academy, instituto que presenta una crisis debido a la posible extinción de las descendientes de Salem, donde encuentra a tres jóvenes brujas más, la caprichosa y vanidosa Madison Montgomery, Queenie, una muñeca vudú humana, y Nan, quien posee clarividencia. Cordelia Foxx, directora del instituto y su madre Fiona Goode, bruja Suprema del aquelarre (la más poderosa). Hacen lo posible por mantener su linaje en pie, luchando contra sus enemigos, los cazadores de brujas y la reina Vudú Marie Laveau. Mientras que Fiona, en la búsqueda de sus intereses personales se encuentra con la sádica racista Delphine LaLaurie, inmortal debido a un hechizo Vudú desde el siglo XIX por culpa de Laveau. La historia se complica con los intentos de la bruja fanática de la moda y líder del Consejo de brujas Myrtle Snow de sacar a flote las perversas intenciones de Fiona, así como también la llegada de la resucitada bruja del pantano Misty Day. Sus temas principales son la opresión y sobre usar todo el potencial que tenemos, así como también la necesidad de reconocer y pertenecer a una "tribu".', 3, 4); -- Temporada: id=23
 
 INSERT INTO generos (genero)
 VALUES ('Comedia')
@@ -311,13 +310,13 @@ VALUES (1, 3), (2, 3), (2, 4)
      , (23, 2);
 
 INSERT INTO shows_descargas (show_id, archivo_id)
-VALUES (1, 3), (2, 5), (3, 7)
-     , (7, 9), (8, 9), (9, 9)
-     , (10, 9), (11, 9), (12, 9)
-     , (13, 9), (14, 9), (15, 9)
-     , (16, 9), (17, 9), (18, 9)
-     , (20, 9), (21, 9), (22, 9)
-     , (6, 9);
+VALUES (1, 2), (2, 4), (3, 6)
+     , (7, 8), (8, 8), (9, 8)
+     , (10, 8), (11, 8), (12, 8)
+     , (13, 8), (14, 8), (15, 8)
+     , (16, 8), (17, 8), (18, 8)
+     , (20, 8), (21, 8), (22, 8)
+     , (6, 8);
 
 -- INSERT personas RELLENAR
 INSERT INTO personas (nombre)
@@ -338,10 +337,10 @@ VALUES (1, 2, 1)
 
 INSERT INTO comentarios (cuerpo, valoracion, show_id, padre_id, usuario_id)
 VALUES ('Pelicula muy buena!', 5, 2, NULL, 3)
-     , ('Una de las mejores sagas bajo mi criterio', 4, 3, NULL, 4)
+     , ('Una de las mejores sagas bajo mi criterio', 4, 1, NULL, 4)
      , ('Saga poco cientifica, dejando eso de lado, bien', 3, 3, NULL, 1)
-     , ('No me gusta el terror', 1, 1, NULL, 2)
-     , ('Eso lo diras tu, caranchoa', NULL, 1, 3, 3);
+     , ('No me gusta el terror', 1, 4, NULL, 2)
+     , ('Eso lo diras tu, caranchoa', NULL, 4, 4, 3);
 
 INSERT INTO votos (usuario_id, comentario_id, votacion)
 VALUES (1, 2, 1)
