@@ -44,7 +44,7 @@ class ComentariosController extends Controller
                         'matchCallback' => function ($rule, $action) {
                             $comentario = Comentarios::findOne(Yii::$app->request->get('id'));
                             if ($comentario !== null) {
-                                return $comentario->usuario_id == Yii::$app->user->identity->id;
+                                return $comentario->usuario_id == Yii::$app->user->id;
                             }
                             return false;
                         }
@@ -91,13 +91,11 @@ class ComentariosController extends Controller
     {
         $model = new Comentarios();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->save();
         }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        return $this->redirect(['shows/view', 'id' => $model->show_id]);
     }
 
     /**
@@ -111,13 +109,11 @@ class ComentariosController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->save();
         }
 
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+        return $this->redirect(['shows/view', 'id' => $model->show_id]);
     }
 
     /**
@@ -129,9 +125,11 @@ class ComentariosController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $comentario = $this->findModel($id);
+        $show = $comentario->show_id;
+        $comentario->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['shows/view', 'id' => $show]);
     }
 
     /**
