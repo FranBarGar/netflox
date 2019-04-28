@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Archivos;
+use app\models\Comentarios;
 use app\models\Generos;
 use app\models\GestoresArchivos;
 use app\models\Participantes;
@@ -88,9 +89,28 @@ class ShowsController extends Controller
             'query' => Shows::findChildrens($id),
         ]);
 
+        $comentarioHijo = new Comentarios();
+        $comentarioHijo->show_id = $id;
+        $comentarioHijo->usuario_id = Yii::$app->user->id;
+        $comentarioHijo->cuerpo = '';
+
+        $valoracion = Comentarios::findOne([
+            'usuario_id' => Yii::$app->user->id,
+            'show_id' => $id
+        ]);
+
+        if ($valoracion == null) {
+            $valoracion = new Comentarios();
+            $valoracion->show_id = $id;
+            $valoracion->usuario_id = Yii::$app->user->id;
+            $valoracion->cuerpo = '';
+        }
+
         return $this->render('view', [
             'model' => $this->findModel($id),
             'dataProvider' => $dataProvider,
+            'comentarioHijo' => $comentarioHijo,
+            'valoracion' => $valoracion,
         ]);
     }
 
@@ -108,10 +128,8 @@ class ShowsController extends Controller
              * Subimos la imagen y se la añadimos a el modelo.
              */
             $model->imgUpload = UploadedFile::getInstance($model, 'imgUpload');
-            if ($model->imgUpload !== null) {
-                $model->uploadImg();
-                $model->imgUpload = null;
-            }
+            $model->uploadImg();
+            $model->imgUpload = null;
 
             /**
              * Guardamos el modelo tras añadirle todos los campos necesarios para obtener el ID.
