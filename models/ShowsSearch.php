@@ -10,6 +10,9 @@ use yii\data\ActiveDataProvider;
  */
 class ShowsSearch extends Shows
 {
+    /** @var array */
+    public $listaGeneros;
+
     /**
      * {@inheritdoc}
      */
@@ -17,8 +20,13 @@ class ShowsSearch extends Shows
     {
         return [
             [['tipo_id'], 'integer'],
-            [['titulo', 'sinopsis', 'lanzamiento'], 'safe'],
+            [['titulo', 'sinopsis', 'lanzamiento', 'listaGeneros'], 'safe'],
         ];
+    }
+
+    public function attributes()
+    {
+        return array_merge(parent::attributes(), [$this->listaGeneros]);
     }
 
     /**
@@ -39,7 +47,7 @@ class ShowsSearch extends Shows
      */
     public function search($params)
     {
-        $query = Shows::find()->where(['show_id' => null]);
+        $query = Shows::find()->joinWith('generos')->where(['shows.show_id' => null]);
 
         // add conditions that should always apply here
 
@@ -60,6 +68,7 @@ class ShowsSearch extends Shows
             'id' => $this->id,
             'lanzamiento' => $this->lanzamiento,
             'tipo_id' => $this->tipo_id,
+            'genero_id' => $this->listaGeneros,
         ]);
 
         $query->andFilterWhere(['ilike', 'titulo', $this->titulo])

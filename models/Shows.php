@@ -73,6 +73,10 @@ class Shows extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * {@inheritdoc}
+     * @return array
+     */
     public function attributes()
     {
         return parent::attributes();

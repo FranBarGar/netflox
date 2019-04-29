@@ -57,7 +57,7 @@ $this->registerCss($css);
     <h3 class="media-heading">
         <?=
         Html::a(Html::encode($model->titulo), ['shows/view', 'id' => $model->id]) .
-        \kartik\rating\StarRating::widget([
+        \kartik\widgets\StarRating::widget([
             'name' => 'rating_20',
             'value' => $model->valoracionMedia,
             'pluginOptions' => [

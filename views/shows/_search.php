@@ -1,5 +1,6 @@
 <?php
 
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -17,15 +18,36 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'titulo') ?>
 
-    <?= $form->field($model, 'tipo_id')
-        ->widget(\kartik\select2\Select2::class,['data'=>$listaTipos,
-            'options'=>[
-                'placeholder'=> 'Selecciona un tipo de show...',
-            ],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]) ?>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <?=
+            $form->field($model, 'tipo_id')
+                ->widget(Select2::class, ['data' => $listaTipos,
+                    'options' => [
+                        'placeholder' => 'Selecciona un tipo de show...',
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
+                ])
+            ?>
+        </div>
+        <div class="form-group col-md-6">
+            <?=
+            $form->field($model, 'listaGeneros')
+                ->widget(Select2::class, [
+                    'data' => $listaGeneros,
+                    'options' => [
+                        'placeholder' => 'Seleccione los generos de este show...',
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                        'multiple' => true,
+                    ],
+                ])
+            ?>
+        </div>
+    </div>
 
 
     <div class="form-group">

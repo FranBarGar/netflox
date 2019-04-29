@@ -74,6 +74,7 @@ class ShowsController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'listaTipos' => $this->listaTiposSearch(),
+            'listaGeneros' => $this->listaGeneros(),
         ]);
     }
 
