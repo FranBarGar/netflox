@@ -39,7 +39,11 @@ class Shows extends \yii\db\ActiveRecord
     public $imgUpload;
     public $showUpload;
     public $gestorId;
-    public $valoracionMedia = null;
+
+    /**
+     * Atributos generados por la query de ShowsSearch.
+     */
+    public $valoracionMedia;
 
     /**
      * {@inheritdoc}
@@ -264,21 +268,10 @@ class Shows extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return int
-     * @throws \yii\base\InvalidConfigException
+     * @return mixed
      */
     public function getValoracionMedia()
     {
-
-        $valoraciones = $this->getValoraciones();
-        $count = $valoraciones->count();
-
-        if ($count != 0) {
-            $this->valoracionMedia = $valoraciones->sum('valoracion') / $count;
-        } else {
-            $this->valoracionMedia = 0;
-        }
-
         return $this->valoracionMedia;
     }
 

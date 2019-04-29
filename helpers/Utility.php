@@ -4,7 +4,13 @@ namespace app\helpers;
 
 use app\models\Archivos;
 use app\models\Comentarios;
+use app\models\Generos;
+use app\models\GestoresArchivos;
 use app\models\Participantes;
+use app\models\Personas;
+use app\models\Roles;
+use app\models\Shows;
+use app\models\Tipos;
 use Yii;
 use yii\helpers\Url;
 
@@ -106,5 +112,92 @@ class Utility
             $items[$participante->rol->rol][] = $participante->persona->nombre;
         }
         return $items;
+    }
+
+
+    /**
+     * Lista de tipos con los valores que no tienen ningun padre del que heredar.
+     * @return array
+     */
+    public static function listaTiposSearch()
+    {
+        return Tipos::find()
+            ->select('tipo')
+            ->where(['padre_id' => null])
+            ->indexBy('id')
+            ->column();
+    }
+
+    /**
+     * Lista de tipos completa.
+     * @return array
+     */
+    public static function listaTipos()
+    {
+        return Tipos::find()
+            ->select('tipo')
+            ->indexBy('id')
+            ->column();
+    }
+
+    /**
+     * Lista de posibles participantes.
+     * @return array
+     */
+    public static function listaPersonas()
+    {
+        return Personas::find()
+            ->select('nombre')
+            ->indexBy('id')
+            ->column();
+    }
+
+    /**
+     * Lista de los roles para los posibles participantes.
+     * @return array
+     */
+    public static function listaRoles()
+    {
+        return Roles::find()
+            ->select('rol')
+            ->indexBy('id')
+            ->column();
+    }
+
+    /**
+     * Lista de padres directos a un tipo de show.
+     * @return array
+     */
+    public static function listaPadres($id)
+    {
+        return Shows::find()
+            ->select('titulo')
+            ->where(['tipo_id' => $id])
+            ->indexBy('id')
+            ->column();
+    }
+
+    /**
+     * Lista completa de generos.
+     * @return array
+     */
+    public static function listaGeneros()
+    {
+        return Generos::find()
+            ->select('genero')
+            ->indexBy('id')
+            ->column();
+    }
+
+    /**
+     * Lista de gestores de subida.
+     * @return array
+     */
+    public static function listaGestores()
+    {
+        return GestoresArchivos::find()
+            ->select('nombre')
+            ->indexBy('id')
+            ->column();
     }
 }

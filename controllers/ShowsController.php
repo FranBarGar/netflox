@@ -2,13 +2,9 @@
 
 namespace app\controllers;
 
-use app\models\Archivos;
+use app\helpers\Utility;
 use app\models\Comentarios;
-use app\models\Generos;
-use app\models\GestoresArchivos;
 use app\models\Participantes;
-use app\models\Personas;
-use app\models\Roles;
 use app\models\ShowsGeneros;
 use app\models\Tipos;
 use Yii;
@@ -73,8 +69,8 @@ class ShowsController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'listaTipos' => $this->listaTiposSearch(),
-            'listaGeneros' => $this->listaGeneros(),
+            'listaTipos' => Utility::listaTiposSearch(),
+            'listaGeneros' => Utility::listaGeneros(),
         ]);
     }
 
@@ -95,10 +91,13 @@ class ShowsController extends Controller
         $comentarioHijo->usuario_id = Yii::$app->user->id;
         $comentarioHijo->cuerpo = '';
 
-        $valoracion = Comentarios::findOne([
-            'usuario_id' => Yii::$app->user->id,
-            'show_id' => $id
-        ]);
+        $valoracion = Comentarios::find()
+            ->andWhere([
+                'usuario_id' => Yii::$app->user->id,
+                'show_id' => $id
+            ])
+            ->andWhere(['not', ['valoracion' => null]])
+            ->one();
 
         if ($valoracion == null) {
             $valoracion = new Comentarios();
@@ -108,7 +107,8 @@ class ShowsController extends Controller
         }
 
         return $this->render('view', [
-            'model' => $this->findModel($id),
+//            'model' => $this->findModel($id),
+            'model' => $this->advancedFindModel($id),
             'dataProvider' => $dataProvider,
             'comentarioHijo' => $comentarioHijo,
             'valoracion' => $valoracion,
@@ -180,11 +180,11 @@ class ShowsController extends Controller
         }
 
         return $this->render('create', ['model' => $model,
-            'listaTipos' => $this->listaTipos(),
-            'listaGeneros' => $this->listaGeneros(),
-            'listaGestores' => $this->listaGestores(),
-            'listaPersonas' => $this->listaPersonas(),
-            'listaRoles' => $this->listaRoles(),
+            'listaTipos' => Utility::listaTipos(),
+            'listaGeneros' => Utility::listaGeneros(),
+            'listaGestores' => Utility::listaGestores(),
+            'listaPersonas' => Utility::listaPersonas(),
+            'listaRoles' => Utility::listaRoles(),
         ]);
     }
 
@@ -203,12 +203,12 @@ class ShowsController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
-        $listaPadres['listaPadres'] = $model->tipo->padre_id !== null ? $this->listaPadres($model->tipo->padre_id) : [];
+        $listaPadres['listaPadres'] = $model->tipo->padre_id !== null ? Utility::listaPadres($model->tipo->padre_id) : [];
 
         return $this->render('update', [
             'model' => $model,
-            'listaTipos' => $this->listaTipos(),
-            'listaGeneros' => $this->listaGeneros(),
+            'listaTipos' => Utility::listaTipos(),
+            'listaGeneros' => Utility::listaGeneros(),
         ]);
     }
 
@@ -245,82 +245,34 @@ class ShowsController extends Controller
     }
 
     /**
-     * @return array
+     * Finds the Shows model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return Shows the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function listaTiposSearch()
+    protected function advancedFindModel($id)
     {
-        return Tipos::find()
-            ->select('tipo')
-            ->where(['padre_id' => null])
-            ->indexBy('id')
-            ->column();
-    }
 
-    /**
-     * @return array
-     */
-    protected function listaTipos()
-    {
-        return Tipos::find()
-            ->select('tipo')
-            ->indexBy('id')
-            ->column();
-    }
+        //TODO: TERMINAR
+        $model = Shows::find()
+            ->select('
+            shows.*, 
+            SUM(COALESCE(valoracion, 0))/GREATEST(COUNT(valoracion), 1)::float AS "valoracionMedia"')
+            ->joinWith('comentarios')
+            ->joinWith('generos')
+            ->with('tipo')
+            ->with('archivos')
+            ->where(['shows.id' => $id])
+            ->groupBy('shows.id')
+            ->one();
 
-    /**
-     * @return array
-     */
-    protected function listaPersonas()
-    {
-        return Personas::find()
-            ->select('nombre')
-            ->indexBy('id')
-            ->column();
-    }
 
-    /**
-     * @return array
-     */
-    protected function listaRoles()
-    {
-        return Roles::find()
-            ->select('rol')
-            ->indexBy('id')
-            ->column();
-    }
+        if ($model !== null) {
+            return $model;
+        }
 
-    /**
-     * @return array
-     */
-    protected function listaPadres($id)
-    {
-        return Shows::find()
-            ->select('titulo')
-            ->where(['tipo_id' => $id])
-            ->indexBy('id')
-            ->column();
-    }
-
-    /**
-     * @return array
-     */
-    protected function listaGeneros()
-    {
-        return Generos::find()
-            ->select('genero')
-            ->indexBy('id')
-            ->column();
-    }
-
-    /**
-     * @return array
-     */
-    protected function listaGestores()
-    {
-        return GestoresArchivos::find()
-            ->select('nombre')
-            ->indexBy('id')
-            ->column();
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 
     /**

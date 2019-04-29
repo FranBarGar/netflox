@@ -47,7 +47,14 @@ class ShowsSearch extends Shows
      */
     public function search($params)
     {
-        $query = Shows::find()->joinWith('generos')->where(['shows.show_id' => null]);
+        $query = Shows::find()
+            ->select('
+            shows.*, 
+            SUM(COALESCE(valoracion, 0))/GREATEST(COUNT(valoracion), 1)::float AS "valoracionMedia"')
+            ->joinWith('showsGeneros')
+            ->joinWith('comentarios')
+            ->with('imagen')
+            ->where(['shows.show_id' => null]);
 
         // add conditions that should always apply here
 
@@ -73,6 +80,14 @@ class ShowsSearch extends Shows
 
         $query->andFilterWhere(['ilike', 'titulo', $this->titulo])
             ->andFilterWhere(['ilike', 'sinopsis', $this->sinopsis]);
+
+        if ($this->listaGeneros != '') {
+            $query->filterHaving(['>=', 'count(*)', count($this->listaGeneros)]);
+        }
+
+        $query->andFilterHaving(['not', ['valoracion' => null]]);
+
+        $query->groupBy('shows.id');
 
         return $dataProvider;
     }
