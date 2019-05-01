@@ -8,7 +8,7 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="comentarios-form">
+<div class="comentarios-form text-left">
 
     <?php $form = ActiveForm::begin(['action' => $action]); ?>
 

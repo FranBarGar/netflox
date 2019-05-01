@@ -22,7 +22,7 @@ use yii\widgets\ActiveForm;
     ]);  ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Comentar', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('Valorar', ['class' => 'btn btn-success']) ?>
         <?php
         if ($model->id !== null) {
             echo Html::a('Eliminar', ['comentarios/delete', 'id' => $model->id], [

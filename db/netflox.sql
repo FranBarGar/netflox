@@ -1,8 +1,3 @@
--- Persistencia de datos:
--- En caso de borrar un usuario, se eliminaria toda su informacion incluyendo
--- sus comentarios, manteniendo los comentarios que dependen de el gracias a
--- un usuario fantasma como por ejemplo: "Anonymous".
-
 -- CREATE EXTENSION pgcrypto;
 
 --Almacenamiento
@@ -181,9 +176,10 @@ CREATE TABLE comentarios
 (
     id              BIGSERIAL PRIMARY KEY
   , cuerpo          TEXT
-  , valoracion      INT       -- Nota del show valorado.
+  , valoracion      NUMERIC(2, 1)       -- Nota del show valorado.
   , created_at      TIMESTAMP NOT NULL
                               DEFAULT CURRENT_TIMESTAMP
+  , edited_at       TIMESTAMP
   , padre_id        BIGINT
   , show_id         BIGINT    NOT NULL
                               REFERENCES shows (id)

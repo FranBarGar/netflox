@@ -14,12 +14,20 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?= $this->render('_search', ['model' => $searchModel, 'listaTipos' => $listaTipos]); ?>
+    <?=
+    $this->render('_search', [
+        'model' => $searchModel,
+        'listaTipos' => $listaTipos,
+        'listaGeneros' => $listaGeneros,
+        'orderBy' => $orderBy,
+        'orderType' => $orderType,
+    ]);
+    ?>
 
     <?= ListView::widget([
         'dataProvider' => $dataProvider,
         'summary' => '',
-        'itemOptions' => ['class' => 'shows-smallView col-md-6 media'],
+        'itemOptions' => ['class' => 'shows-smallView row media'],
         'itemView' => function ($model, $key, $index, $widget) {
             return $this->render('_smallView.php', ['model' => $model]);
         },

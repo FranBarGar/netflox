@@ -11,6 +11,7 @@ use Yii;
  * @property string $cuerpo
  * @property int $valoracion
  * @property string $created_at
+ * @property string $edited_at
  * @property int $padre_id
  * @property int $show_id
  * @property int $usuario_id
@@ -25,6 +26,31 @@ use Yii;
 class Comentarios extends \yii\db\ActiveRecord
 {
     /**
+     * @var array Opciones de ordenacion disponibles.
+     */
+    const ORDER_BY = [
+        'valoracion' => 'Valoracion',
+        'votacionTotal' => 'Likes',
+        'created_at' => 'Fecha de creacion',
+        'edited_at' => 'Fecha de edicion',
+    ];
+
+    const SCENARIO_VALORAR = 'valorar';
+
+    //Ordenacion
+
+    /** @var string */
+    public $orderBy;
+
+    /** @var string */
+    public $orderType;
+
+    // Atributos generados por la query de ComentariosSearch.
+
+    /** @var int */
+    public $votacionTotal;
+
+    /**
      * {@inheritdoc}
      */
     public static function tableName()
@@ -38,11 +64,11 @@ class Comentarios extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['cuerpo'], 'string'],
-            [['valoracion', 'padre_id', 'show_id', 'usuario_id'], 'default', 'value' => null],
-            [['valoracion', 'padre_id', 'show_id', 'usuario_id'], 'integer'],
-            [['created_at'], 'safe'],
             [['show_id', 'usuario_id'], 'required'],
+            [['show_id', 'usuario_id', 'padre_id'], 'integer'],
+            [['valoracion'], 'required', 'on' => self::SCENARIO_VALORAR],
+            [['valoracion'], 'number', 'min' => 0.5, 'max' => 5, 'on' => self::SCENARIO_VALORAR],
+            [['cuerpo'], 'string'],
             [['padre_id'], 'exist', 'skipOnError' => true, 'targetClass' => Comentarios::className(), 'targetAttribute' => ['padre_id' => 'id']],
             [['show_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shows::className(), 'targetAttribute' => ['show_id' => 'id']],
             [['usuario_id'], 'exist', 'skipOnError' => true, 'targetClass' => Usuarios::className(), 'targetAttribute' => ['usuario_id' => 'id']],
@@ -62,6 +88,8 @@ class Comentarios extends \yii\db\ActiveRecord
             'padre_id' => 'Padre ID',
             'show_id' => 'Show ID',
             'usuario_id' => 'Usuario ID',
+            'orderBy' => 'Ordenar por',
+            'orderType' => 'Tipo de ordenacion',
         ];
     }
 
