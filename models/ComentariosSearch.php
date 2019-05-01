@@ -18,7 +18,7 @@ class ComentariosSearch extends Comentarios
     {
         return [
             [['id', 'valoracion', 'padre_id', 'show_id', 'usuario_id'], 'integer'],
-            [['cuerpo', 'created_at'], 'safe'],
+            [['cuerpo', 'created_at', 'orderBy', 'orderType'], 'safe'],
         ];
     }
 
@@ -40,9 +40,17 @@ class ComentariosSearch extends Comentarios
      */
     public function search($params)
     {
-        $query = Comentarios::find();
+        $query = Comentarios::find()
+            ->select('
+                comentarios.*,
+                SUM(COALESCE(votacion, 0)) AS "votacionTotal"
+            ');
 
         // add conditions that should always apply here
+        $query
+            ->andWhere(['not', ['valoracion' => null]])
+            ->joinWith('votos')
+            ->groupBy('comentarios.id');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -67,6 +75,12 @@ class ComentariosSearch extends Comentarios
         ]);
 
         $query->andFilterWhere(['ilike', 'cuerpo', $this->cuerpo]);
+
+        if ($this->orderBy != null) {
+            $query->orderBy($this->orderBy . ' ' . $this->orderType . ', created_at');
+        } else {
+            $query->orderBy('created_at');
+        }
 
         return $dataProvider;
     }

@@ -99,6 +99,22 @@ class ComentariosController extends Controller
     }
 
     /**
+     * Creates a new Comentarios model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionValorar()
+    {
+        $model = new Comentarios(['scenario' => Comentarios::SCENARIO_VALORAR]);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model->save();
+        }
+
+        return $this->redirect(['shows/view', 'id' => $model->show_id]);
+    }
+
+    /**
      * Updates an existing Comentarios model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
@@ -110,6 +126,28 @@ class ComentariosController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post())) {
+            $model->edited_at = gmdate('Y-m-d H:i:s');
+            $model->save();
+        }
+
+        return $this->redirect(['shows/view', 'id' => $model->show_id]);
+    }
+
+    /**
+     * Updates an existing Comentarios model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionValorarUpdate($id)
+    {
+        $model = $this->findModel($id);
+
+        $model->scenario = Comentarios::SCENARIO_VALORAR;
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model->edited_at = gmdate('Y-m-d H:i:s');
             $model->save();
         }
 
@@ -120,8 +158,10 @@ class ComentariosController extends Controller
      * Deletes an existing Comentarios model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
-     * @return mixed
+     * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {

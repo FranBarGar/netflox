@@ -24,7 +24,7 @@ use yii\widgets\ActiveForm;
             $form->field($model, 'tipo_id')
                 ->widget(Select2::class, ['data' => $listaTipos,
                     'options' => [
-                        'placeholder' => 'Selecciona un tipo de show...',
+                        'placeholder' => 'Selecciona un tipo de show a buscar...',
                     ],
                     'pluginOptions' => [
                         'allowClear' => true
@@ -38,11 +38,41 @@ use yii\widgets\ActiveForm;
                 ->widget(Select2::class, [
                     'data' => $listaGeneros,
                     'options' => [
-                        'placeholder' => 'Seleccione los generos de este show...',
+                        'placeholder' => 'Seleccione los generos a buscar en los shows...',
                     ],
                     'pluginOptions' => [
                         'allowClear' => true,
                         'multiple' => true,
+                    ],
+                ])
+            ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-6">
+            <?=
+            $form->field($model, 'orderBy')
+                ->widget(Select2::class, [
+                    'data' => $orderBy,
+                    'options' => [
+                        'placeholder' => 'Seleccione el tipo de ordenación...',
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                    ],
+                ])
+            ?>
+        </div>
+        <div class="form-group col-md-2">
+            <?=
+            $form->field($model, 'orderType')
+                ->widget(Select2::class, ['data' => $orderType,
+                    'options' => [
+                        'placeholder' => 'Selecciona un tipo de show a buscar...',
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true
                     ],
                 ])
             ?>

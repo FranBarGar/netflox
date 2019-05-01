@@ -20,6 +20,14 @@ use yii\helpers\Url;
 class Utility
 {
     /**
+     * @var array Tipos de ordenacion disponibles.
+     */
+    const ORDER_TYPE = [
+        'ASC' => 'Ascendente',
+        'DESC' => 'Descendente',
+    ];
+
+    /**
      * Devuelve un template de ActiveForm con un icono de Bootstrap en su campo.
      * @param  string $icon Nombre del icono de Bootstrap
      * @return string       La cadena del template
@@ -72,20 +80,6 @@ class Utility
     }
 
     /**
-     * Crea un array con el contenido necesario para añadirselo a el widget TabX.
-     * @param $label     string Titulo de la pestaña.
-     * @param $contenido string Contenido de la pestaña.
-     * @return           array  Pestaña del widget TabX.
-     */
-    public static function tabXOption($label, $contenido)
-    {
-        return [
-            'label' => $label,
-            'content' => $contenido,
-        ];
-    }
-
-    /**
      * Crea las pestañas para el widget TabX de un array de Archivos.
      * @param $archivos array Array de Archivos.
      * @return          array Devuelve las pestañas para el widget TabX.
@@ -97,6 +91,20 @@ class Utility
             $items[] = self::tabXOption($archivo->gestor->nombre, Url::to($archivo->link));
         }
         return $items;
+    }
+
+    /**
+     * Crea un array con el contenido necesario para añadirselo a el widget TabX.
+     * @param $label     string Titulo de la pestaña.
+     * @param $contenido string Contenido de la pestaña.
+     * @return           array  Pestaña del widget TabX.
+     */
+    public static function tabXOption($label, $contenido)
+    {
+        return [
+            'label' => $label,
+            'content' => $contenido,
+        ];
     }
 
     /**
@@ -199,5 +207,31 @@ class Utility
             ->select('nombre')
             ->indexBy('id')
             ->column();
+    }
+
+    /**
+     * Pinta los comentarios anidados.
+     * @param $comentarios
+     * @param $vista
+     * @return string
+     */
+    public static function formatComentarios($comentarios, $vista, $comentarioVacio)
+    {
+        $str = '';
+        if ($comentarios) {
+            $str .= '<div class="row comentario-tab">';
+            foreach ($comentarios as $comentario) {
+                $comentarioVacio->padre_id = $comentario->id;
+                $str .= $vista->render('../comentarios/view', [
+                    'model' => $comentario,
+                    'comentarioHijo' => $comentarioVacio,
+                ]);
+
+                $str .= self::formatComentarios($comentario->comentarios, $vista, $comentarioVacio);
+            }
+            $str .= '</div>';
+        }
+
+        return $str;
     }
 }

@@ -10,6 +10,7 @@ use yii\data\ActiveDataProvider;
  */
 class ShowsSearch extends Shows
 {
+    //Filtrado
     /** @var array */
     public $listaGeneros;
 
@@ -20,10 +21,13 @@ class ShowsSearch extends Shows
     {
         return [
             [['tipo_id'], 'integer'],
-            [['titulo', 'sinopsis', 'lanzamiento', 'listaGeneros'], 'safe'],
+            [['titulo', 'sinopsis', 'lanzamiento', 'listaGeneros', 'orderBy', 'orderType'], 'safe'],
         ];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function attributes()
     {
         return array_merge(parent::attributes(), [$this->listaGeneros]);
@@ -47,16 +51,23 @@ class ShowsSearch extends Shows
      */
     public function search($params)
     {
-        $query = Shows::find()
-            ->select('
-            shows.*, 
-            SUM(COALESCE(valoracion, 0))/GREATEST(COUNT(valoracion), 1)::float AS "valoracionMedia"')
-            ->joinWith('showsGeneros')
-            ->joinWith('comentarios')
-            ->with('imagen')
-            ->where(['shows.show_id' => null]);
+        $query = Shows::find();
 
         // add conditions that should always apply here
+        $query->select('
+                shows.*, 
+                SUM(COALESCE(valoracion, 0))/GREATEST(COUNT(valoracion), 1)::float AS "valoracionMedia",
+                count(comentarios.id) AS "numComentarios"
+            ')
+            ->leftJoin('tipos', 'shows.tipo_id = tipos.id')
+            ->joinWith('tipos')
+            ->joinWith('showsGeneros')
+            ->joinWith('comentarios')
+            ->with('generos')
+//            ->with('imagen')
+            ->where(['tipos.padre_id' => null])
+            ->andFilterHaving(['not', ['valoracion' => null]])
+            ->groupBy('shows.id');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -85,9 +96,9 @@ class ShowsSearch extends Shows
             $query->filterHaving(['>=', 'count(*)', count($this->listaGeneros)]);
         }
 
-        $query->andFilterHaving(['not', ['valoracion' => null]]);
-
-        $query->groupBy('shows.id');
+        if ($this->orderBy != null) {
+            $query->orderBy($this->orderBy . ' ' . $this->orderType);
+        }
 
         return $dataProvider;
     }

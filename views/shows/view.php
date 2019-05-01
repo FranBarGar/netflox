@@ -1,12 +1,13 @@
 <?php
 
 use app\helpers\Utility;
-use app\models\Comentarios;
 use kartik\tabs\TabsX;
+use kartik\widgets\Select2;
 use kartik\widgets\StarRating;
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Shows */
@@ -27,12 +28,11 @@ $css = <<<EOCSS
         background-color: #fff5ed;
     }
     .comentario {
-        padding: 5px;
+        border: 2px solid white;
+        padding: 5px 10px 5px 30px;
     }
     .comentario-cuerpo {
         position: relative;
-        padding: 5px 10px 5px 30px;
-        border-radius: 2px;
     }
     .comentario-texto {
         padding-left: 10px;
@@ -41,16 +41,19 @@ $css = <<<EOCSS
         padding-left: 10px;
         padding-top: 3px;
     }
+    .comentario-tab {
+        margin-left: 30px;
+    }
 EOCSS;
 
 
 $this->registerCss($css);
 ?>
 
-<div class="shows-view media">
+<div class="row shows-view">
 
-    <div class="media-left media-top text-center">
-        <?= Html::img($model->getImagenLink(), ['alt' => 'Enlace roto', 'width' => '200px', 'class' => 'media-object']) ?>
+    <div class="col-md-3 text-center align-content-center">
+        <?= Html::img($model->getImagenLink(), ['alt' => 'Enlace roto', 'class' => 'img-responsive']) ?>
 
         <label class="control-label">Tu valoración</label>
 
@@ -81,8 +84,8 @@ $this->registerCss($css);
     </div>
 
 
-    <div class="media-body">
-        <h1 class="media-heading">
+    <div class="col-md-9">
+        <h1 class="row heading">
             <?= Html::encode($model->titulo) .
             StarRating::widget([
                 'name' => 'rating_20',
@@ -96,21 +99,6 @@ $this->registerCss($css);
                 ],
             ]); ?>
         </h1>
-        <div class="info">
-            <p>
-                Duracion: <?= $model->duracion . ' ' . $model->tipo->duracion->tipo ?> ---
-                Estreno: <?= $formatter->asDate($model->lanzamiento, 'long') ?> ---
-                Generos:
-                <?php
-                if ($generos = $model->tieneGeneros()) {
-                    echo array_shift($generos)->genero;
-                    foreach ($generos as $genero) {
-                        echo ', ' . $genero->genero;
-                    }
-                }
-                ?>
-            </p>
-        </div>
 
         <?php
         $items = [];
@@ -118,29 +106,56 @@ $this->registerCss($css);
             $items[] = Utility::tabXOption('Sinopsis', "<p>$model->sinopsis</p>");
         }
 
+        $str = '
+        <ul>
+            <li>General: 
+                <ul>
+                    <li>
+                        Duracion: ' . $model->duracion . ' ' . $model->tipo->duracion->tipo . '
+                    </li>
+                    <li>
+                        Estreno: ' . $formatter->asDate($model->lanzamiento, 'long') . '
+                    </li>
+                    <li>
+                        Generos: ';
+
+        if ($generos = $model->tieneGeneros()) {
+            $str .= array_shift($generos)->genero;
+            foreach ($generos as $genero) {
+                $str .= ', ' . $genero->genero;
+            }
+        }
+
+        $str .= '</li></ul></li>';
+
+        // Participantes
+        if (!empty($model->participantes)) {
+
+            $fixParticipantes = Utility::fixParticipantes($model->participantes);
+
+            $str .= '<br><li>Participantes: <ul>';
+            foreach ($fixParticipantes as $rol => $personas) {
+                $str .= "<li>$rol:<ul>";
+                foreach ($personas as $nombre) {
+                    $str .= "<li>$nombre</li>";
+                }
+                $str .= '</li></ul>';
+            }
+            $str .= '</ul></li>';
+        }
+        $str .= '</ul>';
+
+        $items[] = Utility::tabXOption('Informacion', $str);
+
+
         if ($model->trailer !== null && ($trailer = \Embed\Embed::create($model->trailer)->getCode()) != '') {
             $src = explode('"', explode('src="', $trailer)[1])[0];
 
             $items[] = array_merge($items, Utility::tabXOption('Trailer', "
-                <div class='embed-responsive embed-responsive-16by9'>
-                    <iframe class='embed-responsive-item' src='$src'></iframe>
-                </div>
-            "));
-        }
-
-        // Participantes
-        if (!empty($model->participantes)) {
-            $string = '<ul>';
-            $fixParticipantes = Utility::fixParticipantes($model->participantes);
-            foreach ($fixParticipantes as $rol => $personas) {
-                $string .= "<li>$rol: <ul>";
-                foreach ($personas as $nombre) {
-                    $string .= "<li>$nombre</li>";
-                }
-                $string .= '</li></ul>';
-            }
-            $string .= '</ul>';
-            $items[] = Utility::tabXOption('Participantes', $string);
+        <div class='embed-responsive embed-responsive-16by9'>
+            <iframe class='embed-responsive-item' src='$src'></iframe>
+        </div>
+        "));
         }
         ?>
 
@@ -160,12 +175,12 @@ $this->registerCss($css);
                 Links de descarga
             </li>
             <?=
-            TabsX::widget([
-                'items' => Utility::tabXArchivos($model->archivos),
-                'position' => TabsX::POS_LEFT,
-                'bordered' => true,
-                'encodeLabels' => false
-            ])
+        TabsX::widget([
+            'items' => Utility::tabXArchivos($model->archivos),
+            'position' => TabsX::POS_LEFT,
+            'bordered' => true,
+            'encodeLabels' => false
+        ])
             ?>
             <br>
         <?php endif; ?>
@@ -189,9 +204,52 @@ $this->registerCss($css);
             </ul>
         <?php endif; ?>
 
-        <div class="all-comments">
-            <div class="row col-md-offset-5">
+        <div class="row all-comments comentarios-order">
+
+            <?php $form = ActiveForm::begin([
+                'action' => Url::to([
+                    'shows/view',
+                    'id' => $model->id,
+                ]),
+                'method' => 'get',
+            ]); ?>
+
+            <div class="form-group col-md-4">
+                <?=
+                $form->field($searchModel, 'orderBy')
+                    ->widget(Select2::class, [
+                        'data' => $orderBy,
+                        'options' => [
+                            'placeholder' => 'Seleccione el tipo de ordenación...',
+                        ],
+                        'pluginOptions' => [
+                            'allowClear' => true,
+                        ],
+                    ])
+                ?>
+            </div>
+            <div class="form-group col-md-3">
+                <?=
+                $form->field($searchModel, 'orderType')
+                    ->widget(Select2::class, ['data' => $orderType,
+                        'options' => [
+                            'placeholder' => 'Selecciona un tipo de show a buscar...',
+                        ],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ])
+                ?>
+            </div>
+
+            <div class="form-group col-md-1">
+                <?= Html::submitButton('Ordenar', ['class' => 'btn btn-primary']) ?>
+            </div>
+            <?php ActiveForm::end(); ?>
+
+            <div class="form-group col-md-offset-2 col-md-1">
                 <?php
+
                 Modal::begin([
                     'header' => '<h2>Valorar</h2>',
                     'toggleButton' => [
@@ -201,10 +259,10 @@ $this->registerCss($css);
                 ]);
 
                 $action = $valoracion->valoracion == null
-                    ? Url::to(['comentarios/create'])
+                    ? Url::to(['comentarios/valorar'])
                     : Url::to([
-                            'comentarios/update',
-                            'id' => $valoracion->id,
+                        'comentarios/valorar-update',
+                        'id' => $valoracion->id,
                     ]);
 
                 echo $this->render('../comentarios/_valorar', [
@@ -215,33 +273,13 @@ $this->registerCss($css);
                 Modal::end();
                 ?>
             </div>
-            <?php
-            pintarComentarios($model->getValoraciones()->all(), $this);
 
+        </div>
 
-            /**
-             * Pinta los comentarios anidados.
-             * @param $comentarios
-             * @param $vista
-             */
-            function pintarComentarios($comentarios, $vista)
-            {
-                ?>
-                <?php if ($comentarios) : ?>
-                <ul>
-                    <?php foreach ($comentarios as $comentario) : ?>
-                        <li>
-                            <?= $vista->render('../comentarios/view', [
-                                'model' => $comentario
-                            ]) ?>
-                            <?php pintarComentarios($comentario->comentarios, $vista) ?>
-                        </li>
-                    <?php endforeach ?>
-                </ul>
-            <?php endif;
-            }
+        <div class="row all-comments">
 
-            ?>
+            <?= Utility::formatComentarios($valoraciones, $this, $comentarioHijo) ?>
+
         </div>
     </div>
 </div>

@@ -19,13 +19,15 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $searchModel,
         'listaTipos' => $listaTipos,
         'listaGeneros' => $listaGeneros,
+        'orderBy' => $orderBy,
+        'orderType' => $orderType,
     ]);
     ?>
 
     <?= ListView::widget([
         'dataProvider' => $dataProvider,
         'summary' => '',
-        'itemOptions' => ['class' => 'shows-smallView col-md-6 media'],
+        'itemOptions' => ['class' => 'shows-smallView row media'],
         'itemView' => function ($model, $key, $index, $widget) {
             return $this->render('_smallView.php', ['model' => $model]);
         },

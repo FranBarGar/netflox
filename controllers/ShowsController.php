@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\helpers\Utility;
 use app\models\Comentarios;
+use app\models\ComentariosSearch;
 use app\models\Participantes;
 use app\models\ShowsGeneros;
 use app\models\Tipos;
@@ -71,6 +72,8 @@ class ShowsController extends Controller
             'dataProvider' => $dataProvider,
             'listaTipos' => Utility::listaTiposSearch(),
             'listaGeneros' => Utility::listaGeneros(),
+            'orderBy' => Shows::ORDER_BY,
+            'orderType' => Utility::ORDER_TYPE,
         ]);
     }
 
@@ -82,9 +85,14 @@ class ShowsController extends Controller
      */
     public function actionView($id)
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Shows::findChildrens($id),
-        ]);
+        $searchModel = new ComentariosSearch();
+        $valoracionesProvider = $searchModel
+            ->search(Yii::$app->request->queryParams)
+            ->query
+            ->andFilterWhere(['show_id' => $id])
+            ->all();
+
+        $model = $this->advancedFindModel($id);
 
         $comentarioHijo = new Comentarios();
         $comentarioHijo->show_id = $id;
@@ -106,12 +114,19 @@ class ShowsController extends Controller
             $valoracion->cuerpo = '';
         }
 
+        $dataProvider = new ActiveDataProvider([
+            'query' => Shows::findChildrens($id),
+        ]);
+
         return $this->render('view', [
-//            'model' => $this->findModel($id),
-            'model' => $this->advancedFindModel($id),
+            'model' => $model,
             'dataProvider' => $dataProvider,
             'comentarioHijo' => $comentarioHijo,
             'valoracion' => $valoracion,
+            'searchModel' => $searchModel,
+            'valoraciones' => $valoracionesProvider,
+            'orderBy' => Comentarios::ORDER_BY,
+            'orderType' => Utility::ORDER_TYPE,
         ]);
     }
 
@@ -129,8 +144,10 @@ class ShowsController extends Controller
              * Subimos la imagen y se la añadimos a el modelo.
              */
             $model->imgUpload = UploadedFile::getInstance($model, 'imgUpload');
-            $model->uploadImg();
-            $model->imgUpload = null;
+            if ($model->imgUpload !== null) {
+                $model->uploadImg();
+                $model->imgUpload = null;
+            }
 
             /**
              * Guardamos el modelo tras añadirle todos los campos necesarios para obtener el ID.
@@ -253,8 +270,6 @@ class ShowsController extends Controller
      */
     protected function advancedFindModel($id)
     {
-
-        //TODO: TERMINAR
         $model = Shows::find()
             ->select('
             shows.*, 
