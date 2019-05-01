@@ -59,12 +59,11 @@ class ShowsSearch extends Shows
                 SUM(COALESCE(valoracion, 0))/GREATEST(COUNT(valoracion), 1)::float AS "valoracionMedia",
                 count(comentarios.id) AS "numComentarios"
             ')
-            ->leftJoin('tipos', 'shows.tipo_id = tipos.id')
-            ->joinWith('tipos')
+            ->joinWith('tipo')
             ->joinWith('showsGeneros')
             ->joinWith('comentarios')
             ->with('generos')
-//            ->with('imagen')
+            ->with('imagen')
             ->where(['tipos.padre_id' => null])
             ->andFilterHaving(['not', ['valoracion' => null]])
             ->groupBy('shows.id');
@@ -83,21 +82,20 @@ class ShowsSearch extends Shows
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'lanzamiento' => $this->lanzamiento,
             'tipo_id' => $this->tipo_id,
             'genero_id' => $this->listaGeneros,
         ]);
 
-        $query->andFilterWhere(['ilike', 'titulo', $this->titulo])
-            ->andFilterWhere(['ilike', 'sinopsis', $this->sinopsis]);
+        $query->andFilterWhere(['ilike', 'titulo', $this->titulo]);
 
         if ($this->listaGeneros != '') {
             $query->filterHaving(['>=', 'count(*)', count($this->listaGeneros)]);
         }
 
-        if ($this->orderBy != null) {
+        if ($this->orderBy != '') {
             $query->orderBy($this->orderBy . ' ' . $this->orderType);
+        } else {
+            $query->orderBy('valoracionMedia DESC');
         }
 
         return $dataProvider;
