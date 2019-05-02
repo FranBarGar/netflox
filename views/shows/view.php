@@ -19,6 +19,33 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $formatter = Yii::$app->formatter;
 
+$url = Url::to(['votos/create']);
+$js = <<<EOT
+function like() {
+        var el = $(this);
+        var id = el.data('key');
+        $.ajax({
+            url: '$url',
+            data: { id: id },
+            success: function (data) {
+                if(!data){
+                    $('#like-' + id).text(`Dislike`)
+                    $('#like-' + id).removeClass('btn-primary')
+                    $('#like-' + id).addClass('btn-danger')
+                }else {
+                    $('#like-' + id).text(`Like`)
+                    $('#like-' + id).removeClass('btn-danger')
+                    $('#like-' + id).addClass('btn-primary')
+                }
+            }
+        });
+}
+$(() => {
+    $('.like').on('click', like);
+});
+EOT;
+$this->registerJs($js);
+
 $css = <<<EOCSS
     div.rating-container {
         display: inline-block;
@@ -54,6 +81,33 @@ $this->registerCss($css);
 
     <div class="col-md-3 text-center align-content-center">
         <?= Html::img($model->getImagenLink(), ['alt' => 'Enlace roto', 'class' => 'img-responsive']) ?>
+
+        <div class="row">
+            <?php
+
+            Modal::begin([
+                'header' => '<h2>Valorar</h2>',
+                'toggleButton' => [
+                    'label' => 'Valorar',
+                    'class' => 'btn btn-block btn-primary',
+                ],
+            ]);
+
+            $action = $valoracion->valoracion == null
+                ? Url::to(['comentarios/valorar'])
+                : Url::to([
+                    'comentarios/valorar-update',
+                    'id' => $valoracion->id,
+                ]);
+
+            echo $this->render('../comentarios/_valorar', [
+                'model' => $valoracion,
+                'action' => $action
+            ]);
+
+            Modal::end();
+            ?>
+        </div>
 
         <label class="control-label">Tu valoración</label>
 
@@ -103,7 +157,7 @@ $this->registerCss($css);
         <?php
         $items = [];
         if (!empty($model->sinopsis)) {
-            $items[] = Utility::tabXOption('Sinopsis', "<p>$model->sinopsis</p>");
+            $items[] = Utility::tabXOption('Sinopsis', '<p>' . Html::encode($model->sinopsis) . '</p>');
         }
 
         $str = '
@@ -246,33 +300,6 @@ $this->registerCss($css);
                 <?= Html::submitButton('Ordenar', ['class' => 'btn btn-primary']) ?>
             </div>
             <?php ActiveForm::end(); ?>
-
-            <div class="form-group col-md-offset-2 col-md-1">
-                <?php
-
-                Modal::begin([
-                    'header' => '<h2>Valorar</h2>',
-                    'toggleButton' => [
-                        'label' => 'Valorar',
-                        'class' => 'btn btn-primary',
-                    ],
-                ]);
-
-                $action = $valoracion->valoracion == null
-                    ? Url::to(['comentarios/valorar'])
-                    : Url::to([
-                        'comentarios/valorar-update',
-                        'id' => $valoracion->id,
-                    ]);
-
-                echo $this->render('../comentarios/_valorar', [
-                    'model' => $valoracion,
-                    'action' => $action
-                ]);
-
-                Modal::end();
-                ?>
-            </div>
 
         </div>
 

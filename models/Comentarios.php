@@ -50,6 +50,12 @@ class Comentarios extends \yii\db\ActiveRecord
     /** @var int */
     public $votacionTotal;
 
+    /** @var int */
+    public $votoUsuario = null;
+
+    /** @var int */
+    public $votosTotales = null;
+
     /**
      * {@inheritdoc}
      */
@@ -139,5 +145,39 @@ class Comentarios extends \yii\db\ActiveRecord
     public function getUsuarios()
     {
         return $this->hasMany(Usuarios::className(), ['id' => 'usuario_id'])->viaTable('votos', ['comentario_id' => 'id']);
+    }
+
+    public function afterFind()
+    {
+        parent::afterFind();
+
+        $this->setVotoUsuario();
+        $this->setVotosTotales();
+    }
+
+    private function setVotoUsuario()
+    {
+        if ($this->votoUsuario === null) {
+            $votoUsuario = Votos::find()
+                ->select('votacion')
+                ->andFilterWhere([
+                    'usuario_id' => Yii::$app->user->id,
+                    'comentario_id' => $this->show_id
+                ])
+                ->column();
+            $this->votoUsuario = ($votoUsuario) ?: 0;
+        }
+    }
+
+    private function setVotosTotales()
+    {
+        $this->votosTotales = 0;
+        if ($this->votoUsuario === null) {
+            $votosTotales = Votos::find()
+                ->select('SUM(COALESCE(votacion, 0)) AS "votosTotales"')
+                ->where(['comentario_id' => $this->show_id])
+                ->column();
+            $this->votosTotales = ($votosTotales) ?: 0;
+        }
     }
 }
