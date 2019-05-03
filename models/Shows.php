@@ -45,7 +45,7 @@ class Shows extends \yii\db\ActiveRecord
         'shows.titulo' => 'Titulo',
         'shows.lanzamiento' => 'Fecha de estreno',
         'valoracionMedia' => 'Valoración',
-        'numComentarios' => 'Numero de comentarios',
+        'numComentarios' => 'Numero de valoraciones',
     ];
 
     // Creacion de shows

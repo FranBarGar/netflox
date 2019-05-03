@@ -11,7 +11,8 @@ use yii\helpers\Url;
     <div class="row comentario-info">
         <small>
             <div class="col-md-8">
-                Creado por <?= Html::a($model->usuario->nick, ['usuarios/view', 'id' => $model->usuario->id]) ?>
+                Creado
+                por <?= Html::a(Html::encode($model->usuario->nick), ['usuarios/view', 'id' => $model->usuario->id]) ?>
                 el <?= Yii::$app->formatter->asDatetime($model->created_at) ?>
             </div>
             <div class="col-md-4">
@@ -46,6 +47,34 @@ use yii\helpers\Url;
     <?php endif; ?>
     <div class="actions row">
         <?php
+        if ($model->votoUsuario == 1) {
+            $model->likes = '<b>' . $model->likes . '</b>';
+        } elseif ($model->votoUsuario == -1) {
+            $model->dislikes = '<b>' . $model->dislikes . '</b>';
+        }
+
+        echo
+            Html::button(
+                'Like (<span id="num-like-' . $model->id . '">' . $model->likes . '</span>)',
+                [
+                    'class' => 'voto btn btn-primary btn-xs',
+                    'id' => 'like-' . $model->id,
+                    'data-voto-id' => $model->id,
+                    'data-voto' => 1
+                ]
+            );
+        echo
+            Html::button(
+                'Dislike (<span id="num-dislike-' . $model->id . '">' . $model->dislikes . '</span>)',
+                [
+                    'class' => 'voto btn btn-danger btn-xs',
+                    'id' => 'dislike-' . $model->id,
+                    'data-voto-id' => $model->id,
+                    'data-voto' => -1
+                ]
+            ) . '  ';
+
+
         if ($model->usuario_id == Yii::$app->user->id) {
             echo Html::a('Eliminar', ['comentarios/delete', 'id' => $model->id], [
                     'class' => 'btn btn-danger btn-xs',

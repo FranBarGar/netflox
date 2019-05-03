@@ -50,6 +50,17 @@ class Comentarios extends \yii\db\ActiveRecord
     /** @var int */
     public $votacionTotal;
 
+    // Likes y Dislikes
+
+    /** @var int */
+    public $votoUsuario = null;
+
+    /** @var int */
+    public $dislikes = null;
+
+    /** @var int */
+    public $likes = null;
+
     /**
      * {@inheritdoc}
      */
@@ -139,5 +150,58 @@ class Comentarios extends \yii\db\ActiveRecord
     public function getUsuarios()
     {
         return $this->hasMany(Usuarios::className(), ['id' => 'usuario_id'])->viaTable('votos', ['comentario_id' => 'id']);
+    }
+
+    public function afterFind()
+    {
+        parent::afterFind();
+
+        $this->setVotoUsuario();
+        $this->setVotosLikes();
+        $this->setVotosDislikes();
+    }
+
+    private function setVotoUsuario()
+    {
+        if ($this->votoUsuario === null) {
+            $votoUsuario = Votos::find()
+                ->select('votacion')
+                ->andFilterWhere([
+                    'usuario_id' => Yii::$app->user->id,
+                    'comentario_id' => $this->id
+                ])
+                ->column();
+            $this->votoUsuario = (empty($votoUsuario)) ? 0 : $votoUsuario[0];
+        }
+    }
+
+    private function setVotosLikes()
+    {
+        if ($this->likes === null) {
+            $likes = Votos::find()
+                ->select('SUM(COALESCE(votacion, 0)) AS "likes"')
+                ->andWhere([
+                    'comentario_id' => $this->id,
+                    'votacion' => 1
+                ])
+                ->groupBy('comentario_id')
+                ->column();
+            $this->likes = (empty($likes)) ? 0 : $likes[0];
+        }
+    }
+
+    private function setVotosDislikes()
+    {
+        if ($this->dislikes === null) {
+            $dislikes = Votos::find()
+                ->select('COUNT(id) AS "dislikes"')
+                ->andWhere([
+                    'comentario_id' => $this->id,
+                    'votacion' => -1
+                ])
+                ->groupBy('comentario_id')
+                ->column();
+            $this->dislikes = (empty($dislikes)) ? 0 : $dislikes[0];
+        }
     }
 }

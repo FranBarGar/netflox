@@ -30,7 +30,6 @@ class ComentariosController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['delete', 'update', 'view', 'index', 'create',],
                 'rules' => [
                     [
                         'actions' => ['view', 'index', 'create',],

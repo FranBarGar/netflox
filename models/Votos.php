@@ -32,8 +32,8 @@ class Votos extends \yii\db\ActiveRecord
     {
         return [
             [['usuario_id', 'comentario_id'], 'required'],
-            [['usuario_id', 'comentario_id', 'votacion'], 'default', 'value' => null],
-            [['usuario_id', 'comentario_id', 'votacion'], 'integer'],
+            [['usuario_id', 'comentario_id'], 'integer'],
+            [['votacion'], 'in', 'range' => [-1, 0, 1]],
             [['usuario_id', 'comentario_id'], 'unique', 'targetAttribute' => ['usuario_id', 'comentario_id']],
             [['comentario_id'], 'exist', 'skipOnError' => true, 'targetClass' => Comentarios::className(), 'targetAttribute' => ['comentario_id' => 'id']],
             [['usuario_id'], 'exist', 'skipOnError' => true, 'targetClass' => Usuarios::className(), 'targetAttribute' => ['usuario_id' => 'id']],

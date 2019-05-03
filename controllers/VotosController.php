@@ -2,12 +2,11 @@
 
 namespace app\controllers;
 
+use app\models\Comentarios;
 use Yii;
 use app\models\Votos;
-use app\models\VotosSearch;
 use yii\filters\AccessControl;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
@@ -29,24 +28,11 @@ class VotosController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['delete', 'update', 'view', 'index', 'create',],
                 'rules' => [
                     [
-                        'actions' => ['view', 'index', 'create',],
+                        'actions' => ['votar',],
                         'allow' => true,
                         'roles' => ['@'],
-                    ],
-                    [
-                        'actions' => ['delete', 'update',],
-                        'allow' => true,
-                        'roles' => ['@'],
-                        'matchCallback' => function ($rule, $action) {
-                            $voto = Votos::findOne(Yii::$app->request->get('id'));
-                            if ($voto !== null) {
-                                return $voto->usuario_id == Yii::$app->user->identity->id;
-                            }
-                            return false;
-                        }
                     ],
                 ],
             ],
@@ -54,98 +40,51 @@ class VotosController extends Controller
     }
 
     /**
-     * Lists all Votos models.
-     * @return mixed
+     * Creates a new Votos model or Updates an existing Votos model.
+     * @return array
      */
-    public function actionIndex()
+    public function actionVotar()
     {
-        $searchModel = new VotosSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
+        /** @var Votos $model */
+        $model = Votos::find()
+            ->andFilterWhere([
+                'usuario_id' => Yii::$app->user->id,
+                'comentario_id' => Yii::$app->request->post('comentario_id')
+            ])
+            ->one();
 
-    /**
-     * Displays a single Votos model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
+        if ($model !== null) {
+            if (($votacion = Yii::$app->request->post('votacion')) == $model->votacion) {
+                $model->votacion = 0;
+            } else {
+                $model->votacion = $votacion;
+            }
+        } else {
+            $model = new Votos();
 
-    /**
-     * Creates a new Votos model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $model = new Votos();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            $model->comentario_id = Yii::$app->request->post('comentario_id');
+            $model->usuario_id = Yii::$app->user->id;
+            $model->votacion = Yii::$app->request->post('votacion');
         }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-    }
+        if ($model->save()) {
+            $comentario = Comentarios::findOne($model->comentario_id);
 
-    /**
-     * Updates an existing Votos model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
+            if ($model->votacion == 1) {
+                $comentario->likes = '<b>' . $comentario->likes . '</b>';
+            } elseif ($model->votacion == -1) {
+                $comentario->dislikes = '<b>' . $comentario->dislikes . '</b>';
+            }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return json_encode([
+                'opc' => $model->votacion,
+                'likes' => $comentario->likes,
+                'dislikes' => $comentario->dislikes,
+            ]);
         }
 
-        return $this->render('update', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Deletes an existing Votos model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the Votos model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Votos the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Votos::findOne($id)) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
+        return json_encode([]);
     }
 }
