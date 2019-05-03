@@ -50,11 +50,16 @@ class Comentarios extends \yii\db\ActiveRecord
     /** @var int */
     public $votacionTotal;
 
+    // Likes y Dislikes
+
     /** @var int */
     public $votoUsuario = null;
 
     /** @var int */
-    public $votosTotales = null;
+    public $dislikes = null;
+
+    /** @var int */
+    public $likes = null;
 
     /**
      * {@inheritdoc}
@@ -152,7 +157,8 @@ class Comentarios extends \yii\db\ActiveRecord
         parent::afterFind();
 
         $this->setVotoUsuario();
-        $this->setVotosTotales();
+        $this->setVotosLikes();
+        $this->setVotosDislikes();
     }
 
     private function setVotoUsuario()
@@ -162,22 +168,40 @@ class Comentarios extends \yii\db\ActiveRecord
                 ->select('votacion')
                 ->andFilterWhere([
                     'usuario_id' => Yii::$app->user->id,
-                    'comentario_id' => $this->show_id
+                    'comentario_id' => $this->id
                 ])
                 ->column();
-            $this->votoUsuario = ($votoUsuario) ?: 0;
+            $this->votoUsuario = (empty($votoUsuario)) ? 0 : $votoUsuario[0];
         }
     }
 
-    private function setVotosTotales()
+    private function setVotosLikes()
     {
-        $this->votosTotales = 0;
-        if ($this->votoUsuario === null) {
-            $votosTotales = Votos::find()
-                ->select('SUM(COALESCE(votacion, 0)) AS "votosTotales"')
-                ->where(['comentario_id' => $this->show_id])
+        if ($this->likes === null) {
+            $likes = Votos::find()
+                ->select('SUM(COALESCE(votacion, 0)) AS "likes"')
+                ->andWhere([
+                    'comentario_id' => $this->id,
+                    'votacion' => 1
+                ])
+                ->groupBy('comentario_id')
                 ->column();
-            $this->votosTotales = ($votosTotales) ?: 0;
+            $this->likes = (empty($likes)) ? 0 : $likes[0];
+        }
+    }
+
+    private function setVotosDislikes()
+    {
+        if ($this->dislikes === null) {
+            $dislikes = Votos::find()
+                ->select('COUNT(id) AS "dislikes"')
+                ->andWhere([
+                    'comentario_id' => $this->id,
+                    'votacion' => -1
+                ])
+                ->groupBy('comentario_id')
+                ->column();
+            $this->dislikes = (empty($dislikes)) ? 0 : $dislikes[0];
         }
     }
 }

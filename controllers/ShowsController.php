@@ -38,7 +38,6 @@ class ShowsController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['view', 'index', 'delete', 'update', 'create',],
                 'rules' => [
                     [
                         'actions' => ['view', 'index',],

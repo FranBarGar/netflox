@@ -19,29 +19,32 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $formatter = Yii::$app->formatter;
 
-$url = Url::to(['votos/create']);
+$url = Url::to(['votos/votar']);
 $js = <<<EOT
-function like() {
-        var el = $(this);
-        var id = el.data('key');
-        $.ajax({
-            url: '$url',
-            data: { id: id },
-            success: function (data) {
-                if(!data){
-                    $('#like-' + id).text(`Dislike`)
-                    $('#like-' + id).removeClass('btn-primary')
-                    $('#like-' + id).addClass('btn-danger')
-                }else {
-                    $('#like-' + id).text(`Like`)
-                    $('#like-' + id).removeClass('btn-danger')
-                    $('#like-' + id).addClass('btn-primary')
-                }
+function votar() {
+    var el = $(this);
+    var id = el.data('voto-id');
+    var voto = el.data('voto');
+    
+    $.post({
+        url: '$url',
+        data: {
+            comentario_id: id,
+            votacion: voto
+        },
+        success: function (data) {
+            data = JSON.parse(data);
+            if (data) {
+                // Spans para los votos.
+                $('#num-dislike-' + id).html(data.dislikes);
+                $('#num-like-' + id).html(data.likes);
             }
-        });
+        }
+    });
 }
+
 $(() => {
-    $('.like').on('click', like);
+    $('.voto').on('click', votar);
 });
 EOT;
 $this->registerJs($js);
