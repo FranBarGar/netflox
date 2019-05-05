@@ -21,6 +21,7 @@ use Yii;
  * @property int $show_id
  *
  * @property Comentarios[] $comentarios
+ * @property UsuariosShows[] $suariosShows
  * @property Participantes[] $participantes
  * @property Archivos $imagen
  * @property Shows $show
@@ -50,32 +51,48 @@ class Shows extends \yii\db\ActiveRecord
 
     // Creacion de shows
 
-    /** @var array */
+    /**
+     * @var array Lista de generos a añadir al show tras ser creado.
+     */
     public $listaGeneros;
 
-    /** @var array */
+    /**
+     * @var array Lista de participantes a añadir al show tras ser creado.
+     */
     public $listaParticipantes;
 
-    /** @var FileInput */
+    /**
+     * @var FileInput Fichero a subir a la nube como portada.
+     */
     public $imgUpload;
 
-    /** @var FileInput */
+    /**
+     * @var FileInput Fichero a subir a la nube como contenido descargable.
+     */
     public $showUpload;
 
-    /** @var int */
+    /**
+     * @var int Gestor a usar con el fichero descargable a subir.
+     */
     public $gestorId;
 
     //Ordenacion
 
-    /** @var string */
+    /**
+     * @var string Parametro para la ordenacion de shows.
+     */
     public $orderBy;
 
-    /** @var string */
+    /**
+     * @var string Parametro para la ordenacion de shows.
+     */
     public $orderType;
 
     // Atributos generados por la query de ShowsSearch.
 
-    /** @var float */
+    /**
+     * @var float Valoracion media de el show actual.
+     */
     public $valoracionMedia;
 
     /**
@@ -87,13 +104,13 @@ class Shows extends \yii\db\ActiveRecord
     }
 
     /**
+     * Metodo para buscar los shows que tienen como padre id el del modelo actual.
      * @param int $id
      * @return \yii\db\ActiveQuery
      */
     public static function findChildrens($id)
     {
         return self::find()
-            ->joinWith(['comentarios'])
             ->andWhere(['shows.show_id' => $id])
             ->orderBy('lanzamiento');
     }
@@ -260,6 +277,14 @@ class Shows extends \yii\db\ActiveRecord
     public function getShow()
     {
         return $this->hasOne(self::className(), ['id' => 'show_id'])->inverseOf('shows');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUsuariosShows()
+    {
+        return $this->hasMany(UsuariosShows::className(), ['show_id' => 'id'])->inverseOf('show');
     }
 
     /**

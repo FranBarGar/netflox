@@ -18,6 +18,7 @@ use Yii;
  * @property string $password
  *
  * @property Comentarios[] $comentarios
+ * @property UsuariosShows[] $usuariosShows
  * @property Seguidores[] $seguidores
  * @property Seguidores[] $seguidores0
  * @property Usuarios[] $seguidos
@@ -197,6 +198,7 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
 
     /**
      * @return \yii\db\ActiveQuery
+     * @throws \yii\base\InvalidConfigException
      */
     public function getSeguidos()
     {
@@ -205,6 +207,15 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
 
     /**
      * @return \yii\db\ActiveQuery
+     */
+    public function getUsuariosShows()
+    {
+        return $this->hasMany(UsuariosShows::className(), ['usuario_id' => 'id'])->inverseOf('usuario');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     * @throws \yii\base\InvalidConfigException
      */
     public function getSeguidors()
     {
@@ -229,6 +240,7 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
 
     /**
      * @return \yii\db\ActiveQuery
+     * @throws \yii\base\InvalidConfigException
      */
     public function getComentarios0()
     {

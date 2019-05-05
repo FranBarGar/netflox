@@ -213,13 +213,16 @@ class Utility
      * Pinta los comentarios anidados.
      * @param $comentarios
      * @param $vista
+     * @param $comentarioVacio
+     * @param int $level
      * @return string
      */
-    public static function formatComentarios($comentarios, $vista, $comentarioVacio)
+    public static function formatComentarios($comentarios, $vista, $comentarioVacio, $level = 0)
     {
         $str = '';
         if ($comentarios) {
-            $str .= '<div class="row comentario-tab">';
+            $str .= '
+                <div class="col-md-offset-' . ($level == 0 ? 0 : 1) . ' col-md-' . ($level == 0 ? 12 : 11) . ' comentario-margin">';
             foreach ($comentarios as $comentario) {
                 $comentarioVacio->padre_id = $comentario->id;
                 $str .= $vista->render('../comentarios/view', [
@@ -227,7 +230,7 @@ class Utility
                     'comentarioHijo' => $comentarioVacio,
                 ]);
 
-                $str .= self::formatComentarios($comentario->comentarios, $vista, $comentarioVacio);
+                $str .= self::formatComentarios($comentario->comentarios, $vista, $comentarioVacio, ++$level);
             }
             $str .= '</div>';
         }

@@ -49,7 +49,7 @@ use yii\widgets\ActiveForm;
         </div>
     </div>
 
-    <div class="row">
+    <div class="col-md-12">
         <div class="form-group col-md-6">
             <?=
             $form->field($model, 'orderBy')

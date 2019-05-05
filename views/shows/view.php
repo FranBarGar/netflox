@@ -50,29 +50,22 @@ EOT;
 $this->registerJs($js);
 
 $css = <<<EOCSS
-    div.rating-container {
-        display: inline-block;
-        padding-left: 10px;
-    }
     .all-comments {
         background-color: #fff5ed;
     }
     .comentario {
         border: 2px solid white;
-        padding: 5px 10px 5px 30px;
+        padding: 5px 10px 5px 5px;
     }
-    .comentario-cuerpo {
-        position: relative;
+    .comentario-margin {
+        margin-right: 0px;
+        padding-right: 1px;
     }
-    .comentario-texto {
-        padding-left: 10px;
-    }
-    .votos {
-        padding-left: 10px;
-        padding-top: 3px;
-    }
-    .comentario-tab {
-        margin-left: 30px;
+    .erase-margins {
+        margin-left: 0px;
+        padding-left: 0px;
+        margin-right: 0px;
+        padding-right: 0px;
     }
 EOCSS;
 
@@ -85,32 +78,29 @@ $this->registerCss($css);
     <div class="col-md-3 text-center align-content-center">
         <?= Html::img($model->getImagenLink(), ['alt' => 'Enlace roto', 'class' => 'img-responsive']) ?>
 
-        <div class="row">
-            <?php
+        <?php
+        Modal::begin([
+            'header' => '<h2>Valorar</h2>',
+            'toggleButton' => [
+                'label' => 'Valorar',
+                'class' => 'btn btn-block btn-primary',
+            ],
+        ]);
 
-            Modal::begin([
-                'header' => '<h2>Valorar</h2>',
-                'toggleButton' => [
-                    'label' => 'Valorar',
-                    'class' => 'btn btn-block btn-primary',
-                ],
+        $action = $valoracion->valoracion == null
+            ? Url::to(['comentarios/valorar'])
+            : Url::to([
+                'comentarios/valorar-update',
+                'id' => $valoracion->id,
             ]);
 
-            $action = $valoracion->valoracion == null
-                ? Url::to(['comentarios/valorar'])
-                : Url::to([
-                    'comentarios/valorar-update',
-                    'id' => $valoracion->id,
-                ]);
+        echo $this->render('../comentarios/_valorar', [
+            'model' => $valoracion,
+            'action' => $action
+        ]);
 
-            echo $this->render('../comentarios/_valorar', [
-                'model' => $valoracion,
-                'action' => $action
-            ]);
-
-            Modal::end();
-            ?>
-        </div>
+        Modal::end();
+        ?>
 
         <label class="control-label">Tu valoración</label>
 
@@ -142,8 +132,9 @@ $this->registerCss($css);
 
 
     <div class="col-md-9">
-        <h1 class="row heading">
-            <?= Html::encode($model->titulo) .
+        <h1 class="col-md heading">
+            <?= Html::encode($model->titulo) ?>
+            <?=
             StarRating::widget([
                 'name' => 'rating_20',
                 'value' => $model->valoracionMedia,
@@ -154,7 +145,8 @@ $this->registerCss($css);
                     'max' => 5,
                     'displayOnly' => true,
                 ],
-            ]); ?>
+            ]);
+            ?>
         </h1>
 
         <?php
@@ -209,11 +201,49 @@ $this->registerCss($css);
             $src = explode('"', explode('src="', $trailer)[1])[0];
 
             $items[] = array_merge($items, Utility::tabXOption('Trailer', "
-        <div class='embed-responsive embed-responsive-16by9'>
-            <iframe class='embed-responsive-item' src='$src'></iframe>
-        </div>
-        "));
+                <div class='embed-responsive embed-responsive-16by9'>
+                    <iframe class='embed-responsive-item' src='$src'></iframe>
+                </div>
+            "));
         }
+
+        if (!empty($model->archivos)) {
+            $str = '<li class="list-group-item active">Links de descarga</li>';
+
+            $str .= TabsX::widget([
+                'items' => Utility::tabXArchivos($model->archivos),
+                'position' => TabsX::POS_LEFT,
+                'bordered' => true,
+                'encodeLabels' => false
+            ]);
+
+            $items[] = Utility::tabXOption('Descargas', $str);
+        }
+
+        if (($numHijos = $dataProvider->getCount()) >= 1) {
+            $str = '
+            <ul class="list-group">
+                <li class="list-group-item active">
+                    <span class="badge">' . $numHijos . '/' . $model->duracion . '</span>
+                    Lista de ' . $model->tipo->duracion->tipo . '
+                </li>'
+                .
+                \yii\widgets\ListView::widget([
+                    'dataProvider' => $dataProvider,
+                    'summary' => '',
+                    'itemOptions' => ['class' => 'item'],
+                    'itemView' => function ($model, $key, $index, $widget) {
+                        return $this->render('_reducedView.php', ['model' => $model]);
+                    },
+                ])
+                .
+            '</ul>';
+
+            $label = $model->tipo->duracion->tipo ;
+
+            $items[] = Utility::tabXOption($model->tipo->duracion->tipo, $str);
+        }
+
         ?>
 
         <?=
@@ -224,42 +254,8 @@ $this->registerCss($css);
             'encodeLabels' => false
         ]);
         ?>
+
         <br>
-
-        <?php if (!empty($model->archivos)) : ?>
-            <li class='list-group-item active'>
-                <span class='badge'><?= $model->duracion ?></span>
-                Links de descarga
-            </li>
-            <?=
-        TabsX::widget([
-            'items' => Utility::tabXArchivos($model->archivos),
-            'position' => TabsX::POS_LEFT,
-            'bordered' => true,
-            'encodeLabels' => false
-        ])
-            ?>
-            <br>
-        <?php endif; ?>
-
-        <?php if (($numHijos = $dataProvider->getCount()) >= 1): ?>
-            <ul class="list-group">
-                <li class="list-group-item active">
-                    <span class="badge">
-                        <?= $numHijos . '/' . $model->duracion ?>
-                    </span>
-                    Lista de <?= $model->tipo->duracion->tipo ?>
-                </li>
-                <?= \yii\widgets\ListView::widget([
-                    'dataProvider' => $dataProvider,
-                    'summary' => '',
-                    'itemOptions' => ['class' => 'item'],
-                    'itemView' => function ($model, $key, $index, $widget) {
-                        return $this->render('_reducedView.php', ['model' => $model]);
-                    },
-                ]) ?>
-            </ul>
-        <?php endif; ?>
 
         <div class="row all-comments comentarios-order">
 

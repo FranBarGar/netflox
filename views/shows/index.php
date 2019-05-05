@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= ListView::widget([
         'dataProvider' => $dataProvider,
         'summary' => '',
-        'itemOptions' => ['class' => 'shows-smallView row media'],
+        'itemOptions' => ['class' => 'shows-smallView col-md-12 media'],
         'itemView' => function ($model, $key, $index, $widget) {
             return $this->render('_smallView.php', ['model' => $model]);
         },
