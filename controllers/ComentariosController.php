@@ -41,6 +41,10 @@ class ComentariosController extends Controller
                         'allow' => true,
                         'roles' => ['@'],
                         'matchCallback' => function ($rule, $action) {
+                            if (Yii::$app->user->identity->rol == 'admin') {
+                                return true;
+                            }
+
                             $comentario = Comentarios::findOne(Yii::$app->request->get('id'));
                             if ($comentario !== null) {
                                 return $comentario->usuario_id == Yii::$app->user->id;
@@ -82,13 +86,29 @@ class ComentariosController extends Controller
     }
 
     /**
+     * Finds the Comentarios model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return Comentarios the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Comentarios::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
      * Creates a new Comentarios model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Comentarios();
+        $model = new Comentarios(['scenario' => Comentarios::SCENARIO_COMENTAR]);
 
         if ($model->load(Yii::$app->request->post())) {
             $model->save();
@@ -123,6 +143,8 @@ class ComentariosController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+
+        $model->scenario = Comentarios::SCENARIO_COMENTAR;
 
         if ($model->load(Yii::$app->request->post())) {
             $model->edited_at = gmdate('Y-m-d H:i:s');
@@ -169,21 +191,5 @@ class ComentariosController extends Controller
         $comentario->delete();
 
         return $this->redirect(['shows/view', 'id' => $show]);
-    }
-
-    /**
-     * Finds the Comentarios model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Comentarios the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Comentarios::findOne($id)) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

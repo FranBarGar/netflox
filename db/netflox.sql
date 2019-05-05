@@ -211,6 +211,22 @@ CREATE TABLE votos
     , UNIQUE(usuario_id, comentario_id)
 );
 
+DROP TABLE IF EXISTS usuarios_shows CASCADE;
+CREATE TABLE usuarios_shows
+(
+    id            BIGSERIAL PRIMARY KEY
+  , usuario_id    BIGINT    NOT NULL
+                  REFERENCES usuarios(id)
+                      ON DELETE CASCADE
+                      ON UPDATE CASCADE
+  , show_id       BIGINT    NOT NULL
+                  REFERENCES shows(id)
+                      ON DELETE CASCADE
+                      ON UPDATE CASCADE
+  , votacion      INT
+  , UNIQUE(usuario_id, show_id)
+);
+
 -- TODO: Plan to watch
 
 -- TODO: Dropped

@@ -37,6 +37,8 @@ class Comentarios extends \yii\db\ActiveRecord
 
     const SCENARIO_VALORAR = 'valorar';
 
+    const SCENARIO_COMENTAR = 'comentar';
+
     //Ordenacion
 
     /** @var string */
@@ -77,10 +79,12 @@ class Comentarios extends \yii\db\ActiveRecord
         return [
             [['show_id', 'usuario_id'], 'required'],
             [['show_id', 'usuario_id', 'padre_id'], 'integer'],
+            [['padre_id'], 'required', 'on' => self::SCENARIO_COMENTAR],
+            [['padre_id'], 'integer', 'on' => self::SCENARIO_COMENTAR],
             [['valoracion'], 'required', 'on' => self::SCENARIO_VALORAR],
             [['valoracion'], 'number', 'min' => 0.5, 'max' => 5, 'on' => self::SCENARIO_VALORAR],
             [['cuerpo'], 'string'],
-            [['padre_id'], 'exist', 'skipOnError' => true, 'targetClass' => Comentarios::className(), 'targetAttribute' => ['padre_id' => 'id']],
+            [['padre_id'], 'exist', 'skipOnError' => true, 'targetClass' => Comentarios::className(), 'targetAttribute' => ['padre_id' => 'id'], 'on' => self::SCENARIO_DEFAULT],
             [['show_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shows::className(), 'targetAttribute' => ['show_id' => 'id']],
             [['usuario_id'], 'exist', 'skipOnError' => true, 'targetClass' => Usuarios::className(), 'targetAttribute' => ['usuario_id' => 'id']],
         ];

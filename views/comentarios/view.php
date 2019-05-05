@@ -54,15 +54,15 @@ use yii\helpers\Url;
         }
 
         echo
-            Html::button(
-                'Like (<span id="num-like-' . $model->id . '">' . $model->likes . '</span>)',
-                [
-                    'class' => 'voto btn btn-primary btn-xs',
-                    'id' => 'like-' . $model->id,
-                    'data-voto-id' => $model->id,
-                    'data-voto' => 1
-                ]
-            );
+        Html::button(
+            'Like (<span id="num-like-' . $model->id . '">' . $model->likes . '</span>)',
+            [
+                'class' => 'voto btn btn-primary btn-xs',
+                'id' => 'like-' . $model->id,
+                'data-voto-id' => $model->id,
+                'data-voto' => 1
+            ]
+        );
         echo
             Html::button(
                 'Dislike (<span id="num-dislike-' . $model->id . '">' . $model->dislikes . '</span>)',
@@ -75,7 +75,7 @@ use yii\helpers\Url;
             ) . '  ';
 
 
-        if ($model->usuario_id == Yii::$app->user->id) {
+        if (($duenyo = $model->usuario_id == Yii::$app->user->id) || Yii::$app->user->identity->rol == 'admin') {
             echo Html::a('Eliminar', ['comentarios/delete', 'id' => $model->id], [
                     'class' => 'btn btn-danger btn-xs',
                     'data' => [
@@ -83,7 +83,9 @@ use yii\helpers\Url;
                         'method' => 'post',
                     ],
                 ]) . ' ';
+        }
 
+        if ($duenyo) {
             if ($model->valoracion == null) {
                 Modal::begin([
                     'header' => '<h2>Editar comentario.</h2>',
