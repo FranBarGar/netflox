@@ -33,6 +33,7 @@ class UsuariosController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::class,
+                'only' => ['update', 'delete', 'view', 'index'],
                 'rules' => [
                     [
                         'actions' => ['update', 'delete', 'view', 'index'],
@@ -48,15 +49,6 @@ class UsuariosController extends Controller
     }
 
     /**
-     * Allow only the owner to do the action
-     * @return boolean whether or not the user is the owner
-     */
-    public function allowOnlyAdmin()
-    {
-        return Yii::$app->user->identity->rol == 'admin';
-    }
-
-        /**
      * Lists all Usuarios models.
      * @return mixed
      */

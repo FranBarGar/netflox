@@ -87,26 +87,56 @@ class Shows extends \yii\db\ActiveRecord
     }
 
     /**
+     * @param int $id
+     * @return \yii\db\ActiveQuery
+     */
+    public static function findChildrens($id)
+    {
+        return self::find()
+            ->joinWith(['comentarios'])
+            ->andWhere(['shows.show_id' => $id])
+            ->orderBy('lanzamiento');
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
             [['titulo', 'lanzamiento', 'tipo_id'], 'required'],
+            [['titulo', 'sinopsis', 'trailer'], 'trim'],
             [['titulo'], 'string', 'max' => 255],
             [['lanzamiento'], 'date', 'format' => 'php:Y-m-d'],
-            [['sinopsis'], 'string'],
             [['trailer'], 'url'],
-            [['duracion', 'imagen_id', 'tipo_id', 'show_id'], 'integer'],
-            [['duracion', 'imagen_id', 'trailer', 'tipo_id', 'show_id'], 'default', 'value' => null],
+            [['duracion'], 'integer', 'min' => -32767, 'max' => 32767],
+            [['duracion', 'imagen_id', 'tipo_id', 'show_id', 'gestorId'], 'integer'],
+            [['imagen_id', 'trailer', 'show_id'], 'default', 'value' => null],
             [['listaGeneros'], 'each', 'rule' => ['integer']],
             [['listaParticipantes'], 'safe'],
             [['imgUpload'], 'image', 'extensions' => 'jpg, gif, png, jpeg'],
             [['showUpload'], 'file', 'extensions' => 'owm, mp4, flv, avi'],
-            [['gestorId'], 'integer'],
+            [['show_id'], 'required', 'isEmpty' => function ($value) {
+                $tipo = Tipos::find()
+                    ->andFilterWhere(['id' => $this->tipo_id])
+                    ->andWhere(['not', ['padre_id' => null]])
+                    ->one();
+                if ($tipo !== null) {
+                    $padres = Shows::find()
+                        ->select('id')
+                        ->andFilterWhere([
+                            'tipo_id' => $tipo->padre_id
+                        ])
+                        ->column();
+                    if (!empty($padres) && !in_array($this->show_id, $padres)) {
+                        return true;
+                    }
+                }
+                return false;
+            }],
             [['imagen_id'], 'exist', 'skipOnError' => true, 'targetClass' => Archivos::class, 'targetAttribute' => ['imagen_id' => 'id']],
-            [['show_id'], 'exist', 'skipOnError' => true, 'targetClass' => self::class, 'targetAttribute' => ['show_id' => 'id']],
             [['tipo_id'], 'exist', 'skipOnError' => true, 'targetClass' => Tipos::class, 'targetAttribute' => ['tipo_id' => 'id']],
+            [['show_id'], 'exist', 'skipOnError' => true, 'targetClass' => self::class, 'targetAttribute' => ['show_id' => 'id']],
         ];
     }
 
@@ -311,6 +341,14 @@ class Shows extends \yii\db\ActiveRecord
     /**
      * @return Generos[]|bool
      */
+    public function getPadreGeneros()
+    {
+        return $this->show->tieneGeneros();
+    }
+
+    /**
+     * @return Generos[]|bool
+     */
     public function tieneGeneros()
     {
         $generos = $this->generos;
@@ -320,25 +358,5 @@ class Shows extends \yii\db\ActiveRecord
             return $this->show->tieneGeneros();
         }
         return false;
-    }
-
-    /**
-     * @return Generos[]|bool
-     */
-    public function getPadreGeneros()
-    {
-        return $this->show->tieneGeneros();
-    }
-
-    /**
-     * @param int $id
-     * @return \yii\db\ActiveQuery
-     */
-    public static function findChildrens($id)
-    {
-        return self::find()
-            ->joinWith(['comentarios'])
-            ->andWhere(['shows.show_id' => $id])
-            ->orderBy('lanzamiento');
     }
 }

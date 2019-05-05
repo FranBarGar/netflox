@@ -32,12 +32,12 @@ class ComentariosController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['view', 'index', 'create',],
+                        'actions' => ['view', 'index', 'create', 'valorar'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
                     [
-                        'actions' => ['delete', 'update',],
+                        'actions' => ['delete', 'update', 'valorar-update'],
                         'allow' => true,
                         'roles' => ['@'],
                         'matchCallback' => function ($rule, $action) {

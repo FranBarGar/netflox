@@ -163,7 +163,7 @@ $this->registerCss($css);
 <div class="shows-form">
 
     <?php $form = ActiveForm::begin([
-        'options' => ['enctype' => 'multipart/form-data']
+        'options' => ['enctype' => 'multipart/form-data'],
     ]); ?>
 
     <?php
@@ -183,7 +183,7 @@ $this->registerCss($css);
                     "change" => "changeTipo",
                 ]
             ]) .
-        $form->field($model, 'show_id')
+        $form->field($model, 'show_id', ['enableAjaxValidation' => true])
             ->widget(Select2::class, [
                 'options' => [
                     'hidden' => true,

@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Shows */
 
-$this->title = 'Update Shows: ' . $model->id;
+$this->title = 'Update Shows: ' . $model->titulo;
 $this->params['breadcrumbs'][] = ['label' => 'Shows', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
@@ -14,10 +14,13 @@ $this->params['breadcrumbs'][] = 'Update';
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?= $this->render('_form', [
+    <?= $this->render('_formUpdate', [
         'model' => $model,
         'listaTipos' => $listaTipos,
         'listaGeneros' => $listaGeneros,
+        'listaGestores' => $listaGestores,
+        'listaPersonas' => $listaPersonas,
+        'listaRoles' => $listaRoles,
     ]) ?>
 <!--TODO-->
 <!--

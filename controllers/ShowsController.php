@@ -18,6 +18,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\web\UploadedFile;
+use yii\widgets\ActiveForm;
 
 /**
  * ShowsController implements the CRUD actions for Shows model.
@@ -40,7 +41,7 @@ class ShowsController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['view', 'index',],
+                        'actions' => ['view', 'index', 'ajax-create-info'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -130,6 +131,35 @@ class ShowsController extends Controller
     }
 
     /**
+     * Finds the Shows model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return Shows the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function advancedFindModel($id)
+    {
+        $model = Shows::find()
+            ->select('
+            shows.*, 
+            SUM(COALESCE(valoracion, 0))/GREATEST(COUNT(valoracion), 1)::float AS "valoracionMedia"')
+            ->joinWith('comentarios')
+            ->joinWith('generos')
+            ->with('tipo')
+            ->with('archivos')
+            ->where(['shows.id' => $id])
+            ->groupBy('shows.id')
+            ->one();
+
+
+        if ($model !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
      * Creates a new Shows model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
@@ -137,6 +167,11 @@ class ShowsController extends Controller
     public function actionCreate()
     {
         $model = new Shows();
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ActiveForm::validate($model);
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             /**
@@ -195,7 +230,8 @@ class ShowsController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
-        return $this->render('create', ['model' => $model,
+        return $this->render('create', [
+            'model' => $model,
             'listaTipos' => Utility::listaTipos(),
             'listaGeneros' => Utility::listaGeneros(),
             'listaGestores' => Utility::listaGestores(),
@@ -219,29 +255,19 @@ class ShowsController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
-        $listaPadres['listaPadres'] = $model->tipo->padre_id !== null ? Utility::listaPadres($model->tipo->padre_id) : [];
+        $listaPadres['listaPadres'] =
+            $model->tipo->padre_id !== null
+                ? Utility::listaPadres($model->tipo->padre_id)
+                : [];
 
         return $this->render('update', [
             'model' => $model,
             'listaTipos' => Utility::listaTipos(),
             'listaGeneros' => Utility::listaGeneros(),
+            'listaGestores' => Utility::listaGestores(),
+            'listaPersonas' => Utility::listaPersonas(),
+            'listaRoles' => Utility::listaRoles(),
         ]);
-    }
-
-    /**
-     * Deletes an existing Shows model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException
-     * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
     }
 
     /**
@@ -261,32 +287,19 @@ class ShowsController extends Controller
     }
 
     /**
-     * Finds the Shows model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
+     * Deletes an existing Shows model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
-     * @return Shows the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
-    protected function advancedFindModel($id)
+    public function actionDelete($id)
     {
-        $model = Shows::find()
-            ->select('
-            shows.*, 
-            SUM(COALESCE(valoracion, 0))/GREATEST(COUNT(valoracion), 1)::float AS "valoracionMedia"')
-            ->joinWith('comentarios')
-            ->joinWith('generos')
-            ->with('tipo')
-            ->with('archivos')
-            ->where(['shows.id' => $id])
-            ->groupBy('shows.id')
-            ->one();
+        $this->findModel($id)->delete();
 
-
-        if ($model !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
+        return $this->redirect(['index']);
     }
 
     /**
