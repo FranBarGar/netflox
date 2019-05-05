@@ -37,7 +37,20 @@ class ComentariosController extends Controller
                         'roles' => ['@'],
                     ],
                     [
-                        'actions' => ['delete', 'update', 'valorar-update'],
+                        'actions' => ['update', 'valorar-update'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function ($rule, $action) {
+
+                            $comentario = Comentarios::findOne(Yii::$app->request->get('id'));
+                            if ($comentario !== null) {
+                                return $comentario->usuario_id == Yii::$app->user->id;
+                            }
+                            return false;
+                        }
+                    ],
+                    [
+                        'actions' => ['delete'],
                         'allow' => true,
                         'roles' => ['@'],
                         'matchCallback' => function ($rule, $action) {
