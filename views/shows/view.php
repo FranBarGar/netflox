@@ -53,6 +53,10 @@ $css = <<<EOCSS
     .all-comments {
         background-color: #fff5ed;
     }
+    .comentarios-order {
+        padding-top: 10px;
+        margin-top: 10px;
+    }
     .comentario {
         border: 2px solid white;
         padding: 5px 10px 5px 5px;
@@ -60,12 +64,6 @@ $css = <<<EOCSS
     .comentario-margin {
         margin-right: 0px;
         padding-right: 1px;
-    }
-    .erase-margins {
-        margin-left: 0px;
-        padding-left: 0px;
-        margin-right: 0px;
-        padding-right: 0px;
     }
 EOCSS;
 
@@ -132,7 +130,7 @@ $this->registerCss($css);
 
 
     <div class="col-md-9">
-        <h1 class="col-md heading">
+        <h1 class="col-md-12 heading">
             <?= Html::encode($model->titulo) ?>
             <?=
             StarRating::widget([
@@ -237,9 +235,9 @@ $this->registerCss($css);
                     },
                 ])
                 .
-            '</ul>';
+                '</ul>';
 
-            $label = $model->tipo->duracion->tipo ;
+            $label = $model->tipo->duracion->tipo;
 
             $items[] = Utility::tabXOption($model->tipo->duracion->tipo, $str);
         }
@@ -254,8 +252,6 @@ $this->registerCss($css);
             'encodeLabels' => false
         ]);
         ?>
-
-        <br>
 
         <div class="row all-comments comentarios-order">
 
@@ -279,12 +275,14 @@ $this->registerCss($css);
                             'allowClear' => true,
                         ],
                     ])
+                    ->label(false);
                 ?>
             </div>
             <div class="form-group col-md-3">
                 <?=
                 $form->field($searchModel, 'orderType')
-                    ->widget(Select2::class, ['data' => $orderType,
+                    ->widget(Select2::class, [
+                        'data' => $orderType,
                         'options' => [
                             'placeholder' => 'Selecciona un tipo de show a buscar...',
                         ],
@@ -292,10 +290,11 @@ $this->registerCss($css);
                             'allowClear' => true
                         ],
                     ])
+                    ->label(false);
                 ?>
             </div>
 
-            <div class="form-group col-md-1">
+            <div class="form-group col-md-3">
                 <?= Html::submitButton('Ordenar', ['class' => 'btn btn-primary']) ?>
             </div>
             <?php ActiveForm::end(); ?>

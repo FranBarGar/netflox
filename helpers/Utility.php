@@ -221,8 +221,9 @@ class Utility
     {
         $str = '';
         if ($comentarios) {
-            $str .= '
-                <div class="col-md-offset-' . ($level == 0 ? 0 : 1) . ' col-md-' . ($level == 0 ? 12 : 11) . ' comentario-margin">';
+            $offset = $level == 0 ? 0 : 1;
+            $col = $level == 0 ? 12 : 11;
+            $str .= '<div class="col-md-offset-' . $offset . ' col-md-' . $col . ' col-xs-offset-' . $offset . ' col-xs-' . $col . ' comentario-margin">';
             foreach ($comentarios as $comentario) {
                 $comentarioVacio->padre_id = $comentario->id;
                 $str .= $vista->render('../comentarios/view', [

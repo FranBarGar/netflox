@@ -7,14 +7,14 @@ use yii\helpers\Url;
 
 ?>
 
-<div class="col-md-12 comentario comentario-margin">
+<div class="col-md-12 col-xs-12 comentario comentario-margin">
     <small>
-        <div class="col-md-8">
+        <div class="col-md-8 col-xs-8">
             Creado
             por <?= Html::a(Html::encode($model->usuario->nick), ['usuarios/view', 'id' => $model->usuario->id]) ?>
             el <?= Yii::$app->formatter->asDatetime($model->created_at) ?>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 col-xs-4">
             <?php
             if ($model->edited_at !== null) {
                 echo 'Ultima edicion: ' . Yii::$app->formatter->asDatetime($model->edited_at);
@@ -22,13 +22,13 @@ use yii\helpers\Url;
             ?>
         </div>
     </small>
-    <div class="col-md-12 comentario-margin">
+    <div class="col-md-12 col-xs-12 comentario-margin">
         <p>
             <?= Html::encode($model->cuerpo) ?>
         </p>
     </div>
     <?php if ($model->valoracion !== null) : ?>
-        <div class="col-md-12">
+        <div class="col-md-12 col-xs-12">
             <?=
             StarRating::widget([
                 'name' => 'user_rating' . $model->id,
@@ -50,7 +50,7 @@ use yii\helpers\Url;
         $model->dislikes = '<b>' . $model->dislikes . '</b>';
     }
     ?>
-    <div class="col-md-4">
+    <div class="col-md-4 col-xs-5">
         <?=
         Html::button(
             'Like (<span id="num-like-' . $model->id . '">' . $model->likes . '</span>)',
@@ -74,11 +74,8 @@ use yii\helpers\Url;
         ?>
     </div>
 
-    <div class="col-md-4">
-    </div>
 
-
-    <div class="col-md-4 text-right">
+    <div class="col-md-8 col-xs-7 text-right">
         <?php
 
         if (($duenyo = $model->usuario_id == Yii::$app->user->id) || Yii::$app->user->identity->rol == 'admin') {
@@ -88,7 +85,7 @@ use yii\helpers\Url;
                         'confirm' => '¿Estas seguro de eliminar este comentario? Esto eliminara todos sus comentarios anidados.',
                         'method' => 'post',
                     ],
-                ]) . ' ';
+                ]);
         }
 
         if ($duenyo) {

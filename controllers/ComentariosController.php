@@ -41,7 +41,6 @@ class ComentariosController extends Controller
                         'allow' => true,
                         'roles' => ['@'],
                         'matchCallback' => function ($rule, $action) {
-
                             $comentario = Comentarios::findOne(Yii::$app->request->get('id'));
                             if ($comentario !== null) {
                                 return $comentario->usuario_id == Yii::$app->user->id;
