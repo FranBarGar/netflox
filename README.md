@@ -2,4 +2,4 @@
 
 [[Heroku]](https://netflox-barba.herokuapp.com/)
 
-[[Documentacion]](https://franciscobarbag.github.io/netflox/)
+[[Documentacion]](https://franbargar.github.io/netflox/)
