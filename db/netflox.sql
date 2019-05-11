@@ -211,27 +211,33 @@ CREATE TABLE votos
     , UNIQUE(usuario_id, comentario_id)
 );
 
+DROP TABLE IF EXISTS accion CASCADE;
+CREATE TABLE accion
+(
+    id            BIGSERIAL    PRIMARY KEY
+  , accion        VARCHAR(255) NOT NULL
+);
+
 DROP TABLE IF EXISTS usuarios_shows CASCADE;
 CREATE TABLE usuarios_shows
 (
-    id            BIGSERIAL PRIMARY KEY
-  , usuario_id    BIGINT    NOT NULL
-                  REFERENCES usuarios(id)
-                      ON DELETE CASCADE
-                      ON UPDATE CASCADE
-  , show_id       BIGINT    NOT NULL
-                  REFERENCES shows(id)
-                      ON DELETE CASCADE
-                      ON UPDATE CASCADE
-  , votacion      INT
-  , UNIQUE(usuario_id, show_id)
+    id            BIGSERIAL    PRIMARY KEY
+  , usuario_id    BIGINT       NOT NULL
+                               REFERENCES usuarios(id)
+                                 ON DELETE CASCADE
+                                 ON UPDATE CASCADE
+  , show_id       BIGINT       NOT NULL
+                               REFERENCES shows(id)
+                                 ON DELETE CASCADE
+                                 ON UPDATE CASCADE
+  , accion_id     BIGINT       NOT NULL
+                               REFERENCES shows(id)
+                                 ON DELETE CASCADE
+                                 ON UPDATE CASCADE
+  , created_at    TIMESTAMP    NOT NULL
+                               DEFAULT CURRENT_TIMESTAMP
+  , ended_at      TIMESTAMP
 );
-
--- TODO: Plan to watch
-
--- TODO: Dropped
-
--- TODO: Shows vistos
 
 -- INSERT
 INSERT INTO gestores_archivos (nombre)
@@ -362,3 +368,8 @@ VALUES (1, 2, 1)
      , (2, 4, 1)
      , (3, 2, -1)
      , (3, 1, -1);
+
+INSERT INTO accion (accion)
+VALUES ('DROPPED')
+     , ('WATCHING')
+     , ('WATCHED');

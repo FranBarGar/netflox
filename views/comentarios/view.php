@@ -7,30 +7,28 @@ use yii\helpers\Url;
 
 ?>
 
-<div class="row comentario">
-    <div class="row comentario-info">
-        <small>
-            <div class="col-md-8">
-                Creado
-                por <?= Html::a(Html::encode($model->usuario->nick), ['usuarios/view', 'id' => $model->usuario->id]) ?>
-                el <?= Yii::$app->formatter->asDatetime($model->created_at) ?>
-            </div>
-            <div class="col-md-4">
-                <?php
-                if ($model->edited_at !== null) {
-                    echo 'Ultima edicion: ' . Yii::$app->formatter->asDatetime($model->edited_at);
-                }
-                ?>
-            </div>
-        </small>
-    </div>
-    <div class="row comentario-texto">
+<div class="col-md-12 col-xs-12 comentario comentario-margin">
+    <small>
+        <div class="col-md-8 col-xs-8">
+            Creado
+            por <?= Html::a(Html::encode($model->usuario->nick), ['usuarios/view', 'id' => $model->usuario->id]) ?>
+            el <?= Yii::$app->formatter->asDatetime($model->created_at) ?>
+        </div>
+        <div class="col-md-4 col-xs-4">
+            <?php
+            if ($model->edited_at !== null) {
+                echo 'Ultima edicion: ' . Yii::$app->formatter->asDatetime($model->edited_at);
+            }
+            ?>
+        </div>
+    </small>
+    <div class="col-md-12 col-xs-12 comentario-margin">
         <p>
             <?= Html::encode($model->cuerpo) ?>
         </p>
     </div>
     <?php if ($model->valoracion !== null) : ?>
-        <div class="row">
+        <div class="col-md-12 col-xs-12">
             <?=
             StarRating::widget([
                 'name' => 'user_rating' . $model->id,
@@ -45,15 +43,15 @@ use yii\helpers\Url;
             ?>
         </div>
     <?php endif; ?>
-    <div class="actions row">
-        <?php
-        if ($model->votoUsuario == 1) {
-            $model->likes = '<b>' . $model->likes . '</b>';
-        } elseif ($model->votoUsuario == -1) {
-            $model->dislikes = '<b>' . $model->dislikes . '</b>';
-        }
-
-        echo
+    <?php
+    if ($model->votoUsuario == 1) {
+        $model->likes = '<b>' . $model->likes . '</b>';
+    } elseif ($model->votoUsuario == -1) {
+        $model->dislikes = '<b>' . $model->dislikes . '</b>';
+    }
+    ?>
+    <div class="col-md-4 col-xs-5">
+        <?=
         Html::button(
             'Like (<span id="num-like-' . $model->id . '">' . $model->likes . '</span>)',
             [
@@ -62,18 +60,23 @@ use yii\helpers\Url;
                 'data-voto-id' => $model->id,
                 'data-voto' => 1
             ]
-        );
-        echo
-            Html::button(
-                'Dislike (<span id="num-dislike-' . $model->id . '">' . $model->dislikes . '</span>)',
-                [
-                    'class' => 'voto btn btn-danger btn-xs',
-                    'id' => 'dislike-' . $model->id,
-                    'data-voto-id' => $model->id,
-                    'data-voto' => -1
-                ]
-            ) . '  ';
+        )
+        .
+        Html::button(
+            'Dislike (<span id="num-dislike-' . $model->id . '">' . $model->dislikes . '</span>)',
+            [
+                'class' => 'voto btn btn-danger btn-xs',
+                'id' => 'dislike-' . $model->id,
+                'data-voto-id' => $model->id,
+                'data-voto' => -1
+            ]
+        )
+        ?>
+    </div>
 
+
+    <div class="col-md-8 col-xs-7 text-right">
+        <?php
 
         if (($duenyo = $model->usuario_id == Yii::$app->user->id) || Yii::$app->user->identity->rol == 'admin') {
             echo Html::a('Eliminar', ['comentarios/delete', 'id' => $model->id], [
@@ -82,13 +85,13 @@ use yii\helpers\Url;
                         'confirm' => '¿Estas seguro de eliminar este comentario? Esto eliminara todos sus comentarios anidados.',
                         'method' => 'post',
                     ],
-                ]) . ' ';
+                ]);
         }
 
         if ($duenyo) {
             if ($model->valoracion == null) {
                 Modal::begin([
-                    'header' => '<h2>Editar comentario.</h2>',
+                    'header' => '<h2 class="text-left">Editar comentario.</h2>',
                     'toggleButton' => [
                         'label' => 'Editar',
                         'class' => 'btn btn-primary btn-xs',
@@ -108,7 +111,7 @@ use yii\helpers\Url;
         }
 
         Modal::begin([
-            'header' => '<h2>Responder al comentario.</h2>',
+            'header' => '<h2 class="text-left">Responder al comentario.</h2>',
             'toggleButton' => [
                 'label' => 'Responder',
                 'class' => 'btn btn-primary btn-xs',

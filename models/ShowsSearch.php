@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -11,8 +12,26 @@ use yii\data\ActiveDataProvider;
 class ShowsSearch extends Shows
 {
     //Filtrado
-    /** @var array */
+    /**
+     * @var array Generos que deben tener los show.
+     */
     public $listaGeneros;
+
+    /**
+     * @var int Id de la accion a buscar.
+     */
+    public $accion;
+
+    //Ordenacion
+    /**
+     * @var string Parametro para la ordenacion de shows.
+     */
+    public $orderBy;
+
+    /**
+     * @var string Parametro para la ordenacion de shows.
+     */
+    public $orderType;
 
     /**
      * {@inheritdoc}
@@ -21,7 +40,7 @@ class ShowsSearch extends Shows
     {
         return [
             [['tipo_id'], 'integer'],
-            [['titulo', 'sinopsis', 'lanzamiento', 'listaGeneros', 'orderBy', 'orderType'], 'safe'],
+            [['titulo', 'sinopsis', 'lanzamiento', 'listaGeneros', 'orderBy', 'orderType', 'accion'], 'safe'],
         ];
     }
 
@@ -62,9 +81,13 @@ class ShowsSearch extends Shows
             ->joinWith('tipo')
             ->joinWith('showsGeneros')
             ->joinWith('comentarios')
+            ->joinWith('usuariosShows')
             ->with('generos')
             ->with('imagen')
-            ->where(['tipos.padre_id' => null])
+            ->where([
+                'tipos.padre_id' => null,
+                'ended_at' => null,
+            ])
             ->andFilterHaving(['not', ['valoracion' => null]])
             ->groupBy('shows.id');
 
@@ -84,6 +107,7 @@ class ShowsSearch extends Shows
         $query->andFilterWhere([
             'tipo_id' => $this->tipo_id,
             'genero_id' => $this->listaGeneros,
+            'accion_id' => $this->accion,
         ]);
 
         $query->andFilterWhere(['ilike', 'titulo', $this->titulo]);
@@ -96,6 +120,10 @@ class ShowsSearch extends Shows
             $query->orderBy($this->orderBy . ' ' . $this->orderType);
         } else {
             $query->orderBy('valoracionMedia DESC');
+        }
+
+        if ($this->accion != '') {
+            $query->andWhere(['usuarios_shows.usuario_id' => Yii::$app->user->id]);
         }
 
         return $dataProvider;

@@ -2,6 +2,7 @@
 
 namespace app\helpers;
 
+use app\models\Accion;
 use app\models\Archivos;
 use app\models\Comentarios;
 use app\models\Generos;
@@ -19,6 +20,55 @@ use yii\helpers\Url;
  */
 class Utility
 {
+    /**
+     * @var string CSS para los comentarios.
+     */
+    const CSS = <<<EOCSS
+    .all-comments {
+        background-color: #fff5ed;
+    }
+    .comentarios-order {
+        padding-top: 10px;
+        margin-top: 10px;
+    }
+    .comentario {
+        border: 2px solid white;
+        padding: 5px 10px 5px 5px;
+    }
+    .comentario-margin {
+        margin-right: 0px;
+        padding-right: 1px;
+    }
+EOCSS;
+
+    const AJAX_VOTAR = <<<EOJS
+    function votar() {
+        var el = $(this);
+        var id = el.data('voto-id');
+        var voto = el.data('voto');
+        
+        $.post({
+            url: '/index.php?r=votos%2Fvotar',
+            data: {
+                comentario_id: id,
+                votacion: voto
+            },
+            success: function (data) {
+                data = JSON.parse(data);
+                if (data) {
+                    // Spans para los votos.
+                    $('#num-dislike-' + id).html(data.dislikes);
+                    $('#num-like-' + id).html(data.likes);
+                }
+            }
+        });
+    }
+    
+    $(() => {
+        $('.voto').on('click', votar);
+    });
+EOJS;
+
     /**
      * @var array Tipos de ordenacion disponibles.
      */
@@ -149,6 +199,18 @@ class Utility
     }
 
     /**
+     * Lista de acciones completa.
+     * @return array
+     */
+    public static function listaAcciones()
+    {
+        return Accion::find()
+            ->select('accion')
+            ->indexBy('id')
+            ->column();
+    }
+
+    /**
      * Lista de posibles participantes.
      * @return array
      */
@@ -213,13 +275,17 @@ class Utility
      * Pinta los comentarios anidados.
      * @param $comentarios
      * @param $vista
+     * @param $comentarioVacio
+     * @param int $level
      * @return string
      */
-    public static function formatComentarios($comentarios, $vista, $comentarioVacio)
+    public static function formatComentarios($comentarios, $vista, $comentarioVacio, $level = 0)
     {
         $str = '';
         if ($comentarios) {
-            $str .= '<div class="row comentario-tab">';
+            $offset = $level == 0 ? 0 : 1;
+            $col = $level == 0 ? 12 : 11;
+            $str .= '<div class="col-md-offset-' . $offset . ' col-md-' . $col . ' col-xs-offset-' . $offset . ' col-xs-' . $col . ' comentario-margin">';
             foreach ($comentarios as $comentario) {
                 $comentarioVacio->padre_id = $comentario->id;
                 $str .= $vista->render('../comentarios/view', [
@@ -227,7 +293,7 @@ class Utility
                     'comentarioHijo' => $comentarioVacio,
                 ]);
 
-                $str .= self::formatComentarios($comentario->comentarios, $vista, $comentarioVacio);
+                $str .= self::formatComentarios($comentario->comentarios, $vista, $comentarioVacio, ++$level);
             }
             $str .= '</div>';
         }

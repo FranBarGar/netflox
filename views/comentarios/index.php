@@ -7,36 +7,22 @@ use yii\grid\GridView;
 /* @var $searchModel app\models\ComentariosSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Comentarios';
+$this->title = 'Valoraciones';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="comentarios-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Create Comentarios', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <?= GridView::widget([
+    <?= \yii\widgets\ListView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'cuerpo:ntext',
-            'valoracion',
-            'created_at',
-            'padre_id',
-            //'show_id',
-            //'usuario_id',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
+        'summary' => '',
+        'itemView' => function ($model, $key, $index, $widget) {
+            return $this->render('valoracionView.php', ['model' => $model]);
+        },
+    ]) ?>
 
 
 </div>

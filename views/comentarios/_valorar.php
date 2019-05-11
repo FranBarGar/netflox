@@ -2,6 +2,7 @@
 
 use kartik\rating\StarRating;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -11,7 +12,14 @@ use yii\widgets\ActiveForm;
 
 <div class="comentarios-form">
 
-    <?php $form = ActiveForm::begin(['action' => $action]); ?>
+    <?php $form = ActiveForm::begin([
+            'action' =>  $model->valoracion == null
+            ? Url::to(['comentarios/valorar'])
+            : Url::to([
+                'comentarios/valorar-update',
+                'id' => $model->id,
+            ])
+    ]); ?>
 
     <?= $form->field($model, 'cuerpo')->textarea(['rows' => 6]) ?>
     <?= $form->field($model, 'padre_id')->hiddenInput(['value' => $model->padre_id])->label(false) ?>

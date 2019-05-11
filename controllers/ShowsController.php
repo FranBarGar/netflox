@@ -8,6 +8,7 @@ use app\models\ComentariosSearch;
 use app\models\Participantes;
 use app\models\ShowsGeneros;
 use app\models\Tipos;
+use app\models\UsuariosShows;
 use Yii;
 use app\models\Shows;
 use app\models\ShowsSearch;
@@ -72,6 +73,7 @@ class ShowsController extends Controller
             'dataProvider' => $dataProvider,
             'listaTipos' => Utility::listaTiposSearch(),
             'listaGeneros' => Utility::listaGeneros(),
+            'listaAcciones' => Utility::listaAcciones(),
             'orderBy' => Shows::ORDER_BY,
             'orderType' => Utility::ORDER_TYPE,
         ]);
@@ -99,21 +101,6 @@ class ShowsController extends Controller
         $comentarioHijo->usuario_id = Yii::$app->user->id;
         $comentarioHijo->cuerpo = '';
 
-        $valoracion = Comentarios::find()
-            ->andWhere([
-                'usuario_id' => Yii::$app->user->id,
-                'show_id' => $id
-            ])
-            ->andWhere(['not', ['valoracion' => null]])
-            ->one();
-
-        if ($valoracion == null) {
-            $valoracion = new Comentarios();
-            $valoracion->show_id = $id;
-            $valoracion->usuario_id = Yii::$app->user->id;
-            $valoracion->cuerpo = '';
-        }
-
         $dataProvider = new ActiveDataProvider([
             'query' => Shows::findChildrens($id),
         ]);
@@ -122,9 +109,11 @@ class ShowsController extends Controller
             'model' => $model,
             'dataProvider' => $dataProvider,
             'comentarioHijo' => $comentarioHijo,
-            'valoracion' => $valoracion,
             'searchModel' => $searchModel,
             'valoraciones' => $valoracionesProvider,
+            'valoracion' => Comentarios::findOrEmpty($id),
+            'accion' => UsuariosShows::findOrEmpty($id),
+            'listaAcciones' => Utility::listaAcciones(),
             'orderBy' => Comentarios::ORDER_BY,
             'orderType' => Utility::ORDER_TYPE,
         ]);
