@@ -21,13 +21,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'show_id') ?>
 
-    <?= $form->field($model, 'plan_to_watch') ?>
+    <?= $form->field($model, 'accion_id') ?>
 
-    <?= $form->field($model, 'droppped') ?>
+    <?= $form->field($model, 'created_at') ?>
 
-    <?php // echo $form->field($model, 'watched') ?>
-
-    <?php // echo $form->field($model, 'watching') ?>
+    <?php // echo $form->field($model, 'ended_at') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

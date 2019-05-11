@@ -2,6 +2,7 @@
 
 namespace app\helpers;
 
+use app\models\Accion;
 use app\models\Archivos;
 use app\models\Comentarios;
 use app\models\Generos;
@@ -19,6 +20,55 @@ use yii\helpers\Url;
  */
 class Utility
 {
+    /**
+     * @var string CSS para los comentarios.
+     */
+    const CSS = <<<EOCSS
+    .all-comments {
+        background-color: #fff5ed;
+    }
+    .comentarios-order {
+        padding-top: 10px;
+        margin-top: 10px;
+    }
+    .comentario {
+        border: 2px solid white;
+        padding: 5px 10px 5px 5px;
+    }
+    .comentario-margin {
+        margin-right: 0px;
+        padding-right: 1px;
+    }
+EOCSS;
+
+    const AJAX_VOTAR = <<<EOJS
+    function votar() {
+        var el = $(this);
+        var id = el.data('voto-id');
+        var voto = el.data('voto');
+        
+        $.post({
+            url: '/index.php?r=votos%2Fvotar',
+            data: {
+                comentario_id: id,
+                votacion: voto
+            },
+            success: function (data) {
+                data = JSON.parse(data);
+                if (data) {
+                    // Spans para los votos.
+                    $('#num-dislike-' + id).html(data.dislikes);
+                    $('#num-like-' + id).html(data.likes);
+                }
+            }
+        });
+    }
+    
+    $(() => {
+        $('.voto').on('click', votar);
+    });
+EOJS;
+
     /**
      * @var array Tipos de ordenacion disponibles.
      */
@@ -144,6 +194,18 @@ class Utility
     {
         return Tipos::find()
             ->select('tipo')
+            ->indexBy('id')
+            ->column();
+    }
+
+    /**
+     * Lista de acciones completa.
+     * @return array
+     */
+    public static function listaAcciones()
+    {
+        return Accion::find()
+            ->select('accion')
             ->indexBy('id')
             ->column();
     }

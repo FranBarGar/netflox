@@ -19,56 +19,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $formatter = Yii::$app->formatter;
 
-$url = Url::to(['votos/votar']);
-$js = <<<EOT
-function votar() {
-    var el = $(this);
-    var id = el.data('voto-id');
-    var voto = el.data('voto');
-    
-    $.post({
-        url: '$url',
-        data: {
-            comentario_id: id,
-            votacion: voto
-        },
-        success: function (data) {
-            data = JSON.parse(data);
-            if (data) {
-                // Spans para los votos.
-                $('#num-dislike-' + id).html(data.dislikes);
-                $('#num-like-' + id).html(data.likes);
-            }
-        }
-    });
-}
-
-$(() => {
-    $('.voto').on('click', votar);
-});
-EOT;
-$this->registerJs($js);
-
-$css = <<<EOCSS
-    .all-comments {
-        background-color: #fff5ed;
-    }
-    .comentarios-order {
-        padding-top: 10px;
-        margin-top: 10px;
-    }
-    .comentario {
-        border: 2px solid white;
-        padding: 5px 10px 5px 5px;
-    }
-    .comentario-margin {
-        margin-right: 0px;
-        padding-right: 1px;
-    }
-EOCSS;
-
-
-$this->registerCss($css);
+$this->registerJs(Utility::AJAX_VOTAR);
+$this->registerCss(Utility::CSS);
 ?>
 
 <div class="row shows-view">
@@ -85,16 +37,8 @@ $this->registerCss($css);
             ],
         ]);
 
-        $action = $valoracion->valoracion == null
-            ? Url::to(['comentarios/valorar'])
-            : Url::to([
-                'comentarios/valorar-update',
-                'id' => $valoracion->id,
-            ]);
-
         echo $this->render('../comentarios/_valorar', [
             'model' => $valoracion,
-            'action' => $action
         ]);
 
         Modal::end();
@@ -114,7 +58,13 @@ $this->registerCss($css);
         ])
         ?>
 
-        <?php if (Yii::$app->user->identity->rol == 'admin') : ?>
+        <?php
+        echo $this->render('../usuarios-shows/_form.php', [
+            'model' => $accion,
+            'listaAcciones' => $listaAcciones,
+        ]);
+
+        if (Yii::$app->user->identity->rol == 'admin') : ?>
             <?= Html::a('Actualizar', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
             <?=
             Html::a('Eliminar', ['delete', 'id' => $model->id], [

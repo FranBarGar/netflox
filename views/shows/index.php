@@ -21,6 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'listaGeneros' => $listaGeneros,
         'orderBy' => $orderBy,
         'orderType' => $orderType,
+        'listaAcciones' => $listaAcciones,
     ]);
     ?>
 

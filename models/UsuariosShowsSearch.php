@@ -17,8 +17,8 @@ class UsuariosShowsSearch extends UsuariosShows
     public function rules()
     {
         return [
-            [['id', 'usuario_id', 'show_id'], 'integer'],
-            [['plan_to_watch', 'droppped', 'watched', 'watching'], 'safe'],
+            [['id', 'usuario_id', 'show_id', 'accion_id'], 'integer'],
+            [['created_at', 'ended_at'], 'safe'],
         ];
     }
 
@@ -61,10 +61,9 @@ class UsuariosShowsSearch extends UsuariosShows
             'id' => $this->id,
             'usuario_id' => $this->usuario_id,
             'show_id' => $this->show_id,
-            'plan_to_watch' => $this->plan_to_watch,
-            'droppped' => $this->droppped,
-            'watched' => $this->watched,
-            'watching' => $this->watching,
+            'accion_id' => $this->accion_id,
+            'created_at' => $this->created_at,
+            'ended_at' => $this->ended_at,
         ]);
 
         return $dataProvider;

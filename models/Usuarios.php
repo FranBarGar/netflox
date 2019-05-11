@@ -207,14 +207,6 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
 
     /**
      * @return \yii\db\ActiveQuery
-     */
-    public function getUsuariosShows()
-    {
-        return $this->hasMany(UsuariosShows::className(), ['usuario_id' => 'id'])->inverseOf('usuario');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
      * @throws \yii\base\InvalidConfigException
      */
     public function getSeguidors()
@@ -245,5 +237,13 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
     public function getComentarios0()
     {
         return $this->hasMany(Comentarios::className(), ['id' => 'comentario_id'])->viaTable('votos', ['usuario_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUsuariosShows()
+    {
+        return $this->hasMany(UsuariosShows::className(), ['usuario_id' => 'id'])->inverseOf('usuario');
     }
 }

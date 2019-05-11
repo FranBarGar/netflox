@@ -76,18 +76,6 @@ class Shows extends \yii\db\ActiveRecord
      */
     public $gestorId;
 
-    //Ordenacion
-
-    /**
-     * @var string Parametro para la ordenacion de shows.
-     */
-    public $orderBy;
-
-    /**
-     * @var string Parametro para la ordenacion de shows.
-     */
-    public $orderType;
-
     // Atributos generados por la query de ShowsSearch.
 
     /**
@@ -285,6 +273,14 @@ class Shows extends \yii\db\ActiveRecord
     public function getUsuariosShows()
     {
         return $this->hasMany(UsuariosShows::className(), ['show_id' => 'id'])->inverseOf('show');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUsuariosShows0()
+    {
+        return $this->hasMany(UsuariosShows::className(), ['accion_id' => 'id'])->inverseOf('accion');
     }
 
     /**

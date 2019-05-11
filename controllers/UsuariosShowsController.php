@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use app\models\UsuariosShows;
 use app\models\UsuariosShowsSearch;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -24,6 +25,24 @@ class UsuariosShowsController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['create'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['delete', 'update', 'index', 'view'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function ($rule, $action) {
+                            return Yii::$app->user->identity->rol == 'admin';
+                        }
+                    ],
                 ],
             ],
         ];
@@ -58,21 +77,50 @@ class UsuariosShowsController extends Controller
     }
 
     /**
+     * Finds the UsuariosShows model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return UsuariosShows the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = UsuariosShows::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
      * Creates a new UsuariosShows model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($id)
     {
+        /** @var UsuariosShows $antiguo */
+        $antiguo = UsuariosShows::find()
+            ->andWhere([
+                'usuario_id' => Yii::$app->user->id,
+                'show_id' => $id,
+                'ended_at' => null,
+            ])
+            ->one();
+
         $model = new UsuariosShows();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+            if ($antiguo != null) {
+                $antiguo->ended_at = gmdate('Y-m-d H:i:s');
+                $antiguo->save();
+                if ($model->accion_id != $antiguo->accion_id) {
+                    $model->save();
+                }
+            }
         }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        return $this->redirect(['shows/view', 'id' => $id]);
     }
 
     /**
@@ -107,21 +155,5 @@ class UsuariosShowsController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the UsuariosShows model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return UsuariosShows the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = UsuariosShows::findOne($id)) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

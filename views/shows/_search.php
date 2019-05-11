@@ -16,13 +16,32 @@ use yii\widgets\ActiveForm;
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'titulo') ?>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <?= $form->field($model, 'titulo') ?>
+        </div>
+        <div class="form-group col-md-6">
+            <?=
+            $form->field($model, 'accion')
+                ->widget(Select2::class, [
+                    'data' => $listaAcciones,
+                    'options' => [
+                        'placeholder' => 'Selecciona la accion sobre el show a buscar...',
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
+                ])
+            ?>
+        </div>
+    </div>
 
     <div class="form-row">
         <div class="form-group col-md-6">
             <?=
             $form->field($model, 'tipo_id')
-                ->widget(Select2::class, ['data' => $listaTipos,
+                ->widget(Select2::class, [
+                    'data' => $listaTipos,
                     'options' => [
                         'placeholder' => 'Selecciona un tipo de show a buscar...',
                     ],
@@ -49,7 +68,7 @@ use yii\widgets\ActiveForm;
         </div>
     </div>
 
-    <div class="col-md-12">
+    <div class="form-row">
         <div class="form-group col-md-6">
             <?=
             $form->field($model, 'orderBy')
@@ -64,7 +83,7 @@ use yii\widgets\ActiveForm;
                 ])
             ?>
         </div>
-        <div class="form-group col-md-2">
+        <div class="form-group col-md-6">
             <?=
             $form->field($model, 'orderType')
                 ->widget(Select2::class, ['data' => $orderType,
