@@ -34,7 +34,7 @@ class UsuariosShows extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['usuario_id', 'show_id', 'accion_id'], 'required'],
+            [['usuario_id', 'show_id'], 'required'],
             [['usuario_id', 'show_id', 'accion_id'], 'default', 'value' => null],
             [['usuario_id', 'show_id', 'accion_id'], 'integer'],
             [['created_at', 'ended_at'], 'safe'],
@@ -86,6 +86,7 @@ class UsuariosShows extends \yii\db\ActiveRecord
     /**
      * Busca una instancia del modelo, en caso de no encontrarla devuelve una ya parametrizada.
      * @param $id
+     * @return UsuariosShows|array|\yii\db\ActiveRecord|null
      */
     public static function findOrEmpty($id)
     {

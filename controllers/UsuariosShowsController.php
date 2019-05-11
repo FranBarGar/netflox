@@ -112,11 +112,16 @@ class UsuariosShowsController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
             if ($antiguo != null) {
-                $antiguo->ended_at = gmdate('Y-m-d H:i:s');
-                $antiguo->save();
-                if ($model->accion_id != $antiguo->accion_id) {
+                if ($model->accion_id == '') {
+                    $antiguo->ended_at = gmdate('Y-m-d H:i:s');
+                    $antiguo->save();
+                } elseif ($model->accion_id != $antiguo->accion_id) {
+                    $antiguo->ended_at = gmdate('Y-m-d H:i:s');
+                    $antiguo->save();
                     $model->save();
                 }
+            } elseif ($model->accion_id != '') {
+                $model->save();
             }
         }
 
