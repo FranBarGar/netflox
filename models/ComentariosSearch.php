@@ -17,7 +17,8 @@ class ComentariosSearch extends Comentarios
     public function rules()
     {
         return [
-            [['id', 'valoracion', 'padre_id', 'show_id', 'usuario_id'], 'integer'],
+            [['id', 'padre_id', 'show_id', 'usuario_id'], 'integer'],
+            [['valoracion'], 'number'],
             [['cuerpo', 'created_at', 'orderBy', 'orderType'], 'safe'],
         ];
     }
@@ -71,7 +72,7 @@ class ComentariosSearch extends Comentarios
             'created_at' => $this->created_at,
             'padre_id' => $this->padre_id,
             'show_id' => $this->show_id,
-            'usuario_id' => $this->usuario_id,
+            'comentarios.usuario_id' => $this->usuario_id,
         ]);
 
         $query->andFilterWhere(['ilike', 'cuerpo', $this->cuerpo]);

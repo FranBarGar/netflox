@@ -38,7 +38,8 @@ AppAsset::register($this);
     ]);
 
     $menu = [
-        ['label' => 'Shows', 'url' => ['/shows/index']]
+        ['label' => 'Shows', 'url' => ['/shows/index']],
+        ['label' => 'Valoraciones', 'url' => ['/comentarios/index']]
     ];
 
     if (Yii::$app->user->isGuest) {
