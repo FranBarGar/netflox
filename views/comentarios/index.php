@@ -1,7 +1,8 @@
 <?php
 
+use app\helpers\Utility;
 use yii\helpers\Html;
-use yii\grid\GridView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ComentariosSearch */
@@ -9,20 +10,24 @@ use yii\grid\GridView;
 
 $this->title = 'Valoraciones';
 $this->params['breadcrumbs'][] = $this->title;
+
+$this->registerJs(Utility::AJAX_VOTAR);
+$this->registerCss(Utility::CSS);
 ?>
-<div class="comentarios-index">
+<div class="row comentarios-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?= $this->render('_search', ['model' => $searchModel]); ?>
 
-    <?= \yii\widgets\ListView::widget([
-        'dataProvider' => $dataProvider,
-        'summary' => '',
-        'itemView' => function ($model, $key, $index, $widget) {
-            return $this->render('valoracionView.php', ['model' => $model]);
-        },
-    ]) ?>
-
+    <div class="row all-comments">
+        <?= \yii\widgets\ListView::widget([
+            'dataProvider' => $dataProvider,
+            'summary' => '',
+            'itemView' => function ($model, $key, $index, $widget) {
+                return $this->render('valoracionView.php', ['model' => $model]);
+            },
+        ]) ?>
+    </div>
 
 </div>
