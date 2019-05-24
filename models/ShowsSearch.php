@@ -107,7 +107,6 @@ class ShowsSearch extends Shows
         $query->andFilterWhere([
             'tipo_id' => $this->tipo_id,
             'genero_id' => $this->listaGeneros,
-            'accion_id' => $this->accion,
         ]);
 
         $query->andFilterWhere(['ilike', 'titulo', $this->titulo]);
@@ -123,7 +122,23 @@ class ShowsSearch extends Shows
         }
 
         if ($this->accion != '') {
-            $query->andWhere(['usuarios_shows.usuario_id' => Yii::$app->user->id]);
+            $query->andFilterWhere([
+                'usuarios_shows.usuario_id' => Yii::$app->user->id,
+                'accion_id' => $this->accion,
+            ]);
+        } else {
+            $dropped = UsuariosShows::find()
+                ->select('show_id')
+                ->andWhere([
+                    'accion_id' => Accion::findOne(['accion' => Accion::DROPPED])->id,
+                    'usuarios_shows.usuario_id' => Yii::$app->user->id
+                ])
+                ->column();
+            $query->andWhere([
+                'not', [
+                    'shows.id' => $dropped
+                ]
+            ]);
         }
 
         return $dataProvider;

@@ -12,6 +12,9 @@ use Yii;
  */
 class Accion extends \yii\db\ActiveRecord
 {
+    /** @var string */
+    const DROPPED = 'DROPPED';
+
     /**
      * {@inheritdoc}
      */
