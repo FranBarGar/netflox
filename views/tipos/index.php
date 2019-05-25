@@ -14,22 +14,19 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <p>
+        <?= Html::a('Create Tipos', ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
+
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            [
-                'header' => 'Tipo de show',
-                'attribute' => 'tipo',
-            ],
-            [
-                'header' => 'Duración',
-                'attribute' => 'duracion.tipo',
-            ],
-            [
-                'header' => 'Padre',
-                'attribute' => 'padre.tipo',
-            ],
+            'tipo',
+            'tipo_duracion:ntext',
+            'padre.tipo',
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

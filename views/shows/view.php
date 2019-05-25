@@ -108,7 +108,7 @@ $this->registerCss(Utility::CSS);
             <li>General: 
                 <ul>
                     <li>
-                        Duracion: ' . $model->duracion . ' ' . $model->tipo->duracion->tipo . '
+                        Duracion: ' . $model->duracion . ' ' . $model->tipo->tipo_duracion . '
                     </li>
                     <li>
                         Estreno: ' . $formatter->asDate($model->lanzamiento, 'long') . '
@@ -116,7 +116,7 @@ $this->registerCss(Utility::CSS);
                     <li>
                         Generos: ';
 
-        if ($generos = $model->tieneGeneros()) {
+        if ($generos = $model->obtenerGeneros()) {
             $str .= array_shift($generos)->genero;
             foreach ($generos as $genero) {
                 $str .= ', ' . $genero->genero;
@@ -156,14 +156,24 @@ $this->registerCss(Utility::CSS);
         }
 
         if (!empty($model->archivos)) {
-            $str = '<li class="list-group-item active">Links de descarga</li>';
-
-            $str .= TabsX::widget([
-                'items' => Utility::tabXArchivos($model->archivos),
-                'position' => TabsX::POS_LEFT,
-                'bordered' => true,
-                'encodeLabels' => false
-            ]);
+//                TODO: Descargas totales y archivos en la nube.
+            $str = '
+            <ul class="list-group">
+                <li class="list-group-item active">
+                    <span class="badge"> Descargas totales: 0</span>
+                    Enlaces
+                </li>';
+            foreach ($model->archivos as $archivo) {
+                $str .= '
+                <li class="list-group-item">
+                    <span class="badge">' . $archivo->num_descargas . '</span>'
+                    . Html::a($archivo->descripcion, [
+                        'archivos/file',
+                        'id' => $archivo->id,
+                    ]) .
+                '</li>';
+            }
+            $str .= '</ul>';
 
             $items[] = Utility::tabXOption('Descargas', $str);
         }
@@ -173,7 +183,7 @@ $this->registerCss(Utility::CSS);
             <ul class="list-group">
                 <li class="list-group-item active">
                     <span class="badge">' . $numHijos . '/' . $model->duracion . '</span>
-                    Lista de ' . $model->tipo->duracion->tipo . '
+                    Lista de ' . $model->tipo->tipo_duracion . '
                 </li>'
                 .
                 \yii\widgets\ListView::widget([
@@ -187,9 +197,7 @@ $this->registerCss(Utility::CSS);
                 .
                 '</ul>';
 
-            $label = $model->tipo->duracion->tipo;
-
-            $items[] = Utility::tabXOption($model->tipo->duracion->tipo, $str);
+            $items[] = Utility::tabXOption($model->tipo->tipo_duracion, $str);
         }
 
         ?>

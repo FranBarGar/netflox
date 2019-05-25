@@ -9,14 +9,11 @@ use Yii;
  *
  * @property int $id
  * @property string $link
- * @property int $gestor_id
+ * @property string $descripcion
+ * @property int $num_descargas
+ * @property int $show_id
  *
- * @property GestoresArchivos $gestor
- * @property Shows[] $shows
- * @property Shows[] $shows0
- * @property ShowsDescargas[] $showsDescargas
- * @property Shows[] $shows1
- * @property Usuarios[] $usuarios
+ * @property Shows $show
  */
 class Archivos extends \yii\db\ActiveRecord
 {
@@ -34,11 +31,12 @@ class Archivos extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['link'], 'string'],
-            [['gestor_id'], 'required'],
-            [['gestor_id'], 'integer'],
+            [['show_id'], 'required'],
+            [['show_id'], 'integer'],
+            [['link', 'descripcion'], 'trim'],
+            [['link', 'descripcion'], 'string'],
             [['link'], 'unique'],
-            [['gestor_id'], 'exist', 'skipOnError' => true, 'targetClass' => GestoresArchivos::className(), 'targetAttribute' => ['gestor_id' => 'id']],
+            [['show_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shows::className(), 'targetAttribute' => ['show_id' => 'id']],
         ];
     }
 
@@ -50,48 +48,17 @@ class Archivos extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'link' => 'Link',
-            'gestor_id' => 'Gestor ID',
+            'descripcion' => 'Descripcion',
+            'num_descargas' => 'Num Descargas',
+            'show_id' => 'Show ID',
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getGestor()
+    public function getShow()
     {
-        return $this->hasOne(GestoresArchivos::className(), ['id' => 'gestor_id'])->inverseOf('archivos');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getShows()
-    {
-        return $this->hasMany(Shows::className(), ['imagen_id' => 'id'])->inverseOf('imagen');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getShowsDescargas()
-    {
-        return $this->hasMany(ShowsDescargas::className(), ['archivo_id' => 'id'])->inverseOf('archivo');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function getShows1()
-    {
-        return $this->hasMany(Shows::className(), ['id' => 'show_id'])->viaTable('shows_descargas', ['archivo_id' => 'id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getUsuarios()
-    {
-        return $this->hasMany(Usuarios::className(), ['imagen_id' => 'id'])->inverseOf('imagen');
+        return $this->hasOne(Shows::className(), ['id' => 'show_id'])->inverseOf('archivos');
     }
 }

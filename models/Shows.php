@@ -15,22 +15,21 @@ use Yii;
  * @property string $sinopsis
  * @property string $lanzamiento
  * @property int $duracion
- * @property int $imagen_id
  * @property string $trailer
+ * @property string $imagen
  * @property int $tipo_id
  * @property int $show_id
  *
+ * @property Archivos[] $archivos
  * @property Comentarios[] $comentarios
- * @property UsuariosShows[] $suariosShows
  * @property Participantes[] $participantes
- * @property Archivos $imagen
  * @property Shows $show
  * @property Shows[] $shows
  * @property Tipos $tipo
- * @property ShowsDescargas[] $showsDescargas
- * @property Archivos[] $archivos
  * @property ShowsGeneros[] $showsGeneros
  * @property Generos[] $generos
+ * @property UsuariosShows[] $usuariosShows
+ * @property UsuariosShows[] $usuariosShows0
  */
 class Shows extends \yii\db\ActiveRecord
 {
@@ -52,29 +51,28 @@ class Shows extends \yii\db\ActiveRecord
     // Creacion de shows
 
     /**
-     * @var array Lista de generos a añadir al show tras ser creado.
+     * Lista de generos a añadir al show tras ser creado.
+     * @var array
      */
     public $listaGeneros;
 
     /**
-     * @var array Lista de participantes a añadir al show tras ser creado.
+     * Lista de participantes a añadir al show tras ser creado.
+     * @var array
      */
     public $listaParticipantes;
 
     /**
-     * @var FileInput Fichero a subir a la nube como portada.
+     * Fichero a subir a la nube como portada.
+     * @var FileInput
      */
     public $imgUpload;
 
     /**
-     * @var FileInput Fichero a subir a la nube como contenido descargable.
+     * Fichero a subir a la nube como contenido descargable.
+     * @var FileInput
      */
     public $showUpload;
-
-    /**
-     * @var int Gestor a usar con el fichero descargable a subir.
-     */
-    public $gestorId;
 
     // Atributos generados por la query de ShowsSearch.
 
@@ -139,7 +137,6 @@ class Shows extends \yii\db\ActiveRecord
                 }
                 return false;
             }],
-            [['imagen_id'], 'exist', 'skipOnError' => true, 'targetClass' => Archivos::class, 'targetAttribute' => ['imagen_id' => 'id']],
             [['tipo_id'], 'exist', 'skipOnError' => true, 'targetClass' => Tipos::class, 'targetAttribute' => ['tipo_id' => 'id']],
             [['show_id'], 'exist', 'skipOnError' => true, 'targetClass' => self::class, 'targetAttribute' => ['show_id' => 'id']],
         ];
@@ -164,7 +161,7 @@ class Shows extends \yii\db\ActiveRecord
             'sinopsis' => 'Sinopsis',
             'lanzamiento' => 'Fecha de lanzamiento',
             'duracion' => 'Duracion',
-            'imagen_id' => 'Imagen ID',
+            'Imagen' => 'Imagen',
             'tipo_id' => 'Tipo de show',
             'show_id' => 'Show al que pertenece',
             'listaGeneros' => 'Generos',
@@ -237,6 +234,15 @@ class Shows extends \yii\db\ActiveRecord
 
     /**
      * @return \yii\db\ActiveQuery
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getArchivos()
+    {
+        return $this->hasMany(Archivos::className(), ['show_id' => 'id'])->inverseOf('show');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
      */
     public function getComentarios()
     {
@@ -254,33 +260,9 @@ class Shows extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getImagen()
-    {
-        return $this->hasOne(Archivos::className(), ['id' => 'imagen_id'])->inverseOf('shows');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getShow()
     {
-        return $this->hasOne(self::className(), ['id' => 'show_id'])->inverseOf('shows');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getUsuariosShows()
-    {
-        return $this->hasMany(UsuariosShows::className(), ['show_id' => 'id'])->inverseOf('show');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getUsuariosShows0()
-    {
-        return $this->hasMany(UsuariosShows::className(), ['accion_id' => 'id'])->inverseOf('accion');
+        return $this->hasOne(Shows::className(), ['id' => 'show_id'])->inverseOf('shows');
     }
 
     /**
@@ -288,7 +270,7 @@ class Shows extends \yii\db\ActiveRecord
      */
     public function getShows()
     {
-        return $this->hasMany(self::className(), ['show_id' => 'id'])->inverseOf('show');
+        return $this->hasMany(Shows::className(), ['show_id' => 'id'])->inverseOf('show');
     }
 
     /**
@@ -297,23 +279,6 @@ class Shows extends \yii\db\ActiveRecord
     public function getTipo()
     {
         return $this->hasOne(Tipos::className(), ['id' => 'tipo_id'])->inverseOf('shows');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getShowsDescargas()
-    {
-        return $this->hasMany(ShowsDescargas::className(), ['show_id' => 'id'])->inverseOf('show');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function getArchivos()
-    {
-        return $this->hasMany(Archivos::className(), ['id' => 'archivo_id'])->viaTable('shows_descargas', ['show_id' => 'id']);
     }
 
     /**
@@ -331,6 +296,22 @@ class Shows extends \yii\db\ActiveRecord
     public function getGeneros()
     {
         return $this->hasMany(Generos::className(), ['id' => 'genero_id'])->viaTable('shows_generos', ['show_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUsuariosShows()
+    {
+        return $this->hasMany(UsuariosShows::className(), ['show_id' => 'id'])->inverseOf('show');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUsuariosShows0()
+    {
+        return $this->hasMany(UsuariosShows::className(), ['accion_id' => 'id'])->inverseOf('accion');
     }
 
     /**
@@ -352,31 +333,19 @@ class Shows extends \yii\db\ActiveRecord
      */
     public function getImagenLink()
     {
-        if ($this->imagen_id !== null) {
-            return $this->imagen->link;
-        }
-
-        return self::IMAGEN;
+        return $this->imagen ?: self::IMAGEN;
     }
 
     /**
      * @return Generos[]|bool
      */
-    public function getPadreGeneros()
-    {
-        return $this->show->tieneGeneros();
-    }
-
-    /**
-     * @return Generos[]|bool
-     */
-    public function tieneGeneros()
+    public function obtenerGeneros()
     {
         $generos = $this->generos;
         if (!empty($generos)) {
             return $generos;
         } elseif ($this->show_id !== null) {
-            return $this->show->tieneGeneros();
+            return $this->show->obtenerGeneros();
         }
         return false;
     }

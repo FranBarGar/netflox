@@ -130,20 +130,6 @@ EOJS;
     }
 
     /**
-     * Crea las pestañas para el widget TabX de un array de Archivos.
-     * @param $archivos array Array de Archivos.
-     * @return          array Devuelve las pestañas para el widget TabX.
-     */
-    public static function tabXArchivos($archivos)
-    {
-        $items = [];
-        foreach ($archivos as $archivo) {
-            $items[] = self::tabXOption($archivo->gestor->nombre, Url::to($archivo->link));
-        }
-        return $items;
-    }
-
-    /**
      * Crea un array con el contenido necesario para añadirselo a el widget TabX.
      * @param $label     string Titulo de la pestaña.
      * @param $contenido string Contenido de la pestaña.

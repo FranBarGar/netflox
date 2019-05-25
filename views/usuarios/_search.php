@@ -23,11 +23,10 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'biografia') ?>
 
-    <?= $form->field($model, 'imagen_id') ?>
+    <?= $form->field($model, 'imagen') ?>
 
     <?php // echo $form->field($model, 'created_at') ?>
 
-    <?php // echo $form->field($model, 'banned_at') ?>
 
     <?php // echo $form->field($model, 'token') ?>
 

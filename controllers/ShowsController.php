@@ -94,21 +94,14 @@ class ShowsController extends Controller
             ->andFilterWhere(['show_id' => $id])
             ->all();
 
-        $model = $this->advancedFindModel($id);
-
-        $comentarioHijo = new Comentarios();
-        $comentarioHijo->show_id = $id;
-        $comentarioHijo->usuario_id = Yii::$app->user->id;
-        $comentarioHijo->cuerpo = '';
-
         $dataProvider = new ActiveDataProvider([
             'query' => Shows::findChildrens($id),
         ]);
 
         return $this->render('view', [
-            'model' => $model,
+            'model' => $this->advancedFindModel($id),
             'dataProvider' => $dataProvider,
-            'comentarioHijo' => $comentarioHijo,
+            'comentarioHijo' => Comentarios::getEmpty($id),
             'searchModel' => $searchModel,
             'valoraciones' => $valoracionesProvider,
             'valoracion' => Comentarios::findOrEmpty($id),

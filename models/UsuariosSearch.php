@@ -17,8 +17,8 @@ class UsuariosSearch extends Usuarios
     public function rules()
     {
         return [
-            [['id', 'imagen_id'], 'integer'],
-            [['nick', 'email', 'biografia', 'created_at', 'banned_at', 'token', 'password'], 'safe'],
+            [['id'], 'integer'],
+            [['nick', 'imagen', 'email', 'biografia', 'created_at', 'token', 'password'], 'safe'],
         ];
     }
 
@@ -59,9 +59,7 @@ class UsuariosSearch extends Usuarios
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'imagen_id' => $this->imagen_id,
             'created_at' => $this->created_at,
-            'banned_at' => $this->banned_at,
         ]);
 
         $query->andFilterWhere(['ilike', 'nick', $this->nick])

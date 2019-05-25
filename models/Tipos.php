@@ -9,11 +9,10 @@ use Yii;
  *
  * @property int $id
  * @property string $tipo
- * @property int $duracion_id
+ * @property string $tipo_duracion
  * @property int $padre_id
  *
  * @property Shows[] $shows
- * @property Duraciones $duracion
  * @property Tipos $padre
  * @property Tipos[] $tipos
  */
@@ -33,12 +32,12 @@ class Tipos extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['tipo', 'duracion_id'], 'required'],
-            [['duracion_id', 'padre_id'], 'default', 'value' => null],
-            [['duracion_id', 'padre_id'], 'integer'],
+            [['tipo', 'tipo_duracion'], 'required'],
+            [['tipo_duracion'], 'string'],
+            [['padre_id'], 'default', 'value' => null],
+            [['padre_id'], 'integer'],
             [['tipo'], 'string', 'max' => 255],
             [['tipo'], 'unique'],
-            [['duracion_id'], 'exist', 'skipOnError' => true, 'targetClass' => Duraciones::className(), 'targetAttribute' => ['duracion_id' => 'id']],
             [['padre_id'], 'exist', 'skipOnError' => true, 'targetClass' => Tipos::className(), 'targetAttribute' => ['padre_id' => 'id']],
         ];
     }
@@ -51,7 +50,7 @@ class Tipos extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'tipo' => 'Tipo',
-            'duracion_id' => 'Duracion ID',
+            'tipo_duracion' => 'Tipo Duracion',
             'padre_id' => 'Padre ID',
         ];
     }
@@ -62,14 +61,6 @@ class Tipos extends \yii\db\ActiveRecord
     public function getShows()
     {
         return $this->hasMany(Shows::className(), ['tipo_id' => 'id'])->inverseOf('tipo');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getDuracion()
-    {
-        return $this->hasOne(Duraciones::className(), ['id' => 'duracion_id'])->inverseOf('tipos');
     }
 
     /**

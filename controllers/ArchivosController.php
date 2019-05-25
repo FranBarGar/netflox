@@ -43,6 +43,28 @@ class ArchivosController extends Controller
     }
 
     /**
+     * Descarga un archivo de la maquina.
+     * @param $id
+     * @return \yii\console\Response|\yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionFile($id)
+    {
+        $archivo = Archivos::findOne($id);
+
+        if ($archivo !== null) {
+            $archivo->num_descargas += 1;
+            $archivo->save();
+        }
+
+        if ($archivo === null || !is_file($archivo->link)) {
+            throw new NotFoundHttpException('The file does not exists.');
+        }
+
+        return Yii::$app->response->sendFile($archivo->link);
+    }
+
+    /**
      * Lists all Archivos models.
      * @return mixed
      */
@@ -68,6 +90,22 @@ class ArchivosController extends Controller
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
+    }
+
+    /**
+     * Finds the Archivos model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return Archivos the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Archivos::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 
     /**
@@ -120,21 +158,5 @@ class ArchivosController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the Archivos model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Archivos the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Archivos::findOne($id)) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

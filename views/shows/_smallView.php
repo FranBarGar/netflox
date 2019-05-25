@@ -4,23 +4,6 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 use kartik\widgets\StarRating;
 
-//$url = Url::to(['noticias/menear']);
-//$js = <<<EOT
-//    $('.boton').click(function (event) {
-//        var el = $(this);
-//        var id = el.data('key');
-//        $.ajax({
-//            url: '$url',
-//            data: { id: id },
-//            success: function (data) {
-//                $('#boton-' + id).text(`Mover (` + data +` movimientos)`);
-//                el.attr('disabled', true);
-//            }
-//        });
-//    });
-//EOT;
-//$this->registerJs($js);
-
 $formatter = Yii::$app->formatter;
 
 $css = <<<EOCSS
@@ -87,11 +70,11 @@ $this->registerCss($css);
         </h1>
         <div class="info">
             <p>
-                Duracion: <?= $model->duracion . ' ' . $model->tipo->duracion->tipo ?> ---
+                Duracion: <?= $model->duracion . ' ' . $model->tipo->tipo_duracion ?> ---
                 Estreno: <?= $formatter->asDate($model->lanzamiento, 'long') ?> ---
                 Generos:
                 <?php
-                if ($generos = $model->tieneGeneros()) {
+                if ($generos = $model->obtenerGeneros()) {
                     echo array_shift($generos)->genero;
                     foreach ($generos as $genero) {
                         echo ', ' . $genero->genero;

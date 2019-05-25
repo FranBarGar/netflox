@@ -17,8 +17,8 @@ class TiposSearch extends Tipos
     public function rules()
     {
         return [
-            [['id', 'duracion_id', 'padre_id'], 'integer'],
-            [['tipo'], 'safe'],
+            [['id', 'padre_id'], 'integer'],
+            [['tipo', 'tipo_duracion'], 'safe'],
         ];
     }
 
@@ -40,7 +40,8 @@ class TiposSearch extends Tipos
      */
     public function search($params)
     {
-        $query = Tipos::find();
+        $query = Tipos::find()
+            ->joinWith('tipos AS padre');
 
         // add conditions that should always apply here
 
@@ -59,11 +60,11 @@ class TiposSearch extends Tipos
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'duracion_id' => $this->duracion_id,
             'padre_id' => $this->padre_id,
         ]);
 
-        $query->andFilterWhere(['ilike', 'tipo', $this->tipo]);
+        $query->andFilterWhere(['ilike', 'tipos.tipo', $this->tipo])
+            ->andFilterWhere(['ilike', 'tipos.tipo_duracion', $this->tipo_duracion]);
 
         return $dataProvider;
     }
