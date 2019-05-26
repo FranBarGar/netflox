@@ -155,16 +155,10 @@ class ArchivosController extends Controller
                         'template' => '{delete}',
                         'buttons' => [
                             'delete' => function ($url, $model) {
-                                return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
-                                    'data' => ['method' => 'post']
-                                ]);
+                                return '<span id="' . $model->id . '" class="glyphicon glyphicon-trash archivos-delete"></span>';
                             }
+
                         ],
-                        'urlCreator' => function ($action, $model, $key, $index) {
-                            if ($action === 'delete') {
-                                return Url::to(['archivos/delete', 'id' => $model->id]);
-                            }
-                        }
                     ],
                 ],
             ]));
@@ -195,15 +189,36 @@ class ArchivosController extends Controller
 
     /**
      * Deletes an existing Archivos model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @return false|string
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
-    public function actionDelete($id)
+    public function actionDelete()
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel(Yii::$app->request->post('id'));
 
-        return $this->redirect(['index']);
+        $archivosProvider = (new ArchivosSearch())->search(Yii::$app->request->queryParams, $model->show_id);
+
+        $model->delete();
+
+        return json_encode(GridView::widget([
+            'summary' => '',
+            'dataProvider' => $archivosProvider,
+            'columns' => [
+                'descripcion',
+                'link',
+                [
+                    'class' => 'yii\grid\ActionColumn',
+                    'template' => '{delete}',
+                    'buttons' => [
+                        'delete' => function ($url, $model) {
+                            return '<span id="' . $model->id . '" class="glyphicon glyphicon-trash archivos-delete"></span>';
+                        }
+
+                    ],
+                ],
+            ],
+        ]));
     }
 }
