@@ -21,7 +21,6 @@ use yii\widgets\ActiveForm;
         ]); ?>
 
         <?= $form->field($model, 'cuerpo') ?>
-        <?= $form->field($model, 'created_at') ?>
         <?= $form->field($model, 'usuario_id') ?>
 
     </div>

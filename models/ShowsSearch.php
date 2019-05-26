@@ -83,7 +83,6 @@ class ShowsSearch extends Shows
             ->joinWith('comentarios')
             ->joinWith('usuariosShows')
             ->with('generos')
-            ->with('imagen')
             ->where([
                 'tipos.padre_id' => null,
                 'ended_at' => null,

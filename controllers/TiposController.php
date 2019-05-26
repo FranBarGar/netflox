@@ -5,7 +5,6 @@ namespace app\controllers;
 use Yii;
 use app\models\Tipos;
 use app\models\TiposSearch;
-use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -25,18 +24,6 @@ class TiposController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
-                ],
-            ],
-            'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['@'],
-                        'matchCallback' => function ($rule, $action) {
-                            return Yii::$app->user->identity->rol == 'admin';
-                        }
-                    ],
                 ],
             ],
         ];

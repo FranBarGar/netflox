@@ -4,7 +4,6 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Archivos;
 
 /**
  * ArchivosSearch represents the model behind the search form of `app\models\Archivos`.
@@ -17,8 +16,8 @@ class ArchivosSearch extends Archivos
     public function rules()
     {
         return [
-            [['id', 'gestor_id'], 'integer'],
-            [['link'], 'safe'],
+            [['id', 'num_descargas', 'show_id'], 'integer'],
+            [['link', 'descripcion'], 'safe'],
         ];
     }
 
@@ -59,10 +58,12 @@ class ArchivosSearch extends Archivos
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'gestor_id' => $this->gestor_id,
+            'num_descargas' => $this->num_descargas,
+            'show_id' => $this->show_id,
         ]);
 
-        $query->andFilterWhere(['ilike', 'link', $this->link]);
+        $query->andFilterWhere(['ilike', 'link', $this->link])
+            ->andFilterWhere(['ilike', 'descripcion', $this->descripcion]);
 
         return $dataProvider;
     }

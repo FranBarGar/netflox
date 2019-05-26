@@ -243,13 +243,6 @@ EOJS;
     );
 
     $items[] = Utility::tabXOption('Uploads',
-        $form->field($model, 'gestorId')
-            ->widget(\kartik\select2\Select2::class, [
-                'data' => $listaGestores,
-                'options' => [
-                    'placeholder' => 'Selecciona un gestor de subida...',
-                ]
-            ]) .
         $form->field($model, 'showUpload')->widget(FileInput::class, [
             'options' => ['accept' => 'video/*'],
             'pluginOptions' => [

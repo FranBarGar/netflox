@@ -3,17 +3,12 @@
 namespace app\helpers;
 
 use app\models\Accion;
-use app\models\Archivos;
-use app\models\Comentarios;
 use app\models\Generos;
-use app\models\GestoresArchivos;
-use app\models\Participantes;
 use app\models\Personas;
 use app\models\Roles;
 use app\models\Shows;
 use app\models\Tipos;
 use Yii;
-use yii\helpers\Url;
 
 /**
  * Clase Utility.
@@ -130,20 +125,6 @@ EOJS;
     }
 
     /**
-     * Crea las pestañas para el widget TabX de un array de Archivos.
-     * @param $archivos array Array de Archivos.
-     * @return          array Devuelve las pestañas para el widget TabX.
-     */
-    public static function tabXArchivos($archivos)
-    {
-        $items = [];
-        foreach ($archivos as $archivo) {
-            $items[] = self::tabXOption($archivo->gestor->nombre, Url::to($archivo->link));
-        }
-        return $items;
-    }
-
-    /**
      * Crea un array con el contenido necesario para añadirselo a el widget TabX.
      * @param $label     string Titulo de la pestaña.
      * @param $contenido string Contenido de la pestaña.
@@ -255,18 +236,6 @@ EOJS;
     {
         return Generos::find()
             ->select('genero')
-            ->indexBy('id')
-            ->column();
-    }
-
-    /**
-     * Lista de gestores de subida.
-     * @return array
-     */
-    public static function listaGestores()
-    {
-        return GestoresArchivos::find()
-            ->select('nombre')
             ->indexBy('id')
             ->column();
     }

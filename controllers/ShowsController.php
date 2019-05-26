@@ -94,21 +94,14 @@ class ShowsController extends Controller
             ->andFilterWhere(['show_id' => $id])
             ->all();
 
-        $model = $this->advancedFindModel($id);
-
-        $comentarioHijo = new Comentarios();
-        $comentarioHijo->show_id = $id;
-        $comentarioHijo->usuario_id = Yii::$app->user->id;
-        $comentarioHijo->cuerpo = '';
-
         $dataProvider = new ActiveDataProvider([
             'query' => Shows::findChildrens($id),
         ]);
 
         return $this->render('view', [
-            'model' => $model,
+            'model' => $this->advancedFindModel($id),
             'dataProvider' => $dataProvider,
-            'comentarioHijo' => $comentarioHijo,
+            'comentarioHijo' => Comentarios::getEmpty($id),
             'searchModel' => $searchModel,
             'valoraciones' => $valoracionesProvider,
             'valoracion' => Comentarios::findOrEmpty($id),
@@ -223,7 +216,6 @@ class ShowsController extends Controller
             'model' => $model,
             'listaTipos' => Utility::listaTipos(),
             'listaGeneros' => Utility::listaGeneros(),
-            'listaGestores' => Utility::listaGestores(),
             'listaPersonas' => Utility::listaPersonas(),
             'listaRoles' => Utility::listaRoles(),
         ]);
@@ -253,7 +245,6 @@ class ShowsController extends Controller
             'model' => $model,
             'listaTipos' => Utility::listaTipos(),
             'listaGeneros' => Utility::listaGeneros(),
-            'listaGestores' => Utility::listaGestores(),
             'listaPersonas' => Utility::listaPersonas(),
             'listaRoles' => Utility::listaRoles(),
         ]);
@@ -300,7 +291,7 @@ class ShowsController extends Controller
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         $tipo = Tipos::findOne($id);
-        $info = [$tipo->duracion->tipo];
+        $info = [$tipo->tipo_duracion];
 
         if (($padre_id = $tipo->padre_id) !== null) {
             $info[] = Shows::find()

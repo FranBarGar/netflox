@@ -72,6 +72,39 @@ class Comentarios extends \yii\db\ActiveRecord
     }
 
     /**
+     * Busca una instancia del modelo, en caso de no encontrarla devuelve una ya parametrizada.
+     * @param $id
+     * @return Comentarios|array|\yii\db\ActiveRecord|null
+     */
+    public static function findOrEmpty($id)
+    {
+        $valoracion = Comentarios::find()
+            ->andWhere([
+                'usuario_id' => Yii::$app->user->id,
+                'show_id' => $id
+            ])
+            ->andWhere(['not', ['valoracion' => null]])
+            ->one();
+
+        return $valoracion ?: self::getEmpty($id);
+    }
+
+    /**
+     * Busca una instancia del modelo, en caso de no encontrarla devuelve una ya parametrizada.
+     * @param $id
+     * @return Comentarios|array|\yii\db\ActiveRecord|null
+     */
+    public static function getEmpty($id)
+    {
+        $valoracion = new Comentarios();
+        $valoracion->show_id = $id;
+        $valoracion->usuario_id = Yii::$app->user->id;
+        $valoracion->cuerpo = '';
+
+        return $valoracion;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function rules()
@@ -207,30 +240,5 @@ class Comentarios extends \yii\db\ActiveRecord
                 ->column();
             $this->dislikes = (empty($dislikes)) ? 0 : $dislikes[0];
         }
-    }
-
-    /**
-     * Busca una instancia del modelo, en caso de no encontrarla devuelve una ya parametrizada.
-     * @param $id
-     * @return Comentarios|array|\yii\db\ActiveRecord|null
-     */
-    public static function findOrEmpty($id)
-    {
-        $valoracion = Comentarios::find()
-            ->andWhere([
-                'usuario_id' => Yii::$app->user->id,
-                'show_id' => $id
-            ])
-            ->andWhere(['not', ['valoracion' => null]])
-            ->one();
-
-        if ($valoracion == null) {
-            $valoracion = new Comentarios();
-            $valoracion->show_id = $id;
-            $valoracion->usuario_id = Yii::$app->user->id;
-            $valoracion->cuerpo = '';
-        }
-
-        return $valoracion;
     }
 }

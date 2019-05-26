@@ -14,7 +14,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'link')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'gestor_id')->textInput() ?>
+    <?= $form->field($model, 'descripcion')->textarea(['rows' => 6]) ?>
+
+    <?= $form->field($model, 'show_id')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

@@ -20,9 +20,8 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             'nick',
             'email:email',
-            'imagen_id',
+            'imagen',
             'created_at:datetime',
-            'banned_at',
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
