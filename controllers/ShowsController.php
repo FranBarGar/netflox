@@ -216,7 +216,6 @@ class ShowsController extends Controller
             'model' => $model,
             'listaTipos' => Utility::listaTipos(),
             'listaGeneros' => Utility::listaGeneros(),
-            'listaGestores' => Utility::listaGestores(),
             'listaPersonas' => Utility::listaPersonas(),
             'listaRoles' => Utility::listaRoles(),
         ]);
@@ -246,7 +245,6 @@ class ShowsController extends Controller
             'model' => $model,
             'listaTipos' => Utility::listaTipos(),
             'listaGeneros' => Utility::listaGeneros(),
-            'listaGestores' => Utility::listaGestores(),
             'listaPersonas' => Utility::listaPersonas(),
             'listaRoles' => Utility::listaRoles(),
         ]);
@@ -293,7 +291,7 @@ class ShowsController extends Controller
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         $tipo = Tipos::findOne($id);
-        $info = [$tipo->duracion->tipo];
+        $info = [$tipo->tipo_duracion];
 
         if (($padre_id = $tipo->padre_id) !== null) {
             $info[] = Shows::find()

@@ -18,7 +18,6 @@ $this->params['breadcrumbs'][] = 'Update';
         'model' => $model,
         'listaTipos' => $listaTipos,
         'listaGeneros' => $listaGeneros,
-        'listaGestores' => $listaGestores,
         'listaPersonas' => $listaPersonas,
         'listaRoles' => $listaRoles,
     ]) ?>

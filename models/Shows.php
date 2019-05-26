@@ -113,8 +113,8 @@ class Shows extends \yii\db\ActiveRecord
             [['lanzamiento'], 'date', 'format' => 'php:Y-m-d'],
             [['trailer'], 'url'],
             [['duracion'], 'integer', 'min' => -32767, 'max' => 32767],
-            [['duracion', 'imagen_id', 'tipo_id', 'show_id', 'gestorId'], 'integer'],
-            [['imagen_id', 'trailer', 'show_id'], 'default', 'value' => null],
+            [['duracion', 'tipo_id', 'show_id'], 'integer'],
+            [['trailer', 'show_id'], 'default', 'value' => null],
             [['listaGeneros'], 'each', 'rule' => ['integer']],
             [['listaParticipantes'], 'safe'],
             [['imgUpload'], 'image', 'extensions' => 'jpg, gif, png, jpeg'],
@@ -167,7 +167,6 @@ class Shows extends \yii\db\ActiveRecord
             'listaGeneros' => 'Generos',
             'imgUpload' => 'Imagen de portada',
             'showUpload' => 'Show a subir',
-            'gestorId' => 'Gestor de archivos (AWS por defecto)',
             'trailer' => 'Enlace del trailer (Youtube, Vimeo...)',
             'orderBy' => 'Ordenar por',
             'orderType' => 'Tipo de ordenacion',
@@ -188,17 +187,9 @@ class Shows extends \yii\db\ActiveRecord
             $image = $imagine->open($fileName);
             $image->resize(new Box(200, 200))->save($fileName);
 
-            /**
-             * Guardamos la ruta del archivo en la base de datos y ponemos su id en el show a crear
-             */
-            $archivo = new Archivos();
-            $archivo->gestor_id = 3; //TODO: cambiar el nombre del fichero
-            $archivo->link = $fileName;
+            $this->imagen = $fileName;
 
-            if ($archivo->save()) {
-                $this->imagen_id = $archivo->id;
-                return true;
-            }
+            return true;
         }
 
         return false;
@@ -214,19 +205,11 @@ class Shows extends \yii\db\ActiveRecord
             $fileName = Yii::getAlias('@uploads/' . $this->showUpload->baseName . '.' . $this->showUpload->extension);
             $this->showUpload->saveAs($fileName);
 
-            /**
-             * Guardamos la ruta del archivo en la base de datos y ponemos su id en el show a crear
-             */
             $archivo = new Archivos();
-            $archivo->gestor_id = $this->gestorId ?: 3; //TODO: gestor a elegir y cambiar el nombre del fichero
             $archivo->link = $fileName;
+            $archivo->show_id = $this->id;
 
-            if ($archivo->save()) {
-                $showsDescargas = new ShowsDescargas();
-                $showsDescargas->show_id = $this->id;
-                $showsDescargas->archivo_id = $archivo->id;
-                return $showsDescargas->save();
-            }
+            return $archivo->save();
         }
 
         return false;
@@ -234,7 +217,6 @@ class Shows extends \yii\db\ActiveRecord
 
     /**
      * @return \yii\db\ActiveQuery
-     * @throws \yii\base\InvalidConfigException
      */
     public function getArchivos()
     {

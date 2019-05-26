@@ -3,17 +3,12 @@
 namespace app\helpers;
 
 use app\models\Accion;
-use app\models\Archivos;
-use app\models\Comentarios;
 use app\models\Generos;
-use app\models\GestoresArchivos;
-use app\models\Participantes;
 use app\models\Personas;
 use app\models\Roles;
 use app\models\Shows;
 use app\models\Tipos;
 use Yii;
-use yii\helpers\Url;
 
 /**
  * Clase Utility.
@@ -241,18 +236,6 @@ EOJS;
     {
         return Generos::find()
             ->select('genero')
-            ->indexBy('id')
-            ->column();
-    }
-
-    /**
-     * Lista de gestores de subida.
-     * @return array
-     */
-    public static function listaGestores()
-    {
-        return GestoresArchivos::find()
-            ->select('nombre')
             ->indexBy('id')
             ->column();
     }
