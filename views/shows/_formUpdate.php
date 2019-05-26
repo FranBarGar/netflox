@@ -16,7 +16,9 @@ use yii\widgets\ActiveForm;
 
 $url = \yii\helpers\Url::to(['shows/ajax-create-info']);
 $urlAddParticipante = \yii\helpers\Url::to(['participantes/ajax-create']);
+$urlDeleteParticipante = \yii\helpers\Url::to(['participantes/delete']);
 $urlAddArchivos = \yii\helpers\Url::to(['archivos/ajax-create']);
+$urlDeleteArchivos = \yii\helpers\Url::to(['archivos/delete']);
 $show_id = $model->id;
 $js = <<<EOJS
     div = $('div.field-shows-show_id');
@@ -91,6 +93,21 @@ $js = <<<EOJS
         }
     });
     
+    gridParticipantes.on('click', '.delete', (e) => {
+        e.preventDefault();
+        
+        $.post({
+            url: '$urlDeleteParticipante',
+            data: { 
+                id: e.target.id
+            },
+            success: function (data) {
+                data = JSON.parse(data);
+                gridParticipantes.html(data);
+            }
+        });
+    });
+    
     gridArchivos = $('#grid-view-archivos');
     descripcion = $('input#archivo-descripcion');
     descripcionError = $('div#empty-descripcion');
@@ -119,6 +136,21 @@ $js = <<<EOJS
             }
             });
         }
+    });
+    
+    gridArchivos.on('click', '.archivos-delete', (e) => {
+        e.preventDefault();
+        
+        $.post({
+            url: '$urlDeleteArchivos',
+            data: { 
+                id: e.target.id
+            },
+            success: function (data) {
+                data = JSON.parse(data);
+                gridArchivos.html(data);
+            }
+        });
     });
     
 
@@ -175,9 +207,8 @@ $this->registerCss($css);
 
     <?php $form = ActiveForm::begin([
         'options' => ['enctype' => 'multipart/form-data'],
-    ]); ?>
+    ]);
 
-    <?php
     $items = [];
 
     $items[] = Utility::tabXOption('General',
@@ -262,7 +293,6 @@ $this->registerCss($css);
         $form->field($model, 'trailer')->textInput(['placeholder' => "Introduzca el enlace a el trailer..."])
     );
 
-//    TODO: Archivos
     $items[] = Utility::tabXOption('Uploads',
         $form->field($model, 'showUpload')->widget(FileInput::class, [
             'options' => ['accept' => 'video/*'],
@@ -296,17 +326,10 @@ $this->registerCss($css);
                     'template' => '{delete}',
                     'buttons' => [
                         'delete' => function ($url, $model) {
-                            return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
-                                'data' => ['method' => 'post']
-                            ]);
+                            return '<span id="'.$model->id.'" class="glyphicon glyphicon-trash archivos-delete"></span>';
                         }
 
                     ],
-                    'urlCreator' => function ($action, $model, $key, $index) {
-                        if ($action === 'delete') {
-                            return Url::to(['archivos/delete', 'id' => $model->id]);
-                        }
-                    }
                 ],
             ],
         ]) .
@@ -355,7 +378,7 @@ $this->registerCss($css);
         </div>
         <div id="registro-duplicado" class="help-block custom-error">No pueden existir registros duplicados.</div>
         <div id="grid-view-participantes">' .
-        \yii\grid\GridView::widget([
+        GridView::widget([
             'summary' => '',
             'dataProvider' => $participantesProvider,
             'columns' => [
@@ -366,20 +389,9 @@ $this->registerCss($css);
                     'template' => '{delete}',
                     'buttons' => [
                         'delete' => function ($url, $model) {
-                            return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
-                                'data' => ['method' => 'post']
-                            ]);
+                            return '<span id="'.$model->id.'" class="glyphicon glyphicon-trash delete"></span>';
                         }
-
                     ],
-                    'urlCreator' => function ($action, $model, $key, $index) {
-                        if ($action === 'update') {
-                            return Url::to(['participantes/update', 'id' => $model->id]);
-                        }
-                        if ($action === 'delete') {
-                            return Url::to(['participantes/delete', 'id' => $model->id]);
-                        }
-                    }
                 ],
             ],
         ]) .

@@ -112,26 +112,12 @@ class ParticipantesController extends Controller
                     'rol.rol',
                     [
                         'class' => 'yii\grid\ActionColumn',
-                        'template' => '{update}{delete}',
+                        'template' => '{delete}',
                         'buttons' => [
-                            'update' => function ($url, $model) {
-                                return Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url);
-                            },
                             'delete' => function ($url, $model) {
-                                return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
-                                    'data' => ['method' => 'post']
-                                ]);
+                                return '<span id="' . $model->id . '" class="glyphicon glyphicon-trash delete"></span>';
                             }
-
                         ],
-                        'urlCreator' => function ($action, $model, $key, $index) {
-                            if ($action === 'update') {
-                                return Url::to(['participantes/update', 'id' => $model->id]);
-                            }
-                            if ($action === 'delete') {
-                                return Url::to(['participantes/delete', 'id' => $model->id]);
-                            }
-                        }
                     ],
                 ],
             ]));
@@ -180,15 +166,35 @@ class ParticipantesController extends Controller
 
     /**
      * Deletes an existing Participantes model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @return false|string
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
-    public function actionDelete($id)
+    public function actionDelete()
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel(Yii::$app->request->post('id'));
 
-        return $this->redirect(['index']);
+        $participantesProvider = (new ParticipantesSearch())->search(Yii::$app->request->queryParams, $model->show_id);
+
+        $model->delete();
+
+        return json_encode(GridView::widget([
+            'summary' => '',
+            'dataProvider' => $participantesProvider,
+            'columns' => [
+                'persona.nombre',
+                'rol.rol',
+                [
+                    'class' => 'yii\grid\ActionColumn',
+                    'template' => '{delete}',
+                    'buttons' => [
+                        'delete' => function ($url, $model) {
+                            return '<span id="' . $model->id . '" class="glyphicon glyphicon-trash delete"></span>';
+                        }
+                    ],
+                ],
+            ],
+        ]));
     }
 }
