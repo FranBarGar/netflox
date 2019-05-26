@@ -2,10 +2,12 @@
 
 namespace app\models;
 
+use app\helpers\Utility;
 use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use kartik\file\FileInput;
 use Yii;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "shows".
@@ -47,6 +49,12 @@ class Shows extends \yii\db\ActiveRecord
         'valoracionMedia' => 'Valoración',
         'numComentarios' => 'Numero de valoraciones',
     ];
+
+    /**
+     * Caso de creacion de show.
+     * @var string
+     */
+    const SCENARIO_CREATE = 'create';
 
     // Creacion de shows
 
@@ -90,18 +98,6 @@ class Shows extends \yii\db\ActiveRecord
     }
 
     /**
-     * Metodo para buscar los shows que tienen como padre id el del modelo actual.
-     * @param int $id
-     * @return \yii\db\ActiveQuery
-     */
-    public static function findChildrens($id)
-    {
-        return self::find()
-            ->andWhere(['shows.show_id' => $id])
-            ->orderBy('lanzamiento');
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function rules()
@@ -116,7 +112,7 @@ class Shows extends \yii\db\ActiveRecord
             [['duracion', 'tipo_id', 'show_id'], 'integer'],
             [['trailer', 'show_id'], 'default', 'value' => null],
             [['listaGeneros'], 'each', 'rule' => ['integer']],
-            [['listaParticipantes'], 'safe'],
+            [['listaParticipantes'], 'safe', 'on' => self::SCENARIO_CREATE],
             [['imgUpload'], 'image', 'extensions' => 'jpg, gif, png, jpeg'],
             [['showUpload'], 'file', 'extensions' => 'owm, mp4, flv, avi'],
             [['show_id'], 'required', 'isEmpty' => function ($value) {
@@ -174,11 +170,25 @@ class Shows extends \yii\db\ActiveRecord
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function beforeSave($insert)
+    {
+        if (!parent::beforeSave($insert)) {
+            return false;
+        }
+
+        $this->uploadImg();
+
+        return true;
+    }
+
+    /**
      * Sube una imagen en principio a local.
-     * @return bool
      */
     public function uploadImg()
     {
+        $this->imgUpload = UploadedFile::getInstance($this, 'imgUpload');
         if ($this->imgUpload !== null) {
             $fileName = Yii::getAlias('@uploads/' . $this->imgUpload->baseName . '.' . $this->imgUpload->extension);
             $this->imgUpload->saveAs($fileName);
@@ -188,19 +198,41 @@ class Shows extends \yii\db\ActiveRecord
             $image->resize(new Box(200, 200))->save($fileName);
 
             $this->imagen = $fileName;
+            $this->imgUpload = null;
+        }
+    }
 
-            return true;
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        /**
+         * Añadimos generos al show actual.
+         */
+        Utility::massiveSaveGeneros($this->listaGeneros, $this->id);
+
+        if ($this->scenario == self::SCENARIO_CREATE) {
+            /**
+             * Añadimos los participantes
+             */
+            $this->listaParticipantes = json_decode($this->listaParticipantes);
+            Utility::massiveSaveParticipantes($this->listaParticipantes, $this->id);
+
         }
 
-        return false;
+        /**
+         * Añadimos los links de descarga al show.
+         */
+        $this->uploadShow();
     }
 
     /**
-     * Sube una imagen en principio a local
-     * @return bool
+     * Sube una imagen en principio a local.
      */
     public function uploadShow()
     {
+
+        $this->showUpload = UploadedFile::getInstance($this, 'showUpload');
         if ($this->showUpload !== null) {
             $fileName = Yii::getAlias('@uploads/' . $this->showUpload->baseName . '.' . $this->showUpload->extension);
             $this->showUpload->saveAs($fileName);
@@ -209,10 +241,10 @@ class Shows extends \yii\db\ActiveRecord
             $archivo->link = $fileName;
             $archivo->show_id = $this->id;
 
-            return $archivo->save();
-        }
+            $archivo->save();
 
-        return false;
+            $this->showUpload = null;
+        }
     }
 
     /**
@@ -316,6 +348,18 @@ class Shows extends \yii\db\ActiveRecord
     public function getImagenLink()
     {
         return $this->imagen ?: self::IMAGEN;
+    }
+
+    /**
+     * Metodo para buscar los shows que tienen como padre id el del modelo actual.
+     * @param int $id
+     * @return \yii\db\ActiveQuery
+     */
+    public function findChildrens()
+    {
+        return self::find()
+            ->andWhere(['shows.show_id' => $this->id])
+            ->orderBy('lanzamiento');
     }
 
     /**

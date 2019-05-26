@@ -37,7 +37,7 @@ class ArchivosSearch extends Archivos
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $show_id = null)
     {
         $query = Archivos::find();
 
@@ -59,7 +59,7 @@ class ArchivosSearch extends Archivos
         $query->andFilterWhere([
             'id' => $this->id,
             'num_descargas' => $this->num_descargas,
-            'show_id' => $this->show_id,
+            'show_id' => $show_id ?: $this->show_id,
         ]);
 
         $query->andFilterWhere(['ilike', 'link', $this->link])

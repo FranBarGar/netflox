@@ -6,6 +6,9 @@ use Yii;
 use app\models\Archivos;
 use app\models\ArchivosSearch;
 use yii\filters\AccessControl;
+use yii\grid\GridView;
+use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -124,6 +127,50 @@ class ArchivosController extends Controller
         return $this->render('create', [
             'model' => $model,
         ]);
+    }
+
+    /**
+     * Creates a new Participantes model.
+     * @return string
+     * @throws \Exception
+     */
+    public function actionAjaxCreate()
+    {
+        $model = new Archivos();
+        $model->show_id = Yii::$app->request->post('show_id');
+        $model->link = Yii::$app->request->post('link');
+        $model->descripcion = Yii::$app->request->post('descripcion');
+
+        if ($model->save()) {
+            $archivosProvider = (new ArchivosSearch())->search(Yii::$app->request->queryParams, $model->show_id);
+
+            return json_encode(GridView::widget([
+                'summary' => '',
+                'dataProvider' => $archivosProvider,
+                'columns' => [
+                    'descripcion',
+                    'link',
+                    [
+                        'class' => 'yii\grid\ActionColumn',
+                        'template' => '{delete}',
+                        'buttons' => [
+                            'delete' => function ($url, $model) {
+                                return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+                                    'data' => ['method' => 'post']
+                                ]);
+                            }
+                        ],
+                        'urlCreator' => function ($action, $model, $key, $index) {
+                            if ($action === 'delete') {
+                                return Url::to(['archivos/delete', 'id' => $model->id]);
+                            }
+                        }
+                    ],
+                ],
+            ]));
+        }
+
+        return json_encode('');
     }
 
     /**

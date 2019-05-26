@@ -137,17 +137,6 @@ $js = <<<EOJS
         
         return error; 
     }
-    
-    if(inputParticipantes.val() !== '') {
-        lista = JSON.parse(inputParticipantes.val());
-        $.each(lista, (i, value) => {
-            if (Array.isArray(value) && value.length) {
-                $.each(value, (j, value) => {
-                    addRow(i, rolId.children(i).html(), value, personaId.children(value).html());
-                });
-            }
-        });
-    }
 EOJS;
 
 $css = <<<EOCSS
@@ -257,7 +246,7 @@ $this->registerCss($css);
             'id' => 'input-personas',
             'data' => $listaPersonas,
             'options' => [
-                'placeholder' => 'Select provinces ...',
+                'placeholder' => 'Seleccione el participante...',
             ],
             'pluginEvents' => [
                 "change" => "function() {
@@ -274,7 +263,7 @@ $this->registerCss($css);
             'id' => 'input-roles',
             'data' => $listaRoles,
             'options' => [
-                'placeholder' => 'Select provinces ...',
+                'placeholder' => 'Selecciona el rol del participante...',
             ],
             'pluginEvents' => [
                 "change" => "function() {
