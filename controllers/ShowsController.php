@@ -3,9 +3,11 @@
 namespace app\controllers;
 
 use app\helpers\Utility;
+use app\models\ArchivosSearch;
 use app\models\Comentarios;
 use app\models\ComentariosSearch;
 use app\models\Participantes;
+use app\models\ParticipantesSearch;
 use app\models\ShowsGeneros;
 use app\models\Tipos;
 use app\models\UsuariosShows;
@@ -94,12 +96,14 @@ class ShowsController extends Controller
             ->andFilterWhere(['show_id' => $id])
             ->all();
 
+        $model = $this->advancedFindModel($id);
+
         $dataProvider = new ActiveDataProvider([
-            'query' => Shows::findChildrens($id),
+            'query' => $model->findChildrens(),
         ]);
 
         return $this->render('view', [
-            'model' => $this->advancedFindModel($id),
+            'model' => $model,
             'dataProvider' => $dataProvider,
             'comentarioHijo' => Comentarios::getEmpty($id),
             'searchModel' => $searchModel,
@@ -115,9 +119,9 @@ class ShowsController extends Controller
     /**
      * Finds the Shows model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Shows the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return array|\yii\db\ActiveRecord|null
+     * @throws NotFoundHttpException
      */
     protected function advancedFindModel($id)
     {
@@ -148,67 +152,14 @@ class ShowsController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Shows();
+        $model = new Shows(['scenario' => Shows::SCENARIO_CREATE]);
 
         if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
         }
 
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            /**
-             * Subimos la imagen y se la añadimos a el modelo.
-             */
-            $model->imgUpload = UploadedFile::getInstance($model, 'imgUpload');
-            if ($model->imgUpload !== null) {
-                $model->uploadImg();
-                $model->imgUpload = null;
-            }
-
-            /**
-             * Guardamos el modelo tras añadirle todos los campos necesarios para obtener el ID.
-             */
-            $model->save();
-
-            /**
-             * Añadimos generos al show actual.
-             */
-            if (!empty($model->listaGeneros)) {
-                foreach ($model->listaGeneros as $genero_id) {
-                    $show_generos = new ShowsGeneros();
-                    $show_generos->show_id = $model->id;
-                    $show_generos->genero_id = $genero_id;
-                    $show_generos->save();
-                }
-            }
-
-            /**
-             * Añadimos los links de descarga al show.
-             */
-            $model->showUpload = UploadedFile::getInstance($model, 'showUpload');
-            if ($model->showUpload !== null) {
-                $model->uploadShow();
-                $model->showUpload = null;
-            }
-
-            /**
-             * Añadimos los participantes
-             */
-            $model->listaParticipantes = json_decode($model->listaParticipantes);
-            if (!empty($model->listaParticipantes)) {
-                foreach ($model->listaParticipantes as $rolId => $personas) {
-                    if (!empty($personas)) {
-                        foreach ($personas as $personaId) {
-                            $participantes = new Participantes();
-                            $participantes->show_id = $model->id;
-                            $participantes->persona_id = $personaId;
-                            $participantes->rol_id = $rolId;
-                            $participantes->save();
-                        }
-                    }
-                }
-            }
-
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -232,17 +183,29 @@ class ShowsController extends Controller
     {
         $model = $this->findModel($id);
 
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ActiveForm::validate($model);
+        }
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
+
+        $participantesProvider = (new ParticipantesSearch())->search(Yii::$app->request->queryParams, $id);
+        $archivosProvider = (new ArchivosSearch())->search(Yii::$app->request->queryParams, $id);
 
         $listaPadres['listaPadres'] =
             $model->tipo->padre_id !== null
                 ? Utility::listaPadres($model->tipo->padre_id)
                 : [];
 
+        $model->listaGeneros = Utility::listaGenerosId($id);
+
         return $this->render('update', [
             'model' => $model,
+            'participantesProvider' => $participantesProvider,
+            'archivosProvider' => $archivosProvider,
             'listaTipos' => Utility::listaTipos(),
             'listaGeneros' => Utility::listaGeneros(),
             'listaPersonas' => Utility::listaPersonas(),
@@ -283,10 +246,11 @@ class ShowsController extends Controller
     }
 
     /**
+     * Devuelve la informacion necesaria para la creacion o actualizacion del tipo de un show.
      * @param $id
      * @return array|bool
      */
-    public function actionAjaxCreateInfo($id)
+    public function actionAjaxCreateInfo($id, $show_id = null)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -297,6 +261,7 @@ class ShowsController extends Controller
             $info[] = Shows::find()
                 ->select('titulo')
                 ->where(['tipo_id' => $padre_id])
+                ->andWhere(['not', ['id' => $show_id]])
                 ->indexBy('id')
                 ->column();
         } else {

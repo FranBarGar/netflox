@@ -6,6 +6,9 @@ use Yii;
 use app\models\Participantes;
 use app\models\ParticipantesSearch;
 use yii\filters\AccessControl;
+use yii\grid\GridView;
+use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -71,6 +74,73 @@ class ParticipantesController extends Controller
     }
 
     /**
+     * Finds the Participantes model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return Participantes the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Participantes::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * Creates a new Participantes model.
+     * @return string
+     * @throws \Exception
+     */
+    public function actionAjaxCreate()
+    {
+        $model = new Participantes();
+        $model->show_id = Yii::$app->request->post('show_id');
+        $model->persona_id = Yii::$app->request->post('persona_id');
+        $model->rol_id = Yii::$app->request->post('rol_id');
+
+        if ($model->save()) {
+            $participantesProvider = (new ParticipantesSearch())->search(Yii::$app->request->queryParams, $model->show_id);
+
+            return json_encode(GridView::widget([
+                'summary' => '',
+                'dataProvider' => $participantesProvider,
+                'columns' => [
+                    'persona.nombre',
+                    'rol.rol',
+                    [
+                        'class' => 'yii\grid\ActionColumn',
+                        'template' => '{update}{delete}',
+                        'buttons' => [
+                            'update' => function ($url, $model) {
+                                return Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url);
+                            },
+                            'delete' => function ($url, $model) {
+                                return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+                                    'data' => ['method' => 'post']
+                                ]);
+                            }
+
+                        ],
+                        'urlCreator' => function ($action, $model, $key, $index) {
+                            if ($action === 'update') {
+                                return Url::to(['participantes/update', 'id' => $model->id]);
+                            }
+                            if ($action === 'delete') {
+                                return Url::to(['participantes/delete', 'id' => $model->id]);
+                            }
+                        }
+                    ],
+                ],
+            ]));
+        }
+
+        return json_encode('');
+    }
+
+    /**
      * Creates a new Participantes model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
@@ -120,21 +190,5 @@ class ParticipantesController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the Participantes model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Participantes the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Participantes::findOne($id)) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

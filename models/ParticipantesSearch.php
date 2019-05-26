@@ -34,10 +34,11 @@ class ParticipantesSearch extends Participantes
      * Creates data provider instance with search query applied
      *
      * @param array $params
+     * @param null $show_id
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $show_id = null)
     {
         $query = Participantes::find();
 
@@ -58,10 +59,12 @@ class ParticipantesSearch extends Participantes
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'show_id' => $this->show_id,
+            'show_id' => $show_id ?: $this->show_id,
             'persona_id' => $this->persona_id,
             'rol_id' => $this->rol_id,
         ]);
+
+        $query->orderBy('rol_id, persona_id');
 
         return $dataProvider;
     }

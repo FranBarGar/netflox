@@ -154,7 +154,6 @@ CREATE TABLE comentarios
                               REFERENCES usuarios (id)
                               ON DELETE CASCADE
                               ON UPDATE CASCADE
-  -- TODO: En caso de ser una valoración, el usuario_id y el show_id en conjunto son uniques y la valoracion debe ser null
 );
 ALTER TABLE comentarios
 ADD CONSTRAINT fk1_relacion_involutiva_comentarios
@@ -254,7 +253,6 @@ VALUES ('Los últimos Jedi', 'uploads/jedi.jpg', 'https://www.youtube.com/watch?
      , ('Dark Coussins', NULL, NULL, '2016-06-23', 42, '', 4, 18) -- Capitulo: id=22
      , ('Covem', 'uploads/ahs.jpg', 'https://www.youtube.com/watch?v=-9KZr2Vn7CQ', '2013-06-23', 13, 'La temática de la historia es acerca de la brujería. Se sitúa en 2013, con flashbacks del siglo XIX. Cuando la familia de Zoe Benson descubre que tiene habilidades diferentes es enviada a Miss Robicheaux Academy, instituto que presenta una crisis debido a la posible extinción de las descendientes de Salem, donde encuentra a tres jóvenes brujas más, la caprichosa y vanidosa Madison Montgomery, Queenie, una muñeca vudú humana, y Nan, quien posee clarividencia. Cordelia Foxx, directora del instituto y su madre Fiona Goode, bruja Suprema del aquelarre (la más poderosa). Hacen lo posible por mantener su linaje en pie, luchando contra sus enemigos, los cazadores de brujas y la reina Vudú Marie Laveau. Mientras que Fiona, en la búsqueda de sus intereses personales se encuentra con la sádica racista Delphine LaLaurie, inmortal debido a un hechizo Vudú desde el siglo XIX por culpa de Laveau. La historia se complica con los intentos de la bruja fanática de la moda y líder del Consejo de brujas Myrtle Snow de sacar a flote las perversas intenciones de Fiona, así como también la llegada de la resucitada bruja del pantano Misty Day. Sus temas principales son la opresión y sobre usar todo el potencial que tenemos, así como también la necesidad de reconocer y pertenecer a una "tribu".', 3, 4); -- Temporada: id=23
 
--- TODO:
 INSERT INTO archivos (link, descripcion, show_id)
 VALUES  ('uploads/jedi.mp4', 'Trailer', 1)
      , ('uploads/interestelar.mp4', 'Trailer', 2)
@@ -311,6 +309,3 @@ INSERT INTO accion (accion)
 VALUES ('DROPPED')
      , ('WATCHING')
      , ('WATCHED');
-
-DROP TABLE IF EXISTS duraciones CASCADE;
-DROP TABLE IF EXISTS shows_descargas CASCADE;

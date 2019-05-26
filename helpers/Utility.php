@@ -4,9 +4,11 @@ namespace app\helpers;
 
 use app\models\Accion;
 use app\models\Generos;
+use app\models\Participantes;
 use app\models\Personas;
 use app\models\Roles;
 use app\models\Shows;
+use app\models\ShowsGeneros;
 use app\models\Tipos;
 use Yii;
 
@@ -241,6 +243,19 @@ EOJS;
     }
 
     /**
+     * Lista completa de generos.
+     * @return array
+     */
+    public static function listaGenerosId($id)
+    {
+        return ShowsGeneros::find()
+            ->select('generos.id')
+            ->joinWith('genero')
+            ->where(['show_id' => $id])
+            ->column();
+    }
+
+    /**
      * Pinta los comentarios anidados.
      * @param $comentarios
      * @param $vista
@@ -268,5 +283,54 @@ EOJS;
         }
 
         return $str;
+    }
+
+    /**
+     * Guarda una lista de generos con el show indicado.
+     * @param $listaGeneros
+     * @param $show_id
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public static function massiveSaveGeneros($listaGeneros, $show_id)
+    {
+        if (!empty($listaGeneros)) {
+            $aBorrar = ShowsGeneros::find()
+                ->where(['show_id' => $show_id])
+                ->andWhere(['not', ['genero_id' => $listaGeneros]])
+                ->all();
+            foreach ($aBorrar as $genero) {
+                $genero->delete();
+            }
+
+            foreach ($listaGeneros as $genero_id) {
+                $show_generos = new ShowsGeneros();
+                $show_generos->show_id = $show_id;
+                $show_generos->genero_id = $genero_id;
+                $show_generos->save();
+            }
+        }
+    }
+
+    /**
+     * Guarda una lista de generos con el show indicado.
+     * @param $listaParticipantes
+     * @param $show_id
+     */
+    public static function massiveSaveParticipantes($listaParticipantes, $show_id)
+    {
+        if (!empty($listaParticipantes)) {
+            foreach ($listaParticipantes as $rolId => $personas) {
+                if (!empty($personas)) {
+                    foreach ($personas as $personaId) {
+                        $participantes = new Participantes();
+                        $participantes->show_id = $show_id;
+                        $participantes->persona_id = $personaId;
+                        $participantes->rol_id = $rolId;
+                        $participantes->save();
+                    }
+                }
+            }
+        }
     }
 }
