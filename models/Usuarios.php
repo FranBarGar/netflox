@@ -240,4 +240,13 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
     {
         return $this->hasMany(UsuariosShows::className(), ['usuario_id' => 'id'])->inverseOf('usuario');
     }
+
+    /**
+     * Devuelve el enlace a la imagen de portada, en caso de no tener devuelve la imagen por defecto.
+     * @return string
+     */
+    public function getImagenLink()
+    {
+        return $this->imagen ?: self::IMAGEN;
+    }
 }

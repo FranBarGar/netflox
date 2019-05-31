@@ -25,7 +25,7 @@ $this->registerCss(Utility::CSS);
             'dataProvider' => $dataProvider,
             'summary' => '',
             'itemView' => function ($model, $key, $index, $widget) {
-                return $this->render('_valoracionView.php', ['model' => $model]);
+                return $this->render('_valoracionViewWithShowName.php', ['model' => $model]);
             },
         ]) ?>
     </div>

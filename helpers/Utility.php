@@ -39,7 +39,7 @@ class Utility
 EOCSS;
 
     const AJAX_VOTAR = <<<EOJS
-    function votar() {
+    votar = function() {
         var el = $(this);
         var id = el.data('voto-id');
         var voto = el.data('voto');

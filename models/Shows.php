@@ -31,7 +31,6 @@ use yii\web\UploadedFile;
  * @property ShowsGeneros[] $showsGeneros
  * @property Generos[] $generos
  * @property UsuariosShows[] $usuariosShows
- * @property UsuariosShows[] $usuariosShows0
  */
 class Shows extends \yii\db\ActiveRecord
 {
@@ -321,14 +320,6 @@ class Shows extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getUsuariosShows0()
-    {
-        return $this->hasMany(UsuariosShows::className(), ['accion_id' => 'id'])->inverseOf('accion');
-    }
-
-    /**
      * Busca las valoraciones del show actual.
      * @return array|\yii\db\ActiveRecord[]
      */
@@ -351,8 +342,23 @@ class Shows extends \yii\db\ActiveRecord
     }
 
     /**
+     * Devuelve el nombre completo del show.
+     * @param string $str
+     * @return string
+     */
+    public function getFullTittle($str = '')
+    {
+        $str = $this->titulo . (empty($str) ? '' : (', ' . $str));
+
+        if ($this->show != null) {
+            return $this->show->getFullTittle($str);
+        }
+
+        return $str;
+    }
+
+    /**
      * Metodo para buscar los shows que tienen como padre id el del modelo actual.
-     * @param int $id
      * @return \yii\db\ActiveQuery
      */
     public function findChildrens()

@@ -34,13 +34,15 @@ class UsuariosShowsSearch extends UsuariosShows
     /**
      * Creates data provider instance with search query applied
      *
-     * @param array $params
+     * @param $params
+     * @param array $ids
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $ids = [])
     {
-        $query = UsuariosShows::find();
+        $query = UsuariosShows::find()
+            ->with('accion');
 
         // add conditions that should always apply here
 
@@ -59,12 +61,14 @@ class UsuariosShowsSearch extends UsuariosShows
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'usuario_id' => $this->usuario_id,
+            'usuario_id' => $this->usuario_id ?: $ids,
             'show_id' => $this->show_id,
             'accion_id' => $this->accion_id,
             'created_at' => $this->created_at,
             'ended_at' => $this->ended_at,
         ]);
+
+        $query->orderBy('created_at DESC');
 
         return $dataProvider;
     }

@@ -35,11 +35,12 @@ class ComentariosSearch extends Comentarios
     /**
      * Creates data provider instance with search query applied
      *
-     * @param array $params
+     * @param $params
+     * @param array $ids
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $ids = [])
     {
         $query = Comentarios::find()
             ->select('
@@ -72,7 +73,7 @@ class ComentariosSearch extends Comentarios
             'created_at' => $this->created_at,
             'padre_id' => $this->padre_id,
             'show_id' => $this->show_id,
-            'comentarios.usuario_id' => $this->usuario_id,
+            'comentarios.usuario_id' => $this->usuario_id ?: $ids,
         ]);
 
         $query->andFilterWhere(['ilike', 'cuerpo', $this->cuerpo]);
@@ -80,7 +81,7 @@ class ComentariosSearch extends Comentarios
         if ($this->orderBy != null) {
             $query->orderBy($this->orderBy . ' ' . $this->orderType . ', created_at');
         } else {
-            $query->orderBy('created_at');
+            $query->orderBy('created_at DESC');
         }
 
         return $dataProvider;

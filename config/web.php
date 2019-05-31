@@ -8,6 +8,7 @@ $log = require __DIR__ . '/log.php';
 
 $config = [
     'id' => 'basic',
+    'name' => 'Netflox',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'aliases' => [
@@ -18,6 +19,19 @@ $config = [
     ],
     'language' => 'es-ES',
     'components' => [
+        'i18n' => [
+            'translations' => [
+                'app*' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@app/messages',
+                    //'sourceLanguage' => 'en-US',
+                    'fileMap' => [
+                        'app' => 'app.php',
+                        'app/error' => 'error.php',
+                    ],
+                ],
+            ],
+        ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'I-zY3fgB2aJsvpHuOeYxIc2MA-A9hcmH',

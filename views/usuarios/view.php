@@ -1,43 +1,63 @@
 <?php
 
+use app\helpers\Utility;
+use kartik\tabs\TabsX;
 use yii\helpers\Html;
+use yii\widgets\ActiveForm;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Usuarios */
 
-$this->title = $model->id;
+$this->title = $model->nick;
 $this->params['breadcrumbs'][] = ['label' => 'Usuarios', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="usuarios-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="col-md-3">
+        <?= Html::img($model->getImagenLink(), ['alt' => 'Enlace roto', 'class' => 'img-responsive img-circle', 'width' => '100%']) ?>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
+        <?php
+            if (Yii::$app->user->id != $model->id):
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'nick',
-            'email:email',
-            'biografia',
-            'imagen',
-            'created_at',
-            'token',
-            'password',
-        ],
-    ]) ?>
+        ?>
 
+        <?php endif; ?>
+
+        <div class="row">
+            <h2><?= Html::encode($model->nick) ?></h2>
+
+            <?php if (Yii::$app->user->id == $model->id): ?>
+                <div class="biografia-form">
+                    <?php $form = ActiveForm::begin(['action' => ['usuarios/update', 'id' => Yii::$app->user->id]]); ?>
+                    <?= $form->field($model, 'biografia')->textarea(['rows' => '9']) ?>
+                    <div class="form-group">
+                        <?= Html::submitButton('Guardar', ['class' => 'btn btn-block btn-primary', 'name' => 'login-button']) ?>
+                    </div>
+                    <?php ActiveForm::end(); ?>
+                </div>
+            <?php else: ?>
+                <label for="biografia">Biografia</label>
+                <p id="biografia"><?= Html::encode($model->biografia ?: 'Sin biografia aun.') ?></p>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <?php
+        $items = [];
+        $items[] = Utility::tabXOption('Sinopsis', '<p>' . Html::encode($model->biografia) . '</p>');
+        ?>
+
+        <?=
+        TabsX::widget([
+            'items' => $items,
+            'position' => TabsX::POS_ABOVE,
+            'bordered' => true,
+            'encodeLabels' => false
+        ]);
+        ?>
+    </div>
 </div>

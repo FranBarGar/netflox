@@ -7,6 +7,7 @@ use Yii;
 use app\models\Comentarios;
 use app\models\ComentariosSearch;
 use yii\filters\AccessControl;
+use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -32,7 +33,7 @@ class ComentariosController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['view', 'index', 'create', 'valorar'],
+                        'actions' => ['view', 'index', 'create', 'valorar', 'get-valoraciones'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -185,6 +186,39 @@ class ComentariosController extends Controller
         }
 
         return $this->redirect(['shows/view', 'id' => $model->show_id]);
+    }
+
+    /**
+     * @param $ids
+     * @return string
+     * @throws \Exception
+     */
+    public function actionGetValoraciones($ids)
+    {
+        $ids = json_decode($ids);
+        $searchModel = new ComentariosSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $ids);
+
+        if (is_array($ids)) {
+            $str = 'Valoraciones de seguidores';
+        } elseif (Yii::$app->user->id == $ids) {
+            $str = 'Mis valoraciones';
+        } else {
+            $str = 'Valoraciones de ' .
+                Html::a(Yii::$app->user->identity->nick, [
+                    'usuarios/view',
+                    'id' => $ids
+                ]);
+        }
+
+        return '<div class="col-xs-12"><h1>' . $str . '</h1></div><hr>' .
+            \yii\widgets\ListView::widget([
+                'dataProvider' => $dataProvider,
+                'summary' => '',
+                'itemView' => function ($model, $key, $index, $widget) {
+                    return $this->renderPartial('_valoracionViewWithShowName.php', ['model' => $model]);
+                },
+            ]);
     }
 
     /**

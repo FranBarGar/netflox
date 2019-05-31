@@ -195,7 +195,7 @@ CREATE TABLE usuarios_shows
                                  ON DELETE CASCADE
                                  ON UPDATE CASCADE
   , accion_id     BIGINT       NOT NULL
-                               REFERENCES shows(id)
+                               REFERENCES accion(id)
                                  ON DELETE CASCADE
                                  ON UPDATE CASCADE
   , created_at    TIMESTAMP    NOT NULL

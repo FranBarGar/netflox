@@ -6,6 +6,7 @@ use Yii;
 use app\models\UsuariosShows;
 use app\models\UsuariosShowsSearch;
 use yii\filters\AccessControl;
+use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -31,12 +32,12 @@ class UsuariosShowsController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['create'],
+                        'actions' => ['create', 'get-acciones', 'update'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
                     [
-                        'actions' => ['delete', 'update', 'index', 'view'],
+                        'actions' => ['delete', 'index', 'view'],
                         'allow' => true,
                         'roles' => ['@'],
                         'matchCallback' => function ($rule, $action) {
@@ -126,6 +127,45 @@ class UsuariosShowsController extends Controller
         }
 
         return $this->redirect(['shows/view', 'id' => $id]);
+    }
+
+    /**
+     * Lists all UsuariosShows models.
+     *
+     * @param $ids
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public function actionGetAcciones($ids)
+    {
+        $ids = json_decode($ids);
+        $searchModel = new UsuariosShowsSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $ids);
+
+
+        if (is_array($ids)) {
+            $str = 'Acciones de seguidores';
+        } elseif (Yii::$app->user->id == $ids) {
+            $str = 'Mis acciones';
+        } else {
+            $str = 'Acciones de ' .
+                Html::a(Yii::$app->user->identity->nick, [
+                    'usuarios/view',
+                    'id' => $ids
+                ]);
+        }
+
+
+        return '<div class="col-xs-12"><h1>' . $str . '</h1></div><hr>' .
+            \yii\widgets\ListView::widget([
+                'dataProvider' => $dataProvider,
+                'summary' => '',
+                'itemView' => function ($model, $key, $index, $widget) {
+                    return $this->renderPartial('_smallView.php', ['model' => $model]);
+                },
+            ]);
     }
 
     /**

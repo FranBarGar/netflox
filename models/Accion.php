@@ -9,11 +9,19 @@ use Yii;
  *
  * @property int $id
  * @property string $accion
+ *
+ * @property UsuariosShows[] $usuariosShows
  */
 class Accion extends \yii\db\ActiveRecord
 {
     /** @var string */
     const DROPPED = 'DROPPED';
+
+    /** @var string */
+    const WATCHED = 'WATCHED';
+
+    /** @var string */
+    const WATCHING = 'WATCHING';
 
     /**
      * {@inheritdoc}
@@ -43,5 +51,13 @@ class Accion extends \yii\db\ActiveRecord
             'id' => 'ID',
             'accion' => 'Accion',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUsuariosShows()
+    {
+        return $this->hasMany(UsuariosShows::className(), ['accion_id' => 'id'])->inverseOf('accion');
     }
 }

@@ -14,8 +14,8 @@ use Yii;
  * @property string $created_at
  * @property string $ended_at
  *
+ * @property Accion $accion
  * @property Shows $show
- * @property Shows $accion
  * @property Usuarios $usuario
  */
 class UsuariosShows extends \yii\db\ActiveRecord
@@ -34,12 +34,12 @@ class UsuariosShows extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['usuario_id', 'show_id'], 'required'],
+            [['usuario_id', 'show_id', 'accion_id'], 'required'],
             [['usuario_id', 'show_id', 'accion_id'], 'default', 'value' => null],
             [['usuario_id', 'show_id', 'accion_id'], 'integer'],
             [['created_at', 'ended_at'], 'safe'],
+            [['accion_id'], 'exist', 'skipOnError' => true, 'targetClass' => Accion::className(), 'targetAttribute' => ['accion_id' => 'id']],
             [['show_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shows::className(), 'targetAttribute' => ['show_id' => 'id']],
-            [['accion_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shows::className(), 'targetAttribute' => ['accion_id' => 'id']],
             [['usuario_id'], 'exist', 'skipOnError' => true, 'targetClass' => Usuarios::className(), 'targetAttribute' => ['usuario_id' => 'id']],
         ];
     }
@@ -62,17 +62,17 @@ class UsuariosShows extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getShow()
+    public function getAccion()
     {
-        return $this->hasOne(Shows::className(), ['id' => 'show_id'])->inverseOf('usuariosShows');
+        return $this->hasOne(Accion::className(), ['id' => 'accion_id'])->inverseOf('usuariosShows');
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getAccion()
+    public function getShow()
     {
-        return $this->hasOne(Shows::className(), ['id' => 'accion_id'])->inverseOf('usuariosShows0');
+        return $this->hasOne(Shows::className(), ['id' => 'show_id'])->inverseOf('usuariosShows');
     }
 
     /**
