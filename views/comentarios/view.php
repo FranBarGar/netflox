@@ -14,7 +14,7 @@ use yii\helpers\Url;
             por <?= Html::a(Html::encode($model->usuario->nick), ['usuarios/view', 'id' => $model->usuario->id]) ?>
             el <?= Yii::$app->formatter->asDatetime($model->created_at) ?>
         </div>
-        <div class="col-md-4 col-xs-4">
+        <div class="col-md-4 col-xs-4 text-right">
             <?php
             if ($model->edited_at !== null) {
                 echo 'Ultima edicion: ' . Yii::$app->formatter->asDatetime($model->edited_at);

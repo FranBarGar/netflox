@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="usuarios-shows-view">
 
-    <div class="col-xs-12">
+    <div class="col-xs-12 border-bottom-custom" style="padding-top: 5px; padding-bottom: 5px">
         <p>
             <?= Yii::t('app', $model->accion->accion, [
                 'user' => Html::a($model->usuario->nick, ['usuarios/view', 'id' => Yii::$app->user->id]),
@@ -21,7 +21,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 'date' => Yii::$app->formatter->asDate($model->created_at, 'long'),
             ]) ?>
         </p>
-        <hr>
     </div>
 
 </div>

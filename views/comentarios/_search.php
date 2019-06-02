@@ -10,6 +10,16 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model app\models\ComentariosSearch */
 /* @var $form yii\widgets\ActiveForm */
+
+$js = <<<EOJS
+    $('#krajee-sucks').val($('#comentariossearch-valoracion').val());
+    $('#krajee-sucks').rating('create');
+    $('#krajee-sucks').on('change', (e) => {
+       $('#comentariossearch-valoracion').val(e.target.value);
+    });
+EOJS;
+
+$this->registerJs($js);
 ?>
 
 <div class="row all-comments comentarios-order">
@@ -27,10 +37,10 @@ use yii\widgets\ActiveForm;
     <div class="row">
         <div class="col-md-12">
             <div class="form-group col-md-6">
+                <label for="krajee-sucks">Valoracion</label>
+                <input type="text" id="krajee-sucks" class="form-control">
                 <?=
-//                $form->field($model, 'valoracion')->widget(StarRating::classname());
-
-                $form->field($model, 'valoracion');
+                $form->field($model, 'valoracion')->hiddenInput()->label(false);
                 ?>
             </div>
 

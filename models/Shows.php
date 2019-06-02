@@ -189,14 +189,7 @@ class Shows extends \yii\db\ActiveRecord
     {
         $this->imgUpload = UploadedFile::getInstance($this, 'imgUpload');
         if ($this->imgUpload !== null) {
-            $fileName = Yii::getAlias('@uploads/' . $this->imgUpload->baseName . '.' . $this->imgUpload->extension);
-            $this->imgUpload->saveAs($fileName);
-
-            $imagine = new Imagine();
-            $image = $imagine->open($fileName);
-            $image->resize(new Box(200, 200))->save($fileName);
-
-            $this->imagen = $fileName;
+            $this->imagen = Utility::uploadImg($this->imgUpload);
             $this->imgUpload = null;
         }
     }

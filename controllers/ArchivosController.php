@@ -2,13 +2,13 @@
 
 namespace app\controllers;
 
+use Throwable;
 use Yii;
 use app\models\Archivos;
 use app\models\ArchivosSearch;
+use yii\db\StaleObjectException;
 use yii\filters\AccessControl;
 use yii\grid\GridView;
-use yii\helpers\Html;
-use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -25,7 +25,7 @@ class ArchivosController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -47,8 +47,11 @@ class ArchivosController extends Controller
 
     /**
      * Descarga un archivo de la maquina.
+     *
      * @param $id
+     *
      * @return \yii\console\Response|\yii\web\Response
+     *
      * @throws NotFoundHttpException
      */
     public function actionFile($id)
@@ -69,6 +72,7 @@ class ArchivosController extends Controller
 
     /**
      * Lists all Archivos models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -84,8 +88,11 @@ class ArchivosController extends Controller
 
     /**
      * Displays a single Archivos model.
+     *
      * @param integer $id
+     *
      * @return mixed
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
@@ -98,8 +105,11 @@ class ArchivosController extends Controller
     /**
      * Finds the Archivos model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param integer $id
+     *
      * @return Archivos the loaded model
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
@@ -114,6 +124,7 @@ class ArchivosController extends Controller
     /**
      * Creates a new Archivos model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
@@ -131,7 +142,9 @@ class ArchivosController extends Controller
 
     /**
      * Creates a new Participantes model.
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public function actionAjaxCreate()
@@ -170,8 +183,11 @@ class ArchivosController extends Controller
     /**
      * Updates an existing Archivos model.
      * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param integer $id
+     *
      * @return mixed
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate($id)
@@ -189,10 +205,12 @@ class ArchivosController extends Controller
 
     /**
      * Deletes an existing Archivos model.
+     *
      * @return false|string
+     *
      * @throws NotFoundHttpException
-     * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
+     * @throws Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete()
     {

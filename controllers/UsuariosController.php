@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\helpers\Utility;
 use app\models\ComentariosSearch;
 use app\models\Seguidores;
+use app\models\SeguidoresSearch;
 use app\models\Usuarios;
 use app\models\UsuariosSearch;
 use app\models\UsuariosShows;
@@ -93,13 +94,18 @@ class UsuariosController extends Controller
      */
     public function actionView($id)
     {
+        $searchModel = new ComentariosSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
         if ($id == Yii::$app->user->id) {
             return $this->redirect(['usuarios/my-profile', 'id' => $id]);
         }
 
         return $this->render('view', [
-            'visitor' => $this->findModel(Yii::$app->user->id),
             'model' => $this->findModel($id),
+            'followingId' => $this->getSeguidoresId($id),
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 

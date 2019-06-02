@@ -8,20 +8,20 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 ?>
-<div class="usuarios-shows-index">
+<div class="comentarios-index">
 
     <div class="col-xs-12 border-bottom-custom" style="margin-top: 5px">
         <h1> <?= $title ?> </h1>
     </div>
+
     <?=
     \yii\widgets\ListView::widget([
         'dataProvider' => $dataProvider,
         'summary' => '',
         'itemView' => function ($model, $key, $index, $widget) {
-            return $this->render('_smallView.php', ['model' => $model]);
+            return $this->render('_valoracionView.php', ['model' => $model]);
         },
     ])
     ?>
-
 
 </div>

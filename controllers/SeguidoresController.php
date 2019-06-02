@@ -6,6 +6,7 @@ use Yii;
 use app\models\Seguidores;
 use app\models\SeguidoresSearch;
 use yii\filters\AccessControl;
+use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -31,7 +32,7 @@ class SeguidoresController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['view', 'index', 'create',],
+                        'actions' => ['view', 'index', 'create', 'get-seguidores'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -78,6 +79,22 @@ class SeguidoresController extends Controller
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
+    }
+
+    /**
+     * Finds the Seguidores model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return Seguidores the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Seguidores::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 
     /**
@@ -133,18 +150,29 @@ class SeguidoresController extends Controller
     }
 
     /**
-     * Finds the Seguidores model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Seguidores the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return string
+     * @throws NotFoundHttpException
      */
-    protected function findModel($id)
+    public function actionGetSeguidores()
     {
-        if (($model = Seguidores::findOne($id)) !== null) {
-            return $model;
+        $searchModel = new SeguidoresSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $search = Yii::$app->request->get('SeguidoresSearch');
+
+        $seguidorId = isset($search['seguidor_id']) ? $search['seguidor_id'] : null;
+//        $seguidoId = isset($search['seguido_id']) ? $search['seguido_id'] : null;
+
+        if ($seguidorId != '') {
+            $str = 'Siguiendo';
+        } else {
+            $str = 'Seguidores';
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        return $this->renderPartial('indexPartial.php', [
+            'title' => $str,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 }

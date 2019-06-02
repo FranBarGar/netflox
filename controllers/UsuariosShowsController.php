@@ -138,34 +138,25 @@ class UsuariosShowsController extends Controller
      *
      * @throws \Exception
      */
-    public function actionGetAcciones($ids)
+    public function actionGetAcciones()
     {
-        $ids = json_decode($ids);
         $searchModel = new UsuariosShowsSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $ids);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        $ids = Yii::$app->request->get('UsuariosShowsSearch')['usuario_id'];
 
         if (is_array($ids)) {
-            $str = 'Acciones de seguidores';
+            $str = 'Acciones de seguidos';
         } elseif (Yii::$app->user->id == $ids) {
             $str = 'Mis acciones';
         } else {
-            $str = 'Acciones de ' .
-                Html::a(Yii::$app->user->identity->nick, [
-                    'usuarios/view',
-                    'id' => $ids
-                ]);
+            $str = 'Acciones';
         }
 
-
-        return '<div class="col-xs-12"><h1>' . $str . '</h1></div><hr>' .
-            \yii\widgets\ListView::widget([
-                'dataProvider' => $dataProvider,
-                'summary' => '',
-                'itemView' => function ($model, $key, $index, $widget) {
-                    return $this->renderPartial('_smallView.php', ['model' => $model]);
-                },
-            ]);
+        return $this->renderPartial('index.php', [
+            'title' => $str,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**

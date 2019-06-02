@@ -10,7 +10,10 @@ use app\models\Roles;
 use app\models\Shows;
 use app\models\ShowsGeneros;
 use app\models\Tipos;
+use Imagine\Image\Box;
 use Yii;
+use yii\web\UploadedFile;
+use Imagine\Gd\Imagine;
 
 /**
  * Clase Utility.
@@ -21,16 +24,20 @@ class Utility
      * @var string CSS para los comentarios.
      */
     const CSS = <<<EOCSS
-    .all-comments {
-        background-color: #fff5ed;
+    .comentario-border {
+        border-left: 2px solid black;
+    }
+    .border-bottom-custom {
+        margin: 0px 5px 5px 0px;
+        border: 2px solid black;
+        border-radius: 5px;
     }
     .comentarios-order {
         padding-top: 10px;
         margin-top: 10px;
     }
     .comentario {
-        border: 2px solid white;
-        padding: 5px 10px 5px 5px;
+        padding: 5px 10px 10px 5px;
     }
     .comentario-margin {
         margin-right: 0px;
@@ -269,7 +276,12 @@ EOJS;
         if ($comentarios) {
             $offset = $level == 0 ? 0 : 1;
             $col = $level == 0 ? 12 : 11;
-            $str .= '<div class="col-md-offset-' . $offset . ' col-md-' . $col . ' col-xs-offset-' . $offset . ' col-xs-' . $col . ' comentario-margin">';
+            $str .= '<div class="
+                col-md-offset-' . $offset . ' 
+                col-md-' . $col . ' col-xs-offset-' . $offset . ' 
+                col-xs-' . $col . ' 
+                comentario-margin 
+                comentario-border">';
             foreach ($comentarios as $comentario) {
                 $comentarioVacio->padre_id = $comentario->id;
                 $str .= $vista->render('../comentarios/view', [
@@ -283,6 +295,21 @@ EOJS;
         }
 
         return $str;
+    }
+
+    /**
+     * Sube una imagen en principio a local.
+     */
+    public static function uploadImg($imgUpload)
+    {
+        $fileName = Yii::getAlias('@uploads/' . $imgUpload->baseName . '.' . $imgUpload->extension);
+        $imgUpload->saveAs($fileName);
+
+        $imagine = new Imagine();
+        $image = $imagine->open($fileName);
+        $image->resize(new Box(200, 200))->save($fileName);
+
+        return $fileName;
     }
 
     /**

@@ -11,6 +11,8 @@ use yii\helpers\Url;
 $this->title = 'Valoraciones';
 $this->params['breadcrumbs'][] = $this->title;
 
+\kartik\rating\StarRatingAsset::register($this);
+
 $this->registerJs(Utility::AJAX_VOTAR);
 $this->registerCss(Utility::CSS);
 ?>
@@ -25,7 +27,7 @@ $this->registerCss(Utility::CSS);
             'dataProvider' => $dataProvider,
             'summary' => '',
             'itemView' => function ($model, $key, $index, $widget) {
-                return $this->render('_valoracionViewWithShowName.php', ['model' => $model]);
+                return $this->render('_valoracionView.php', ['model' => $model]);
             },
         ]) ?>
     </div>

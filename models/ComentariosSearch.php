@@ -17,9 +17,9 @@ class ComentariosSearch extends Comentarios
     public function rules()
     {
         return [
-            [['id', 'padre_id', 'show_id', 'usuario_id'], 'integer'],
+            [['id', 'padre_id', 'show_id'], 'integer'],
             [['valoracion'], 'number'],
-            [['cuerpo', 'created_at', 'orderBy', 'orderType'], 'safe'],
+            [['cuerpo', 'created_at', 'orderBy', 'orderType', 'usuario_id'], 'safe'],
         ];
     }
 
@@ -40,8 +40,9 @@ class ComentariosSearch extends Comentarios
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $ids = [])
+    public function search($params)
     {
+//        var_dump($_POST, $_GET);die;
         $query = Comentarios::find()
             ->select('
                 comentarios.*,
@@ -73,7 +74,7 @@ class ComentariosSearch extends Comentarios
             'created_at' => $this->created_at,
             'padre_id' => $this->padre_id,
             'show_id' => $this->show_id,
-            'comentarios.usuario_id' => $this->usuario_id ?: $ids,
+            'comentarios.usuario_id' => $this->usuario_id,
         ]);
 
         $query->andFilterWhere(['ilike', 'cuerpo', $this->cuerpo]);

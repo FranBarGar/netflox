@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\UsuariosShows;
@@ -17,8 +18,8 @@ class UsuariosShowsSearch extends UsuariosShows
     public function rules()
     {
         return [
-            [['id', 'usuario_id', 'show_id', 'accion_id'], 'integer'],
-            [['created_at', 'ended_at'], 'safe'],
+            [['id', 'show_id', 'accion_id'], 'integer'],
+            [['created_at', 'ended_at', 'usuario_id'], 'safe'],
         ];
     }
 
@@ -39,7 +40,7 @@ class UsuariosShowsSearch extends UsuariosShows
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $ids = [])
+    public function search($params)
     {
         $query = UsuariosShows::find()
             ->with('accion');
@@ -61,7 +62,7 @@ class UsuariosShowsSearch extends UsuariosShows
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'usuario_id' => $this->usuario_id ?: $ids,
+            'usuario_id' => $this->usuario_id,
             'show_id' => $this->show_id,
             'accion_id' => $this->accion_id,
             'created_at' => $this->created_at,
