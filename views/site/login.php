@@ -29,9 +29,6 @@ $this->registerJs(Utility::togglePassword());
             <?php $form = ActiveForm::begin(); ?>
                 <?= $form->field($model, 'username', [
                     'inputTemplate' => Utility::inputWithIcon('user'),
-                    ])->textInput([
-                    'autofocus' => true,
-                    'inputTemplate'
                     ]) ?>
                 <?= $form->field($model, 'password', [
                     'inputTemplate' => Utility::inputWithIcon('eye-close'),
