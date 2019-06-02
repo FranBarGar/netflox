@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\UsuariosShows;
@@ -17,8 +18,8 @@ class UsuariosShowsSearch extends UsuariosShows
     public function rules()
     {
         return [
-            [['id', 'usuario_id', 'show_id', 'accion_id'], 'integer'],
-            [['created_at', 'ended_at'], 'safe'],
+            [['id', 'show_id', 'accion_id'], 'integer'],
+            [['created_at', 'ended_at', 'usuario_id'], 'safe'],
         ];
     }
 
@@ -34,13 +35,15 @@ class UsuariosShowsSearch extends UsuariosShows
     /**
      * Creates data provider instance with search query applied
      *
-     * @param array $params
+     * @param $params
+     * @param array $ids
      *
      * @return ActiveDataProvider
      */
     public function search($params)
     {
-        $query = UsuariosShows::find();
+        $query = UsuariosShows::find()
+            ->with('accion');
 
         // add conditions that should always apply here
 
@@ -65,6 +68,8 @@ class UsuariosShowsSearch extends UsuariosShows
             'created_at' => $this->created_at,
             'ended_at' => $this->ended_at,
         ]);
+
+        $query->orderBy('created_at DESC');
 
         return $dataProvider;
     }

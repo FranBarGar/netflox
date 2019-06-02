@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 \kartik\rating\StarRatingAsset::register($this);
 
-$ajax = <<<EOJS
+$js = <<<EOJS
     $('div#content-container-custom ').on('click', '.pagination li a', (e) => {
         $.ajax({
             type : 'GET',
@@ -40,7 +40,7 @@ $ajax = <<<EOJS
 EOJS;
 
 
-$this->registerJs(Utility::AJAX_VOTAR . $ajax);
+$this->registerJs(Utility::AJAX_VOTAR . $js);
 $this->registerCss(Utility::CSS);
 $miId = $model->id;
 
@@ -69,12 +69,49 @@ $accionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usua
 
         <div class="row">
 
+            <?php
+            Modal::begin([
+                'header' => '<h2 class="text-left">Cambiar imagen</h2>',
+                'toggleButton' => [
+                    'label' => 'Cambiar imagen de perfil',
+                    'class' => 'btn btn-primary col-md-12 col-xs-12',
+                ],
+            ]);
+
+            $form = ActiveForm::begin(['action' => ['usuarios/update', 'id' => Yii::$app->user->id]]);
+            echo $form->field($model, 'imgUpload')->widget(FileInput::class, [
+                'options' => ['accept' => 'image/*'],
+                'pluginOptions' => [
+                    'showUpload' => false,
+                    'initialPreview' => [
+                        $model->getImagenLink()
+                    ],
+                    'initialPreviewAsData' => true,
+                    'initialCaption' => Html::encode($model->nick),
+                    'initialPreviewConfig' => [
+                        ['caption' => Html::encode($model->nick)],
+                    ],
+                    'overwriteInitial' => true,
+                    'maxFileSize' => 5000
+                ]
+            ]);
+            echo Html::submitButton('Guardar', ['class' => 'btn btn-block btn-primary']);
+            ActiveForm::end();
+
+            Modal::end();
+            ?>
         </div>
 
         <div class="row">
             <h2><?= Html::encode($model->nick) ?></h2>
-            <label for="biografia">Biografía:</label>
-            <p><?= Html::encode($model->biografia) ?></p>
+            <div class="biografia-form">
+                <?php $form = ActiveForm::begin(['action' => ['usuarios/update', 'id' => Yii::$app->user->id]]); ?>
+                <?= $form->field($model, 'biografia')->textarea(['rows' => '9']) ?>
+                <div class="form-group">
+                    <?= Html::submitButton('Guardar', ['class' => 'btn btn-block btn-primary', 'name' => 'login-button']) ?>
+                </div>
+                <?php ActiveForm::end(); ?>
+            </div>
         </div>
     </div>
 
@@ -82,7 +119,7 @@ $accionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usua
         <!-- SEGUIDORES -->
         <?=
         Html::a('Seguidores', $seguidoresUrl, [
-            'class' => 'btn btn-primary col-md-6 col-xs-6',
+            'class' => 'btn btn-primary col-md-4 col-xs-4',
             'onclick' => "
                     $.ajax({
                         type : 'GET',
@@ -96,27 +133,10 @@ $accionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usua
         ]);
         ?>
 
-        <!-- SEGUIDOS -->
-        <?=
-        Html::a('Seguidos', $seguidosUrl, [
-            'class' => 'btn btn-primary col-md-6 col-xs-6',
-            'onclick' => "
-                    $.ajax({
-                        type : 'GET',
-                        url : '$seguidosUrl',
-                        success: function(response) {
-                            $('#content-container-custom').html(response);
-                        }
-                    });
-                    return false;
-                ",
-        ]);
-        ?>
-
         <!--    MIS VALORACIONES    -->
         <?=
-        Html::a('Valoraciones', $misValoracionesUrl, [
-            'class' => 'btn btn-primary col-md-6 col-xs-6',
+        Html::a('Mis valoraciones', $misValoracionesUrl, [
+            'class' => 'btn btn-primary col-md-4 col-xs-4',
             'onclick' => "
                     $.ajax({
                         type : 'GET',
@@ -139,12 +159,70 @@ $accionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usua
 
         <!--    MIS ACCIONES    -->
         <?=
-        Html::a('Acciones', $misAccionesUrl, [
-            'class' => 'btn btn-primary col-md-6 col-xs-6',
+        Html::a('Mis acciones', $misAccionesUrl, [
+            'class' => 'btn btn-primary col-md-4 col-xs-4',
             'onclick' => "
                     $.ajax({
                         type : 'GET',
                         url : '$misAccionesUrl',
+                        success: function(response) {
+                            $('#content-container-custom').html(response);
+                        }
+                    });
+                    return false;
+                ",
+        ]);
+        ?>
+
+        <!-- SEGUIDOS -->
+        <?=
+        Html::a('Seguidos', $seguidosUrl, [
+            'class' => 'btn btn-primary col-md-4 col-xs-4',
+            'onclick' => "
+                    $.ajax({
+                        type : 'GET',
+                        url : '$seguidosUrl',
+                        success: function(response) {
+                            $('#content-container-custom').html(response);
+                        }
+                    });
+                    return false;
+                ",
+        ]);
+        ?>
+
+        <!--    VALORACIONES SEGUIDORES    -->
+        <?=
+        Html::a('Valoraciones', 'comentarios/get-valoraciones', [
+            'class' => 'btn btn-primary col-md-4 col-xs-4',
+            'onclick' => "
+                    $.ajax({
+                        type : 'GET',
+                        url : '$valoracionesUrl',
+                        success: function(response) {
+                            $('#content-container-custom').html(response);
+                            $('.voto').on('click', votar);
+                            $('input.rating-loading').rating('create', {
+                                    'size': 'sm',
+                                    'readonly': true,
+                                    'showClear': false,
+                                    'showCaption': false,
+                                });
+                        }
+                    });
+                    return false;
+                ",
+        ]);
+        ?>
+
+        <!--    ACCIONES SEGUIDORES    -->
+        <?=
+        Html::a('Acciones', $accionesUrl, [
+            'class' => 'btn btn-primary col-md-4 col-xs-4',
+            'onclick' => "
+                    $.ajax({
+                        type : 'GET',
+                        url : '$accionesUrl',
                         success: function(response) {
                             $('#content-container-custom').html(response);
                         }

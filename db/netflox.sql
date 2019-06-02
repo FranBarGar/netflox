@@ -22,13 +22,14 @@ CREATE TABLE seguidores
 (
     id          BIGSERIAL PRIMARY KEY
   , created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  , ended_at    TIMESTAMP
+  , blocked_at  TIMESTAMP
   , seguidor_id BIGINT    NOT NULL REFERENCES usuarios (id)
                           ON DELETE CASCADE
                           ON UPDATE CASCADE
   , seguido_id  BIGINT    NOT NULL REFERENCES usuarios (id)
                           ON DELETE CASCADE
                           ON UPDATE CASCADE
-  , UNIQUE (seguidor_id, seguido_id)
 );
 
 -- Peliculas, series, temporadas y capitulos
@@ -195,7 +196,7 @@ CREATE TABLE usuarios_shows
                                  ON DELETE CASCADE
                                  ON UPDATE CASCADE
   , accion_id     BIGINT       NOT NULL
-                               REFERENCES shows(id)
+                               REFERENCES accion(id)
                                  ON DELETE CASCADE
                                  ON UPDATE CASCADE
   , created_at    TIMESTAMP    NOT NULL

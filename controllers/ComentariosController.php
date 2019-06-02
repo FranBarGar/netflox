@@ -3,13 +3,19 @@
 namespace app\controllers;
 
 use app\helpers\Utility;
+use Throwable;
 use Yii;
 use app\models\Comentarios;
 use app\models\ComentariosSearch;
+use yii\db\StaleObjectException;
 use yii\filters\AccessControl;
+use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Request;
+use yii\web\Response;
+use yii\widgets\Pjax;
 
 /**
  * ComentariosController implements the CRUD actions for Comentarios model.
@@ -23,7 +29,7 @@ class ComentariosController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -32,7 +38,7 @@ class ComentariosController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['view', 'index', 'create', 'valorar'],
+                        'actions' => ['view', 'index', 'create', 'valorar', 'get-valoraciones'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -71,6 +77,7 @@ class ComentariosController extends Controller
 
     /**
      * Lists all Comentarios models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -86,8 +93,11 @@ class ComentariosController extends Controller
 
     /**
      * Displays a single Comentarios model.
+     *
      * @param integer $id
+     *
      * @return mixed
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
@@ -100,8 +110,11 @@ class ComentariosController extends Controller
     /**
      * Finds the Comentarios model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param integer $id
+     *
      * @return Comentarios the loaded model
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
@@ -116,6 +129,7 @@ class ComentariosController extends Controller
     /**
      * Creates a new Comentarios model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
@@ -132,6 +146,7 @@ class ComentariosController extends Controller
     /**
      * Creates a new Comentarios model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionValorar()
@@ -148,8 +163,11 @@ class ComentariosController extends Controller
     /**
      * Updates an existing Comentarios model.
      * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param integer $id
+     *
      * @return mixed
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate($id)
@@ -169,8 +187,11 @@ class ComentariosController extends Controller
     /**
      * Updates an existing Comentarios model.
      * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param integer $id
+     *
      * @return mixed
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionValorarUpdate($id)
@@ -188,13 +209,46 @@ class ComentariosController extends Controller
     }
 
     /**
+     * Vista parcial de las valoraciones dado unos ids.
+     *
+     * @param $ids
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public function actionGetValoraciones()
+    {
+        $searchModel = new ComentariosSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $ids = Yii::$app->request->get('ComentariosSearch')['usuario_id'];
+
+        if (is_array($ids)) {
+            $str = 'Valoraciones de seguidos';
+        } elseif (Yii::$app->user->id == $ids) {
+            $str = 'Mis valoraciones';
+        } else {
+            $str = 'Valoraciones';
+        }
+
+        return $this->renderPartial('indexPartial.php', [
+            'title' => $str,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
      * Deletes an existing Comentarios model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
      * @param integer $id
-     * @return \yii\web\Response
+     *
+     * @return Response
+     *
      * @throws NotFoundHttpException if the model cannot be found
-     * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
+     * @throws Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {

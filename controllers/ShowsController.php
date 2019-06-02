@@ -102,13 +102,16 @@ class ShowsController extends Controller
             'query' => $model->findChildrens(),
         ]);
 
+        ($valoracion = Comentarios::findOrEmpty($id))->setScenario(Comentarios::SCENARIO_VALORAR);
+        ($comentario = Comentarios::getEmpty($id))->setScenario(Comentarios::SCENARIO_COMENTAR);
+
         return $this->render('view', [
             'model' => $model,
             'dataProvider' => $dataProvider,
-            'comentarioHijo' => Comentarios::getEmpty($id),
+            'comentarioHijo' => $comentario,
             'searchModel' => $searchModel,
             'valoraciones' => $valoracionesProvider,
-            'valoracion' => Comentarios::findOrEmpty($id),
+            'valoracion' => $valoracion,
             'accion' => UsuariosShows::findOrEmpty($id),
             'listaAcciones' => Utility::listaAcciones(),
             'orderBy' => Comentarios::ORDER_BY,

@@ -17,9 +17,9 @@ class ComentariosSearch extends Comentarios
     public function rules()
     {
         return [
-            [['id', 'padre_id', 'show_id', 'usuario_id'], 'integer'],
+            [['id', 'padre_id', 'show_id'], 'integer'],
             [['valoracion'], 'number'],
-            [['cuerpo', 'created_at', 'orderBy', 'orderType'], 'safe'],
+            [['cuerpo', 'created_at', 'orderBy', 'orderType', 'usuario_id'], 'safe'],
         ];
     }
 
@@ -35,12 +35,14 @@ class ComentariosSearch extends Comentarios
     /**
      * Creates data provider instance with search query applied
      *
-     * @param array $params
+     * @param $params
+     * @param array $ids
      *
      * @return ActiveDataProvider
      */
     public function search($params)
     {
+//        var_dump($_POST, $_GET);die;
         $query = Comentarios::find()
             ->select('
                 comentarios.*,
@@ -80,7 +82,7 @@ class ComentariosSearch extends Comentarios
         if ($this->orderBy != null) {
             $query->orderBy($this->orderBy . ' ' . $this->orderType . ', created_at');
         } else {
-            $query->orderBy('created_at');
+            $query->orderBy('created_at DESC');
         }
 
         return $dataProvider;

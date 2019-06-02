@@ -9,6 +9,8 @@ use Yii;
  *
  * @property int $id
  * @property string $created_at
+ * @property string $ended_at
+ * @property string $blocked_at
  * @property int $seguidor_id
  * @property int $seguido_id
  *
@@ -31,11 +33,8 @@ class Seguidores extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['created_at'], 'safe'],
             [['seguidor_id', 'seguido_id'], 'required'],
-            [['seguidor_id', 'seguido_id'], 'default', 'value' => null],
             [['seguidor_id', 'seguido_id'], 'integer'],
-            [['seguidor_id', 'seguido_id'], 'unique', 'targetAttribute' => ['seguidor_id', 'seguido_id']],
             [['seguidor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Usuarios::className(), 'targetAttribute' => ['seguidor_id' => 'id']],
             [['seguido_id'], 'exist', 'skipOnError' => true, 'targetClass' => Usuarios::className(), 'targetAttribute' => ['seguido_id' => 'id']],
         ];

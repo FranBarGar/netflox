@@ -2,7 +2,10 @@
 
 namespace app\models;
 
+use app\helpers\Utility;
+use kartik\file\FileInput;
 use Yii;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "usuarios".
@@ -40,6 +43,12 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
      * @var string
      */
     const IMAGEN = 'images/user.jpeg';
+
+    /**
+     * Fichero a subir a la nube como imagen de perfil.
+     * @var FileInput
+     */
+    public $imgUpload;
 
     /**
      * Confirmar contraseña.
@@ -94,6 +103,7 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
             [['email'], 'email'],
             [['email'], 'unique'],
             [['imagen'], 'string'],
+            [['imgUpload'], 'image', 'extensions' => 'jpg, gif, png, jpeg'],
             [['password_repeat', 'password'], 'string', 'max' => 60],
             [['password_repeat'], 'required', 'on' => self::SCENARIO_CREATE],
             [['password_repeat'], 'compare', 'compareAttribute' => 'password', 'on' => self::SCENARIO_CREATE],
@@ -112,6 +122,7 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
             'biografia' => 'Biografia',
             'imagen' => 'Imagen',
             'created_at' => 'Creado el',
+            'imgUpload' => 'Imagen de perfil',
             'token' => 'Token',
             'password' => 'Contraseña',
             'password_repeat' => 'Confirmar contraseña',
@@ -167,11 +178,26 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
         if (!parent::beforeSave($insert)) {
             return false;
         }
+
+        $this->uploadImg();
+
         if ($insert && $this->scenario === self::SCENARIO_CREATE) {
             $this->password = Yii::$app->security->generatePasswordHash($this->password);
             $this->token = Yii::$app->security->generateRandomString();
         }
         return true;
+    }
+
+    /**
+     * Sube una imagen en principio a local.
+     */
+    public function uploadImg()
+    {
+        $this->imgUpload = UploadedFile::getInstance($this, 'imgUpload');
+        if ($this->imgUpload !== null) {
+            $this->imagen = Utility::uploadImg($this->imgUpload);
+            $this->imgUpload = null;
+        }
     }
 
     /**
@@ -239,5 +265,14 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
     public function getUsuariosShows()
     {
         return $this->hasMany(UsuariosShows::className(), ['usuario_id' => 'id'])->inverseOf('usuario');
+    }
+
+    /**
+     * Devuelve el enlace a la imagen de portada, en caso de no tener devuelve la imagen por defecto.
+     * @return string
+     */
+    public function getImagenLink()
+    {
+        return $this->imagen ?: self::IMAGEN;
     }
 }

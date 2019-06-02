@@ -11,6 +11,8 @@ use yii\helpers\Url;
 $this->title = 'Valoraciones';
 $this->params['breadcrumbs'][] = $this->title;
 
+\kartik\rating\StarRatingAsset::register($this);
+
 $this->registerJs(Utility::AJAX_VOTAR);
 $this->registerCss(Utility::CSS);
 ?>

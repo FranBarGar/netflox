@@ -3,8 +3,12 @@
 namespace app\controllers;
 
 use app\helpers\Utility;
+use app\models\ComentariosSearch;
+use app\models\Seguidores;
+use app\models\SeguidoresSearch;
 use app\models\Usuarios;
 use app\models\UsuariosSearch;
+use app\models\UsuariosShows;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -33,15 +37,19 @@ class UsuariosController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['update', 'delete', 'view', 'index'],
                 'rules' => [
                     [
-                        'actions' => ['update', 'delete', 'view', 'index'],
+                        'actions' => ['delete', 'index-admin'],
                         'allow' => true,
                         'roles' => ['@'],
                         'matchCallback' => function ($rule, $action) {
                             return Yii::$app->user->identity->rol == 'admin';
                         }
+                    ],
+                    [
+                        'actions' => ['update', 'view', 'index', 'activar', 'my-profile'],
+                        'allow' => true,
+                        'roles' => ['@']
                     ],
                 ],
             ],
@@ -64,6 +72,21 @@ class UsuariosController extends Controller
     }
 
     /**
+     * Lists all Usuarios models.
+     * @return mixed
+     */
+    public function actionIndexAdmin()
+    {
+        $searchModel = new UsuariosSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('indexAdmin', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
      * Displays a single Usuarios model.
      * @param int $id
      * @return mixed
@@ -71,8 +94,57 @@ class UsuariosController extends Controller
      */
     public function actionView($id)
     {
+        $searchModel = new ComentariosSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        if ($id == Yii::$app->user->id) {
+            return $this->redirect(['usuarios/my-profile', 'id' => $id]);
+        }
+
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'followingId' => $this->getSeguidoresId($id),
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Finds the Usuarios model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param int $id
+     * @return Usuarios the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Usuarios::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * Displays a single Usuarios model.
+     * @param int $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionMyProfile($id)
+    {
+        $searchModel = new ComentariosSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        if ($id != Yii::$app->user->id) {
+            return $this->redirect(['usuarios/view', 'id' => $id]);
+        }
+
+        return $this->render('myProfile', [
+            'model' => $this->findModel($id),
+            'followingId' => $this->getSeguidoresId($id),
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -171,18 +243,12 @@ class UsuariosController extends Controller
     }
 
     /**
-     * Finds the Usuarios model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id
-     * @return Usuarios the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * Devuelve la lista de id de las personas a las que sigue un usuario.
+     * @param $id
+     * @return array
      */
-    protected function findModel($id)
+    public function getSeguidoresId($id)
     {
-        if (($model = Usuarios::findOne($id)) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
+        return Seguidores::find()->select('seguido_id')->where(['seguidor_id' => $id])->column();
     }
 }
