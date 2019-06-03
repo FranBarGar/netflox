@@ -42,7 +42,6 @@ class ComentariosSearch extends Comentarios
      */
     public function search($params)
     {
-//        var_dump($_POST, $_GET);die;
         $query = Comentarios::find()
             ->select('
                 comentarios.*,
@@ -57,6 +56,7 @@ class ComentariosSearch extends Comentarios
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => ['pageSize' => 5]
         ]);
 
         $this->load($params);

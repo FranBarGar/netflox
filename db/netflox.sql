@@ -219,9 +219,12 @@ INSERT INTO seguidores (seguidor_id, seguido_id)
 VALUES (1, 2)
      , (2, 1)
      , (3, 2)
-     , (3, 1)
      , (3, 4)
      , (4, 2);
+
+INSERT INTO seguidores (seguidor_id, seguido_id, blocked_at)
+VALUES (1, 3, CURRENT_TIMESTAMP)
+     , (1, 4, CURRENT_TIMESTAMP);
 
 INSERT INTO tipos (tipo, tipo_duracion, padre_id)
 VALUES ('Pelicula', 'minutos', NULL)

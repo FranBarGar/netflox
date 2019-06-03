@@ -55,6 +55,7 @@ $valoracionesUrl = Url::to(['comentarios/get-valoraciones', 'ComentariosSearch[u
  */
 $seguidoresUrl = Url::to(['seguidores/get-seguidores', 'SeguidoresSearch[seguido_id]' => $miId]);
 $seguidosUrl = Url::to(['seguidores/get-seguidores', 'SeguidoresSearch[seguidor_id]' => $miId]);
+$bloqueadosUrl = Url::to(['seguidores/get-bloqueados', 'SeguidoresSearch[seguidor_id]' => $miId]);
 
 /**
  * Url de acciones
@@ -103,6 +104,9 @@ $accionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usua
         </div>
 
         <div class="row">
+            <div class="col-xs-12 text-center" style="margin-top: 8px">
+                <p>Usuario desde el <?= Yii::$app->formatter->asDate($model->created_at, 'long') ?></p>
+            </div>
             <h2><?= Html::encode($model->nick) ?></h2>
             <div class="biografia-form">
                 <?php $form = ActiveForm::begin(['action' => ['usuarios/update', 'id' => Yii::$app->user->id]]); ?>
@@ -133,38 +137,14 @@ $accionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usua
         ]);
         ?>
 
-        <!--    MIS VALORACIONES    -->
+        <!-- BLOQUEADOS -->
         <?=
-        Html::a('Mis valoraciones', $misValoracionesUrl, [
+        Html::a('Bloqueados', $bloqueadosUrl, [
             'class' => 'btn btn-primary col-md-4 col-xs-4',
             'onclick' => "
                     $.ajax({
                         type : 'GET',
-                        url : '$misValoracionesUrl',
-                        success: function(response) {
-                            $('#content-container-custom').html(response);
-                            $('.voto').on('click', votar);
-                            $('input.rating-loading').rating('create', {
-                                    'size': 'sm',
-                                    'readonly': true,
-                                    'showClear': false,
-                                    'showCaption': false,
-                                });
-                        }
-                    });
-                    return false;
-                ",
-        ]);
-        ?>
-
-        <!--    MIS ACCIONES    -->
-        <?=
-        Html::a('Mis acciones', $misAccionesUrl, [
-            'class' => 'btn btn-primary col-md-4 col-xs-4',
-            'onclick' => "
-                    $.ajax({
-                        type : 'GET',
-                        url : '$misAccionesUrl',
+                        url : '$bloqueadosUrl',
                         success: function(response) {
                             $('#content-container-custom').html(response);
                         }
@@ -191,10 +171,51 @@ $accionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usua
         ]);
         ?>
 
+        <!--    MIS VALORACIONES    -->
+        <?=
+        Html::a('Mis valoraciones', $misValoracionesUrl, [
+            'class' => 'btn btn-primary col-md-3 col-xs-3',
+            'onclick' => "
+                    $.ajax({
+                        type : 'GET',
+                        url : '$misValoracionesUrl',
+                        success: function(response) {
+                            $('#content-container-custom').html(response);
+                            $('.voto').on('click', votar);
+                            $('input.rating-loading').rating('create', {
+                                    'size': 'sm',
+                                    'readonly': true,
+                                    'showClear': false,
+                                    'showCaption': false,
+                                });
+                        }
+                    });
+                    return false;
+                ",
+        ]);
+        ?>
+
+        <!--    MIS ACCIONES    -->
+        <?=
+        Html::a('Mis acciones', $misAccionesUrl, [
+            'class' => 'btn btn-primary col-md-3 col-xs-3',
+            'onclick' => "
+                    $.ajax({
+                        type : 'GET',
+                        url : '$misAccionesUrl',
+                        success: function(response) {
+                            $('#content-container-custom').html(response);
+                        }
+                    });
+                    return false;
+                ",
+        ]);
+        ?>
+
         <!--    VALORACIONES SEGUIDORES    -->
         <?=
         Html::a('Valoraciones', 'comentarios/get-valoraciones', [
-            'class' => 'btn btn-primary col-md-4 col-xs-4',
+            'class' => 'btn btn-primary col-md-3 col-xs-3',
             'onclick' => "
                     $.ajax({
                         type : 'GET',
@@ -218,7 +239,7 @@ $accionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usua
         <!--    ACCIONES SEGUIDORES    -->
         <?=
         Html::a('Acciones', $accionesUrl, [
-            'class' => 'btn btn-primary col-md-4 col-xs-4',
+            'class' => 'btn btn-primary col-md-3 col-xs-3',
             'onclick' => "
                     $.ajax({
                         type : 'GET',

@@ -32,7 +32,7 @@ class SeguidoresController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['view', 'index', 'create', 'get-seguidores'],
+                        'actions' => ['view', 'index', 'create', 'get-seguidores', 'get-bloqueados', 'follow'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -60,7 +60,7 @@ class SeguidoresController extends Controller
     public function actionIndex()
     {
         $searchModel = new SeguidoresSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->searchBlocked(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -138,9 +138,11 @@ class SeguidoresController extends Controller
     /**
      * Deletes an existing Seguidores model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
@@ -150,7 +152,7 @@ class SeguidoresController extends Controller
     }
 
     /**
-     * @param $id
+     * Lista de seguidores.
      * @return string
      * @throws NotFoundHttpException
      */
@@ -174,5 +176,56 @@ class SeguidoresController extends Controller
             'title' => $str,
             'dataProvider' => $dataProvider,
         ]);
+    }
+
+    /**
+     * Lista de usuarios bloqueados.
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    public function actionGetBloqueados()
+    {
+        $searchModel = new SeguidoresSearch();
+        $dataProvider = $searchModel->searchBlocked(Yii::$app->request->queryParams);
+
+        return $this->renderPartial('indexPartial.php', [
+            'title' => 'Usuarios bloqueados',
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Accion de seguir/dejar de seguir a un usuario
+     *
+     * @param $seguido_id
+     *
+     * @return string
+     */
+    public function actionFollow($seguido_id)
+    {
+        /** @var Seguidores $antiguo */
+        $antiguo = Seguidores::find()
+            ->andWhere([
+                'seguido_id' => $seguido_id,
+                'seguidor_id' => Yii::$app->user->id,
+                'ended_at' => null,
+            ])
+            ->one();
+
+        $opt = ['class' => 'btn-danger btn-success'];
+
+        if ($antiguo != null) {
+            $antiguo->ended_at = gmdate('Y-m-d H:i:s');
+            $antiguo->save();
+            $opt['tittle'] = 'Follow';
+        } else {
+            $model = new Seguidores();
+            $model->seguidor_id = Yii::$app->user->id;
+            $model->seguido_id = $seguido_id;
+            $model->save();
+            $opt['tittle'] = 'Unfollow';
+        }
+
+        return json_encode($opt);
     }
 }

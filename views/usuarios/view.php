@@ -42,24 +42,25 @@ EOJS;
 
 $this->registerJs(Utility::AJAX_VOTAR . $ajax);
 $this->registerCss(Utility::CSS);
-$miId = $model->id;
+
+$follow = Url::to(['seguidores/follow', 'seguido_id' => $model->id]);
 
 /**
  * Url de valoraciones
  */
-$misValoracionesUrl = Url::to(['comentarios/get-valoraciones', 'ComentariosSearch[usuario_id]' => $miId]);
+$misValoracionesUrl = Url::to(['comentarios/get-valoraciones', 'ComentariosSearch[usuario_id]' => $model->id]);
 $valoracionesUrl = Url::to(['comentarios/get-valoraciones', 'ComentariosSearch[usuario_id]' => $followingId]);
 
 /**
  * Url de seguidores
  */
-$seguidoresUrl = Url::to(['seguidores/get-seguidores', 'SeguidoresSearch[seguido_id]' => $miId]);
-$seguidosUrl = Url::to(['seguidores/get-seguidores', 'SeguidoresSearch[seguidor_id]' => $miId]);
+$seguidoresUrl = Url::to(['seguidores/get-seguidores', 'SeguidoresSearch[seguido_id]' => $model->id]);
+$seguidosUrl = Url::to(['seguidores/get-seguidores', 'SeguidoresSearch[seguidor_id]' => $model->id]);
 
 /**
  * Url de acciones
  */
-$misAccionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usuario_id]' => $miId]);
+$misAccionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usuario_id]' => $model->id]);
 $accionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usuario_id]' => $followingId]);
 ?>
 <div class="usuarios-view">
@@ -67,11 +68,31 @@ $accionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usua
     <div class="col-md-3 col-xs-12">
         <?= Html::img($model->getImagenLink(), ['alt' => 'Enlace roto', 'class' => 'img-responsive img-circle', 'width' => '100%']) ?>
 
-        <div class="row">
+        <div id="" class="row">
+            <?=
+            Html::a(($esSeguidor ? 'Unfollow' : 'Follow'), $follow, [
+                'class' => 'btn col-md-6 col-xs-6 ' . ($esSeguidor ? 'btn-danger' : 'btn-success'),
+                'onclick' => "
+                    btn = this;
+                    $.ajax({
+                        type : 'GET',
+                        url : '$follow',
+                        success: function(data) {
+                            data = JSON.parse(data);
+                            $(btn).html(data.tittle).toggleClass(data.class);
+                        }
+                    });
+                    return false;
+                ",
+            ]);
+            ?>
 
         </div>
 
         <div class="row">
+            <div class="col-xs-12 text-center" style="margin-top: 5px">
+                <p>Usuario desde el <?= Yii::$app->formatter->asDate($model->created_at, 'long') ?></p>
+            </div>
             <h2><?= Html::encode($model->nick) ?></h2>
             <label for="biografia">Biografía:</label>
             <p><?= Html::encode($model->biografia) ?></p>
