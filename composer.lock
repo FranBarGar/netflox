@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "471f8da2c49f40768b8c44e23b6b0535",
+    "content-hash": "cae96f19bb55531daaf34d9db3ecc92d",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -1900,6 +1900,18 @@
                 "yii2"
             ],
             "time": "2018-11-05T12:31:44+00:00"
+        },
+        {
+            "name": "npm-asset/bootstrap-notify",
+            "version": "3.1.3",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/bootstrap-notify/-/bootstrap-notify-3.1.3.tgz"
+            },
+            "type": "npm-asset",
+            "license": [
+                "MIT"
+            ]
         },
         {
             "name": "swiftmailer/swiftmailer",

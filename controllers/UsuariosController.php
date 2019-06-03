@@ -102,17 +102,24 @@ class UsuariosController extends Controller
         }
 
 
-        $esSeguidor = Seguidores::find()
+        $seguidor = Seguidores::find()
                 ->andWhere([
                     'seguido_id' => $id,
                     'seguidor_id' => Yii::$app->user->id,
-                    'ended_at' => null,
-                    'blocked_at' => null
+                    'ended_at' => null
                 ])
-                ->one() !== null;
+                ->one();
+
+        if ($seguidor !== null) {
+            $esSeguidor = $seguidor->blocked_at === null;
+            $esBloqueado = $seguidor->blocked_at !== null;
+        } else {
+            $esSeguidor = $esBloqueado = false;
+        }
 
         return $this->render('view', [
             'esSeguidor' => $esSeguidor,
+            'esBloqueado' => $esBloqueado,
             'model' => $this->findModel($id),
             'followingId' => $this->getSeguidoresId($id),
             'searchModel' => $searchModel,

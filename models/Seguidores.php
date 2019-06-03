@@ -28,6 +28,23 @@ class Seguidores extends \yii\db\ActiveRecord
     }
 
     /**
+     * @param $seguido_id
+     * @return bool
+     */
+    public static function soySeguidor($seguido_id)
+    {
+        return Seguidores::find()
+            ->andFilterWhere([
+                'seguido_id' => $seguido_id,
+                'seguidor_id' => Yii::$app->user->id,
+            ])
+            ->andWhere([
+                'ended_at' => null,
+            ])
+            ->one() !== null;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function rules()

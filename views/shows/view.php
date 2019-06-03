@@ -167,7 +167,7 @@ $this->registerCss(Utility::CSS);
                 $str .= '
                 <li class="list-group-item">
                     <span class="badge">' . $archivo->num_descargas . '</span>'
-                    . Html::a($archivo->descripcion, [
+                    . Html::a($archivo->descripcion ?: $model->getFullTittle(), [
                         'archivos/file',
                         'id' => $archivo->id,
                     ]) .
