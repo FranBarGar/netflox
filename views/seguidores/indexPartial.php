@@ -16,23 +16,36 @@ $this->params['breadcrumbs'][] = $this->title;
         <h1> <?= $title ?> </h1>
     </div>
     <hr>
-    <?=
-    strpos($title, 'Seguidores') !== false ?
-        \yii\widgets\ListView::widget([
-            'dataProvider' => $dataProvider,
-            'summary' => '',
-            'itemView' => function ($model, $key, $index, $widget) {
-                return $this->render('_smallViewSeguidores.php', ['model' => $model]);
-            },
-        ])
-        :
-        \yii\widgets\ListView::widget([
-            'dataProvider' => $dataProvider,
-            'summary' => '',
-            'itemView' => function ($model, $key, $index, $widget) {
-                return $this->render('_smallViewSeguidos.php', ['model' => $model]);
-            },
-        ])
+    <?php
+    switch ($title) {
+        case strpos($title, 'Seguidores') !== false:
+            echo \yii\widgets\ListView::widget([
+                'dataProvider' => $dataProvider,
+                'summary' => '',
+                'itemView' => function ($model, $key, $index, $widget) {
+                    return $this->render('_smallViewSeguidores.php', ['model' => $model]);
+                },
+            ]);
+            break;
+        case strpos($title, 'Siguiendo') !== false:
+            echo \yii\widgets\ListView::widget([
+                'dataProvider' => $dataProvider,
+                'summary' => '',
+                'itemView' => function ($model, $key, $index, $widget) {
+                    return $this->render('_smallViewSeguidos.php', ['model' => $model]);
+                },
+            ]);
+            break;
+        case strpos($title, 'bloqueados') !== false:
+            echo \yii\widgets\ListView::widget([
+                'dataProvider' => $dataProvider,
+                'summary' => '',
+                'itemView' => function ($model, $key, $index, $widget) {
+                    return $this->render('_smallViewBlocked.php', ['model' => $model]);
+                },
+            ]);
+            break;
+    }
     ?>
 
 

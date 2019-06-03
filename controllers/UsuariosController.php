@@ -101,7 +101,18 @@ class UsuariosController extends Controller
             return $this->redirect(['usuarios/my-profile', 'id' => $id]);
         }
 
+
+        $esSeguidor = Seguidores::find()
+                ->andWhere([
+                    'seguido_id' => $id,
+                    'seguidor_id' => Yii::$app->user->id,
+                    'ended_at' => null,
+                    'blocked_at' => null
+                ])
+                ->one() !== null;
+
         return $this->render('view', [
+            'esSeguidor' => $esSeguidor,
             'model' => $this->findModel($id),
             'followingId' => $this->getSeguidoresId($id),
             'searchModel' => $searchModel,
@@ -123,6 +134,24 @@ class UsuariosController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * Devuelve la lista de id de las personas a las que sigue un usuario o con un 0 en caso de no tener seguidores.
+     *
+     * @param $id
+     * @return array
+     */
+    public function getSeguidoresId($id)
+    {
+        return Seguidores::find()
+            ->select('seguido_id')
+            ->andWhere([
+                'seguidor_id' => $id,
+                'ended_at' => null,
+                'blocked_at' => null
+            ])
+            ->column() ?: [0];
     }
 
     /**
@@ -240,15 +269,5 @@ class UsuariosController extends Controller
         }
         Yii::$app->session->setFlash('error', 'La validación no es correcta.');
         return $this->redirect(['site/index']);
-    }
-
-    /**
-     * Devuelve la lista de id de las personas a las que sigue un usuario.
-     * @param $id
-     * @return array
-     */
-    public function getSeguidoresId($id)
-    {
-        return Seguidores::find()->select('seguido_id')->where(['seguidor_id' => $id])->column();
     }
 }

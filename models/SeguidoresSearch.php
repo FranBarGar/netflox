@@ -46,6 +46,7 @@ class SeguidoresSearch extends Seguidores
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => ['pageSize' => 5]
         ]);
 
         $this->load($params);
@@ -62,7 +63,50 @@ class SeguidoresSearch extends Seguidores
             'created_at' => $this->created_at,
             'seguidor_id' => $this->seguidor_id,
             'seguido_id' => $this->seguido_id,
+        ])->andWhere([
+            'ended_at' => null,
+            'blocked_at' => null
         ]);
+
+        return $dataProvider;
+    }
+
+    /**
+     * Creates data provider instance with search query applied
+     *
+     * @param $params
+     *
+     * @return ActiveDataProvider
+     */
+    public function searchBlocked($params)
+    {
+        $query = Seguidores::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => ['pageSize' => 5]
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        // grid filtering conditions
+        $query
+            ->andFilterWhere([
+                'id' => $this->id,
+                'created_at' => $this->created_at,
+                'seguidor_id' => $this->seguidor_id,
+                'seguido_id' => $this->seguido_id,
+            ])
+            ->andWhere(['ended_at' => null,])
+            ->andWhere(['not', ['blocked_at' => null]]);
 
         return $dataProvider;
     }
