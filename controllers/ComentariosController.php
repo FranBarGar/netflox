@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\helpers\Utility;
+use app\models\Seguidores;
 use Throwable;
 use Yii;
 use app\models\Comentarios;
@@ -219,10 +220,14 @@ class ComentariosController extends Controller
      */
     public function actionGetValoraciones()
     {
+        $ids = Yii::$app->request->get('ComentariosSearch')['usuario_id'];
+
+        if ($ids == '') {
+            $_GET['ComentariosSearch']['usuario_id'] = Seguidores::getSeguidoresId(Yii::$app->user->id);
+        }
+
         $searchModel = new ComentariosSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        $ids = Yii::$app->request->get('ComentariosSearch')['usuario_id'];
 
         if (is_array($ids)) {
             $str = 'Valoraciones de seguidos';

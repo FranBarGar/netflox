@@ -229,6 +229,11 @@ class SeguidoresController extends Controller
                 $antiguo->ended_at = gmdate('Y-m-d H:i:s');
                 $antiguo->save();
                 $opt['tittle'] = 'Follow';
+                $opt['message'] = [
+                    'tittle' => '<strong>Unfollow:</strong>',
+                    'content' => 'Has dejado de seguir a <strong>' . $antiguo->seguido->nick . '</strong>',
+                    'type' => 'danger'
+                ];
             }
         } elseif ($seguido === null) {
             $model = new Seguidores();
@@ -236,6 +241,11 @@ class SeguidoresController extends Controller
             $model->seguido_id = $seguido_id;
             $model->save();
             $opt['tittle'] = 'Unfollow';
+            $opt['message'] = [
+                'tittle' => '<strong>Follow:</strong>',
+                'content' => 'Has seguido a <strong>' . $model->seguido->nick . '</strong>',
+                'type' => 'success'
+            ];
         } else {
             $opt = '';
         }

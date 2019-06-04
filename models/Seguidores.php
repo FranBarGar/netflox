@@ -28,20 +28,39 @@ class Seguidores extends \yii\db\ActiveRecord
     }
 
     /**
+     * Devuelve un modelo o null en caso de no ser ni seguidor ni bloqueador.
      * @param $seguido_id
-     * @return bool
+     * @return array|\yii\db\ActiveRecord|null
      */
-    public static function soySeguidor($seguido_id)
+    public static function soySeguidorOBloqueador($seguido_id)
     {
         return Seguidores::find()
-            ->andFilterWhere([
-                'seguido_id' => $seguido_id,
-                'seguidor_id' => Yii::$app->user->id,
-            ])
+                ->andFilterWhere([
+                    'seguido_id' => $seguido_id,
+                    'seguidor_id' => Yii::$app->user->id,
+                ])
+                ->andWhere([
+                    'ended_at' => null,
+                ])
+                ->one();
+    }
+
+    /**
+     * Devuelve la lista de id de las personas a las que sigue un usuario o con un 0 en caso de no tener seguidores.
+     *
+     * @param $id
+     * @return array
+     */
+    public static function getSeguidoresId($id)
+    {
+        return Seguidores::find()
+            ->select('seguido_id')
             ->andWhere([
+                'seguidor_id' => $id,
                 'ended_at' => null,
+                'blocked_at' => null
             ])
-            ->one() !== null;
+            ->column() ?: [0];
     }
 
     /**

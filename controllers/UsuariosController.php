@@ -47,7 +47,7 @@ class UsuariosController extends Controller
                         }
                     ],
                     [
-                        'actions' => ['update', 'view', 'index', 'activar', 'my-profile'],
+                        'actions' => ['update', 'view', 'view-blocked', 'index', 'activar', 'my-profile'],
                         'allow' => true,
                         'roles' => ['@']
                     ],
@@ -94,13 +94,22 @@ class UsuariosController extends Controller
      */
     public function actionView($id)
     {
-        $searchModel = new ComentariosSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
         if ($id == Yii::$app->user->id) {
             return $this->redirect(['usuarios/my-profile', 'id' => $id]);
         }
 
+        $soyBloqueado = Seguidores::find()
+                ->andWhere([
+                    'seguido_id' => Yii::$app->user->id,
+                    'seguidor_id' => $id,
+                    'ended_at' => null,
+                ])
+                ->andWhere(['not', ['blocked_at' => null]])
+                ->one() !== null;
+
+        if ($soyBloqueado) {
+            return $this->redirect(['usuarios/view-blocked', 'id' => $id]);
+        }
 
         $seguidor = Seguidores::find()
                 ->andWhere([
@@ -121,9 +130,51 @@ class UsuariosController extends Controller
             'esSeguidor' => $esSeguidor,
             'esBloqueado' => $esBloqueado,
             'model' => $this->findModel($id),
-            'followingId' => $this->getSeguidoresId($id),
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Displays a single Usuarios model.
+     * @param int $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionViewBlocked($id)
+    {
+        if ($id == Yii::$app->user->id) {
+            return $this->redirect(['usuarios/my-profile', 'id' => $id]);
+        }
+
+        $soyBloqueado = Seguidores::find()
+                ->andWhere([
+                    'seguido_id' => Yii::$app->user->id,
+                    'seguidor_id' => $id,
+                    'ended_at' => null,
+                ])
+                ->andWhere(['not', ['blocked_at' => null]])
+                ->one() !== null;
+
+        if (!$soyBloqueado) {
+            return $this->redirect(['usuarios/view', 'id' => $id]);
+        }
+
+        $seguidor = Seguidores::find()
+                ->andWhere([
+                    'seguido_id' => $id,
+                    'seguidor_id' => Yii::$app->user->id,
+                    'ended_at' => null
+                ])
+                ->one();
+
+        if ($seguidor !== null) {
+            $esBloqueado = $seguidor->blocked_at !== null;
+        } else {
+            $esBloqueado = false;
+        }
+
+        return $this->render('viewBlocked', [
+            'esBloqueado' => $esBloqueado,
+            'model' => $this->findModel($id),
         ]);
     }
 
@@ -144,24 +195,6 @@ class UsuariosController extends Controller
     }
 
     /**
-     * Devuelve la lista de id de las personas a las que sigue un usuario o con un 0 en caso de no tener seguidores.
-     *
-     * @param $id
-     * @return array
-     */
-    public function getSeguidoresId($id)
-    {
-        return Seguidores::find()
-            ->select('seguido_id')
-            ->andWhere([
-                'seguidor_id' => $id,
-                'ended_at' => null,
-                'blocked_at' => null
-            ])
-            ->column() ?: [0];
-    }
-
-    /**
      * Displays a single Usuarios model.
      * @param int $id
      * @return mixed
@@ -178,7 +211,6 @@ class UsuariosController extends Controller
 
         return $this->render('myProfile', [
             'model' => $this->findModel($id),
-            'followingId' => $this->getSeguidoresId($id),
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);

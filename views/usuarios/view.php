@@ -51,7 +51,7 @@ $block = Url::to(['seguidores/block', 'seguido_id' => $model->id]);
  * Url de valoraciones
  */
 $misValoracionesUrl = Url::to(['comentarios/get-valoraciones', 'ComentariosSearch[usuario_id]' => $model->id]);
-$valoracionesUrl = Url::to(['comentarios/get-valoraciones', 'ComentariosSearch[usuario_id]' => $followingId]);
+$valoracionesUrl = Url::to(['comentarios/get-valoraciones', 'ComentariosSearch[usuario_id]' => '']);
 
 /**
  * Url de seguidores
@@ -63,7 +63,9 @@ $seguidosUrl = Url::to(['seguidores/get-seguidores', 'SeguidoresSearch[seguidor_
  * Url de acciones
  */
 $misAccionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usuario_id]' => $model->id]);
-$accionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usuario_id]' => $followingId]);
+$accionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usuario_id]' => '']);
+
+
 ?>
 <div class="usuarios-view">
 
@@ -85,12 +87,18 @@ $accionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usua
                             data = JSON.parse(data);
                             if (data == '') {
                                 $.notify({
-                                    title: 'Error:',
+                                    title: '<strong>Error:</strong>',
                                     message: 'El usuario te ha bloqueado.'
                                 }, {
                                     type: 'danger'
                                 });
                             } else {
+                                $.notify({
+                                    title: data.message.tittle,
+                                    message: data.message.content
+                                }, {
+                                    type: data.message.type
+                                });
                                 $(btn).html(data.tittle).toggleClass(data.class);
                             }
                         }

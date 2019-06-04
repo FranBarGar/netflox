@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Seguidores;
 use Yii;
 use app\models\UsuariosShows;
 use app\models\UsuariosShowsSearch;
@@ -140,10 +141,14 @@ class UsuariosShowsController extends Controller
      */
     public function actionGetAcciones()
     {
+        $ids = Yii::$app->request->get('UsuariosShowsSearch')['usuario_id'];
+
+        if ($ids == '') {
+            $_GET['UsuariosShowsSearch']['usuario_id'] = Seguidores::getSeguidoresId(Yii::$app->user->id);
+        }
+
         $searchModel = new UsuariosShowsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        $ids = Yii::$app->request->get('UsuariosShowsSearch')['usuario_id'];
 
         if (is_array($ids)) {
             $str = 'Acciones de seguidos';

@@ -15,7 +15,7 @@ $seguidor = $model->seguidor;
 $follow = Url::to(['seguidores/follow', 'seguido_id' => $seguido->id]);
 $block = Url::to(['seguidores/block', 'seguido_id' => $seguido->id]);
 
-$soySeguidor = Seguidores::soySeguidor($seguido->id);
+$soySeguidor = Seguidores::soySeguidorOBloqueador($seguido->id) !== null;
 ?>
 <div class="usuarios-shows-view">
 
