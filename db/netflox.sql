@@ -224,6 +224,7 @@ VALUES (1, 2)
 
 INSERT INTO seguidores (seguidor_id, seguido_id, blocked_at)
 VALUES (1, 3, CURRENT_TIMESTAMP)
+     , (4, 1, CURRENT_TIMESTAMP)
      , (1, 4, CURRENT_TIMESTAMP);
 
 INSERT INTO tipos (tipo, tipo_duracion, padre_id)

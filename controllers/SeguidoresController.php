@@ -32,7 +32,7 @@ class SeguidoresController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['view', 'index', 'create', 'get-seguidores', 'get-bloqueados', 'follow'],
+                        'actions' => ['view', 'index', 'create', 'get-seguidores', 'get-bloqueados', 'follow', 'block'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -214,18 +214,101 @@ class SeguidoresController extends Controller
 
         $opt = ['class' => 'btn-danger btn-success'];
 
+        /** @var Seguidores $seguido */
+        $seguido = Seguidores::find()
+            ->andWhere([
+                'seguido_id' => Yii::$app->user->id,
+                'seguidor_id' => $seguido_id,
+                'ended_at' => null,
+            ])
+            ->andWhere(['not', ['blocked_at' => null]])
+            ->one();
+
         if ($antiguo != null) {
-            $antiguo->ended_at = gmdate('Y-m-d H:i:s');
-            $antiguo->save();
-            $opt['tittle'] = 'Follow';
-        } else {
+            if ($antiguo->blocked_at === null) {
+                $antiguo->ended_at = gmdate('Y-m-d H:i:s');
+                $antiguo->save();
+                $opt['tittle'] = 'Follow';
+                $opt['message'] = [
+                    'tittle' => '<strong>Unfollow:</strong>',
+                    'content' => 'Has dejado de seguir a <strong>' . $antiguo->seguido->nick . '</strong>',
+                    'type' => 'danger'
+                ];
+            }
+        } elseif ($seguido === null) {
             $model = new Seguidores();
             $model->seguidor_id = Yii::$app->user->id;
             $model->seguido_id = $seguido_id;
             $model->save();
             $opt['tittle'] = 'Unfollow';
+            $opt['message'] = [
+                'tittle' => '<strong>Follow:</strong>',
+                'content' => 'Has seguido a <strong>' . $model->seguido->nick . '</strong>',
+                'type' => 'success'
+            ];
+        } else {
+            $opt = '';
         }
 
         return json_encode($opt);
+    }
+
+//    TODO: Terminar logica de bloqueos.
+
+    /**
+     * Accion de seguir/dejar de seguir a un usuario.
+     *
+     * @param $seguido_id
+     *
+     * @return array
+     */
+    public function actionBlock($seguido_id)
+    {
+        /** @var Seguidores $antiguo */
+        $antiguo = Seguidores::find()
+            ->andWhere([
+                'seguido_id' => $seguido_id,
+                'seguidor_id' => Yii::$app->user->id,
+                'ended_at' => null,
+            ])
+            ->one();
+
+        if ($antiguo != null) {
+            $antiguo->ended_at = gmdate('Y-m-d H:i:s');
+            $antiguo->save();
+            if ($antiguo->blocked_at === null) {
+                $model = new Seguidores();
+                $model->seguidor_id = Yii::$app->user->id;
+                $model->seguido_id = $seguido_id;
+                $model->blocked_at = gmdate('Y-m-d H:i:s');
+                $model->save();
+
+                /** @var Seguidores $seguido */
+                $seguido = Seguidores::find()
+                    ->andWhere([
+                        'seguido_id' => Yii::$app->user->id,
+                        'seguidor_id' => $seguido_id,
+                        'ended_at' => null,
+                        'blocked_at' => null,
+                    ])
+                    ->one();
+                if ($seguido !== null) {
+                    $seguido->ended_at = gmdate('Y-m-d H:i:s');
+                    $seguido->save();
+                }
+            }
+        } else {
+            $model = new Seguidores();
+            $model->seguidor_id = Yii::$app->user->id;
+            $model->seguido_id = $seguido_id;
+            $model->blocked_at = gmdate('Y-m-d H:i:s');
+            $model->save();
+        }
+
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return [
+            'message' => 'OK',
+            'code' => 201,
+        ];
     }
 }

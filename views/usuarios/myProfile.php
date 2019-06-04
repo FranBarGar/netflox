@@ -48,7 +48,7 @@ $miId = $model->id;
  * Url de valoraciones
  */
 $misValoracionesUrl = Url::to(['comentarios/get-valoraciones', 'ComentariosSearch[usuario_id]' => $miId]);
-$valoracionesUrl = Url::to(['comentarios/get-valoraciones', 'ComentariosSearch[usuario_id]' => $followingId]);
+$valoracionesUrl = Url::to(['comentarios/get-valoraciones', 'ComentariosSearch[usuario_id]' => '']);
 
 /**
  * Url de seguidores
@@ -61,7 +61,7 @@ $bloqueadosUrl = Url::to(['seguidores/get-bloqueados', 'SeguidoresSearch[seguido
  * Url de acciones
  */
 $misAccionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usuario_id]' => $miId]);
-$accionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usuario_id]' => $followingId]);
+$accionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usuario_id]' => '']);
 ?>
 <div class="usuarios-view">
 
