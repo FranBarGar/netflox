@@ -30,6 +30,7 @@ $block = Url::to(['seguidores/block', 'seguido_id' => $seguido->id]);
                         url : '$block',
                         success: function(data) {
                             $(btn).parent().parent().remove();
+                            sessionStorage.setItem('blockData', data);
                         }
                     });
                     return false;

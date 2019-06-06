@@ -19,6 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 \app\assets\AlertAsset::register($this);
 
+$this->registerJs(Utility::JS_BLOCK);
 $block = Url::to(['seguidores/block', 'seguido_id' => $model->id]);
 
 ?>
@@ -42,6 +43,7 @@ $block = Url::to(['seguidores/block', 'seguido_id' => $model->id]);
                             type : 'GET',
                             url : '$block',
                             success: function(data) {
+                                sessionStorage.setItem('blockData', data);
                                 location.reload();
                             }
                         });

@@ -79,6 +79,7 @@ if (($soySeguidor = Seguidores::soySeguidorOBloqueador($seguidor->id)) !== null)
                             type : 'GET',
                             url : '$block',
                             success: function(data) {
+                                sessionStorage.setItem('blockData', data);
                                 location.reload();
                             }
                         });
