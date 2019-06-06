@@ -45,7 +45,21 @@ class Utility
     }
 EOCSS;
 
-    const AJAX_VOTAR = <<<EOJS
+    const JS_BLOCK = <<<EOJSB
+    var data = JSON.parse(sessionStorage.getItem('blockData'));
+    console.log(data);
+    if (data != null) {
+        $.notify({
+            title: data.tittle,
+            message: data.content
+        }, {
+            type: data.type
+        });
+        sessionStorage.removeItem("blockData");
+    }
+EOJSB;
+
+    const AJAX_VOTAR = <<<EOJSV
     votar = function() {
         var el = $(this);
         var id = el.data('voto-id');
@@ -71,7 +85,7 @@ EOCSS;
     $(() => {
         $('.voto').on('click', votar);
     });
-EOJS;
+EOJSV;
 
     /**
      * @var array Tipos de ordenacion disponibles.

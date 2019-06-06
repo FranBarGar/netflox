@@ -17,6 +17,7 @@ $this->title = $model->nick;
 $this->params['breadcrumbs'][] = ['label' => 'Usuarios', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
+\app\assets\AlertAsset::register($this);
 \kartik\rating\StarRatingAsset::register($this);
 
 $js = <<<EOJS
@@ -40,7 +41,7 @@ $js = <<<EOJS
 EOJS;
 
 
-$this->registerJs(Utility::AJAX_VOTAR . $js);
+$this->registerJs(Utility::AJAX_VOTAR . $js . Utility::JS_BLOCK);
 $this->registerCss(Utility::CSS);
 $miId = $model->id;
 

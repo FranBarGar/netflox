@@ -41,7 +41,7 @@ $ajax = <<<EOJS
 EOJS;
 
 
-$this->registerJs(Utility::AJAX_VOTAR . $ajax);
+$this->registerJs(Utility::AJAX_VOTAR . $ajax . Utility::JS_BLOCK);
 $this->registerCss(Utility::CSS);
 
 $follow = Url::to(['seguidores/follow', 'seguido_id' => $model->id]);

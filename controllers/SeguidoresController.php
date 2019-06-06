@@ -253,8 +253,6 @@ class SeguidoresController extends Controller
         return json_encode($opt);
     }
 
-//    TODO: Terminar logica de bloqueos.
-
     /**
      * Accion de seguir/dejar de seguir a un usuario.
      *
@@ -273,6 +271,8 @@ class SeguidoresController extends Controller
             ])
             ->one();
 
+        $opt = [];
+
         if ($antiguo != null) {
             $antiguo->ended_at = gmdate('Y-m-d H:i:s');
             $antiguo->save();
@@ -282,6 +282,11 @@ class SeguidoresController extends Controller
                 $model->seguido_id = $seguido_id;
                 $model->blocked_at = gmdate('Y-m-d H:i:s');
                 $model->save();
+                $opt = [
+                    'tittle' => '<strong>Bloqueado:</strong>',
+                    'content' => 'Has bloqueado a <strong>' . $model->seguido->nick . '</strong>',
+                    'type' => 'danger'
+                ];
 
                 /** @var Seguidores $seguido */
                 $seguido = Seguidores::find()
@@ -296,6 +301,12 @@ class SeguidoresController extends Controller
                     $seguido->ended_at = gmdate('Y-m-d H:i:s');
                     $seguido->save();
                 }
+            } else {
+                $opt = [
+                    'tittle' => '<strong>Desbloqueado:</strong>',
+                    'content' => 'Has desbloqueado a <strong>' . $antiguo->seguido->nick . '</strong>',
+                    'type' => 'success'
+                ];
             }
         } else {
             $model = new Seguidores();
@@ -303,12 +314,13 @@ class SeguidoresController extends Controller
             $model->seguido_id = $seguido_id;
             $model->blocked_at = gmdate('Y-m-d H:i:s');
             $model->save();
+            $opt = [
+                'tittle' => '<strong>Bloqueado:</strong>',
+                'content' => 'Has bloqueado a <strong>' . $model->seguido->nick . '</strong>',
+                'type' => 'danger'
+            ];
         }
 
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        return [
-            'message' => 'OK',
-            'code' => 201,
-        ];
+        return json_encode($opt);
     }
 }
