@@ -40,4 +40,5 @@ tests/chromedriver
 .env
 
 # uploads
-uploads/*
+web/uploads/*
+!web/uploads/.gitkeep

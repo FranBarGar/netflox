@@ -206,7 +206,7 @@ CREATE TABLE usuarios_shows
 
 -- INSERT
 INSERT INTO usuarios (nick, email, imagen, password, rol)
-VALUES ('admin', 'admin@admin.com', 'uploads/admin.jpeg', crypt('admin', gen_salt('bf', 10)), 'admin');
+VALUES ('admin', 'admin@admin.com', 'admin.jpeg', crypt('admin', gen_salt('bf', 10)), 'admin');
 
 INSERT INTO usuarios (nick, email, password)
 VALUES ('pepe', 'pepe@pepe.com', crypt('pepe', gen_salt('bf', 10)))

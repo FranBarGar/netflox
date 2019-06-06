@@ -10,6 +10,9 @@ use app\models\Roles;
 use app\models\Shows;
 use app\models\ShowsGeneros;
 use app\models\Tipos;
+use Aws\S3\Exception\S3Exception;
+use Aws\S3\S3Client;
+use Aws\Sdk;
 use Imagine\Image\Box;
 use Yii;
 use yii\web\UploadedFile;
@@ -312,9 +315,14 @@ EOJSV;
     }
 
     /**
-     * Sube una imagen en principio a local.
+     * Sube una imagen.
+     * @param $imgUpload
+     * @param $fileKey
+     * @param $bucketName
+     * @param $antiguo
+     * @return mixed
      */
-    public static function uploadImg($imgUpload)
+    public static function uploadImg($imgUpload, $fileKey, $bucketName, $antiguo)
     {
         $fileName = Yii::getAlias('@uploads/' . $imgUpload->baseName . '.' . $imgUpload->extension);
         $imgUpload->saveAs($fileName);
@@ -323,7 +331,13 @@ EOJSV;
         $image = $imagine->open($fileName);
         $image->resize(new Box(200, 200))->save($fileName);
 
-        return $fileName;
+        if ($antiguo !== null) {
+            Utility::s3Delete($antiguo, $bucketName);
+        }
+
+        $fileKey .= '.' . $imgUpload->extension;
+
+        return Utility::s3Upload(file_get_contents($fileName), $fileKey, $bucketName);
     }
 
     /**
@@ -373,5 +387,65 @@ EOJSV;
                 }
             }
         }
+    }
+
+    /**
+     * Sube un archivo a AWS S3.
+     * @param $file
+     * @param $name
+     * @param $bucketName
+     * @return mixed
+     */
+    public static function s3Upload($file, $name, $bucketName)
+    {
+        $s3Client = new S3Client([
+            'version' => 'latest',
+            'region' => 'eu-west-3'
+        ]);
+
+        $s3Client->putObject([
+            'Bucket' => $bucketName,
+            'Key' => $name,
+            'Body' => $file
+        ]);
+
+        return $name;
+    }
+
+    /**
+     * Elimina un archivo de AWS S3.
+     * @param $name
+     * @param $bucketName
+     */
+    public static function s3Delete($name, $bucketName)
+    {
+        $s3Client = new S3Client([
+            'version' => 'latest',
+            'region' => 'eu-west-3'
+        ]);
+
+        $s3Client->deleteObject([
+            'Bucket' => $bucketName,
+            'Key' => $name
+        ]);
+    }
+
+    /**
+     * Descarga una imagen de AWS S3.
+     * @param $name
+     * @param $bucketName
+     * @return \Aws\Result
+     */
+    public static function s3Download($name, $bucketName)
+    {
+        $s3Client = new S3Client([
+            'version' => 'latest',
+            'region' => 'eu-west-3'
+        ]);
+
+        return $s3Client->getObject([
+            'Bucket' => $bucketName,
+            'Key' => $name
+        ]);
     }
 }

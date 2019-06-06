@@ -15,7 +15,7 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm' => '@vendor/npm-asset',
         '@uploads' => 'uploads',
-        '@localSrc' => 'images',
+        '@images' => 'images',
     ],
     'language' => 'es-ES',
     'components' => [

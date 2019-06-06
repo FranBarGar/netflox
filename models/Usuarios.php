@@ -42,7 +42,7 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
      * Imagen por defecto.
      * @var string
      */
-    const IMAGEN = 'images/user.jpeg';
+    const IMAGEN = '@images/user.jpeg';
 
     /**
      * Fichero a subir a la nube como imagen de perfil.
@@ -195,7 +195,7 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
     {
         $this->imgUpload = UploadedFile::getInstance($this, 'imgUpload');
         if ($this->imgUpload !== null) {
-            $this->imagen = Utility::uploadImg($this->imgUpload);
+            $this->imagen = Utility::uploadImg($this->imgUpload, $this->nick, 'netflox-usuarios', $this->imagen);
             $this->imgUpload = null;
         }
     }
@@ -273,6 +273,16 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
      */
     public function getImagenLink()
     {
-        return $this->imagen ?: self::IMAGEN;
+        if ($this->imagen !== null) {
+            try {
+                $img = Utility::s3Download($this->imagen, 'netflox-usuarios');
+                $path = Yii::getAlias('@images/' . $this->imagen);
+                file_put_contents($path, $img['Body']);
+                return $path;
+            } catch (\Exception $exception) {
+            }
+        }
+
+        return Yii::getAlias(self::IMAGEN);
     }
 }
