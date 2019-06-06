@@ -42,3 +42,8 @@ tests/chromedriver
 # uploads
 web/uploads/*
 !web/uploads/.gitkeep
+
+web/images/*
+!web/uploads/user.jpeg
+!web/uploads/netflox.jpg
+!web/uploads/default.png
