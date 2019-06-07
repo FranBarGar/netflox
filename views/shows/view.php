@@ -19,14 +19,32 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $formatter = Yii::$app->formatter;
 
+
+$css = <<<EOCSS
+    div.rating-container {
+        display: inline-block;
+        padding-left: 10px;
+        padding-top: 5px;
+        vertical-align: top;
+    }
+EOCSS;
+
+$this->registerCss($css);
+
 $this->registerJs(Utility::AJAX_VOTAR);
-$this->registerCss(Utility::CSS);
+$this->registerCss(Utility::CSS . $css);
 ?>
 
 <div class="row shows-view">
 
     <div class="col-md-3 text-center align-content-center">
-        <?= Html::img($model->getImagenLink(), ['alt' => 'Enlace roto', 'class' => 'img-responsive']) ?>
+
+        <div>
+            <div id="accion-icono" style="position: absolute;top: 0;right: 18px;">
+                <span class="<?= $model->getMiAccion() ?>" style="color: white"></span>
+            </div>
+            <?= Html::img($model->getImagenLink(), ['alt' => 'Enlace roto', 'class' => 'img-responsive']) ?>
+        </div>
 
         <?php
         Modal::begin([

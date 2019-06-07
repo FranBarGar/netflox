@@ -18,12 +18,7 @@ $css = <<<EOCSS
         padding: 4px;
         margin-bottom: 0px;
         border: 1px solid gray;
-        border-radius: 2px;
-        height: 250px;
-    }
-    
-    div.media-left.media-middle {
-        object-fit: cover;
+        border-radius: 5px;
     }
 EOCSS;
 
@@ -32,25 +27,17 @@ $this->registerCss($css);
 
 <div class="shows-view media">
 
-    <div class="media-left media-top text-center">
-        <?= Html::img($model->getImagenLink(), ['alt' => 'Enlace roto', 'width' => '200px', 'class' => 'media-object']) ?>
-
-        <?php if (Yii::$app->user->identity->rol == 'admin') : ?>
-            <?= Html::a('Actualizar', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-            <?=
-            Html::a('Eliminar', ['delete', 'id' => $model->id], [
-                'class' => 'btn btn-danger',
-                'data' => [
-                    'confirm' => '¿Estas seguro de eliminar este show? Esto eliminara todos sus contenidos asociados como comentarios, "hijos", etc...',
-                    'method' => 'post',
-                ],
-            ])
-            ?>
-        <?php endif; ?>
+    <div class="col-xs-4 col-md-2">
+        <div>
+            <div id="accion-icono" style="position: absolute;top: 0;right: 18px;">
+                <span class="<?= $model->getMiAccion() ?>" style="color: white"></span>
+            </div>
+            <?= Html::img($model->getImagenLink(), ['alt' => 'Enlace roto', 'width' => '200px', 'class' => 'img-responsive']) ?>
+        </div>
     </div>
 
 
-    <div class="media-body">
+    <div class="row col-xs-8 col-md-10">
         <h1 class="media-heading">
             <?= Html::a(Html::encode($model->titulo), [
                 'shows/view',
