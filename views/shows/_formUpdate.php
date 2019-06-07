@@ -300,6 +300,10 @@ $this->registerCss($css);
                 'showUpload' => false
             ]
         ]) .
+        $form->field($model, 'descripcion')->textInput([
+            'maxlength' => true,
+            'placeholder' => "Introduzca el titulo del enlace del show..."
+        ]) .
         '<div class="form-group">
         <div class="col-md-5 col-sm-12" style="margin-bottom: 20px">
         <label class="control-label">Descripcion</label>

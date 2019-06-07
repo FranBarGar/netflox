@@ -276,7 +276,7 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
         if ($this->imagen !== null) {
             try {
                 $img = Utility::s3Download($this->imagen, 'netflox-usuarios');
-                $path = Yii::getAlias('@images/' . $this->imagen);
+                $path = Yii::getAlias('@user/' . $this->imagen);
                 file_put_contents($path, $img['Body']);
                 return $path;
             } catch (\Exception $exception) {

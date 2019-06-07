@@ -236,6 +236,10 @@ $this->registerCss($css);
             'pluginOptions' => [
                 'showUpload' => false
             ]
+        ]) .
+        $form->field($model, 'descripcion')->textInput([
+            'maxlength' => true,
+            'placeholder' => "Introduzca el titulo del enlace del show..."
         ])
     );
 

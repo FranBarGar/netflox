@@ -16,6 +16,10 @@ $config = [
         '@npm' => '@vendor/npm-asset',
         '@uploads' => 'uploads',
         '@images' => 'images',
+        '@aws' => 'aws',
+        '@user' => '@aws/user',
+        '@cover' => '@aws/cover',
+        '@content' => '@aws/content',
     ],
     'language' => 'es-ES',
     'components' => [

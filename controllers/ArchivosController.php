@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\helpers\Utility;
 use Throwable;
 use Yii;
 use app\models\Archivos;
@@ -61,13 +62,18 @@ class ArchivosController extends Controller
         if ($archivo !== null) {
             $archivo->num_descargas += 1;
             $archivo->save();
+
+            try {
+                $file = Utility::s3Download($archivo->link, 'netflox-shows-content');
+                $path = Yii::getAlias('@content/' . $archivo->link);
+                file_put_contents($path, $file['Body']);
+                return Yii::$app->response->sendFile($path);
+            } catch (\Exception $exception) {
+                throw new NotFoundHttpException('El fichero no existe.');
+            }
         }
 
-        if ($archivo === null || !is_file($archivo->link)) {
-            throw new NotFoundHttpException('The file does not exists.');
-        }
-
-        return Yii::$app->response->sendFile($archivo->link);
+        throw new NotFoundHttpException('El fichero no existe.');
     }
 
     /**

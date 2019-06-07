@@ -37,7 +37,7 @@ class Shows extends \yii\db\ActiveRecord
     /**
      * @var string Imagen por defecto.
      */
-    const IMAGEN = 'images/default.png';
+    const IMAGEN = '@images/default.png';
 
     /**
      * @var array Opciones de ordenacion disponibles.
@@ -81,6 +81,12 @@ class Shows extends \yii\db\ActiveRecord
      */
     public $showUpload;
 
+    /**
+     * Descripcion del show a subir.
+     * @var string
+     */
+    public $descripcion;
+
     // Atributos generados por la query de ShowsSearch.
 
     /**
@@ -103,8 +109,8 @@ class Shows extends \yii\db\ActiveRecord
     {
         return [
             [['titulo', 'lanzamiento', 'tipo_id'], 'required'],
-            [['titulo', 'sinopsis', 'trailer'], 'trim'],
-            [['titulo'], 'string', 'max' => 255],
+            [['titulo', 'sinopsis', 'trailer', 'descripcion'], 'trim'],
+            [['titulo', 'descripcion'], 'string', 'max' => 255],
             [['lanzamiento'], 'date', 'format' => 'php:Y-m-d'],
             [['trailer'], 'url'],
             [['duracion'], 'integer', 'min' => -32767, 'max' => 32767],
@@ -183,13 +189,13 @@ class Shows extends \yii\db\ActiveRecord
     }
 
     /**
-     * Sube una imagen en principio a local.
+     * Sube una imagen a AWS S3.
      */
     public function uploadImg()
     {
         $this->imgUpload = UploadedFile::getInstance($this, 'imgUpload');
         if ($this->imgUpload !== null) {
-            $this->imagen = Utility::uploadImg($this->imgUpload);
+            $this->imagen = Utility::upload($this->imgUpload, uniqid($this->titulo), 'netflox-shows-images', $this->imagen);
             $this->imgUpload = null;
         }
     }
@@ -209,7 +215,6 @@ class Shows extends \yii\db\ActiveRecord
              */
             $this->listaParticipantes = json_decode($this->listaParticipantes);
             Utility::massiveSaveParticipantes($this->listaParticipantes, $this->id);
-
         }
 
         /**
@@ -219,24 +224,41 @@ class Shows extends \yii\db\ActiveRecord
     }
 
     /**
-     * Sube una imagen en principio a local.
+     * Sube un show.
      */
     public function uploadShow()
     {
-
         $this->showUpload = UploadedFile::getInstance($this, 'showUpload');
         if ($this->showUpload !== null) {
-            $fileName = Yii::getAlias('@uploads/' . $this->showUpload->baseName . '.' . $this->showUpload->extension);
-            $this->showUpload->saveAs($fileName);
-
             $archivo = new Archivos();
-            $archivo->link = $fileName;
+            $archivo->link = Utility::upload(
+                $this->showUpload,
+                uniqid($this->id),
+                'netflox-shows-content'
+            );
+            $archivo->descripcion = $this->descripcion ?: $this->id . '-' . $this->getFullTittle();
             $archivo->show_id = $this->id;
 
             $archivo->save();
 
             $this->showUpload = null;
         }
+    }
+
+    /**
+     * Devuelve el nombre completo del show.
+     * @param string $str
+     * @return string
+     */
+    public function getFullTittle($str = '')
+    {
+        $str = $this->titulo . (empty($str) ? '' : (', ' . $str));
+
+        if ($this->show != null) {
+            return $this->show->getFullTittle($str);
+        }
+
+        return $str;
     }
 
     /**
@@ -331,23 +353,17 @@ class Shows extends \yii\db\ActiveRecord
      */
     public function getImagenLink()
     {
-        return $this->imagen ?: self::IMAGEN;
-    }
-
-    /**
-     * Devuelve el nombre completo del show.
-     * @param string $str
-     * @return string
-     */
-    public function getFullTittle($str = '')
-    {
-        $str = $this->titulo . (empty($str) ? '' : (', ' . $str));
-
-        if ($this->show != null) {
-            return $this->show->getFullTittle($str);
+        if ($this->imagen !== null) {
+            try {
+                $img = Utility::s3Download($this->imagen, 'netflox-shows-images');
+                $path = Yii::getAlias('@cover/' . $this->imagen);
+                file_put_contents($path, $img['Body']);
+                return $path;
+            } catch (\Exception $exception) {
+            }
         }
 
-        return $str;
+        return Yii::getAlias(self::IMAGEN);
     }
 
     /**

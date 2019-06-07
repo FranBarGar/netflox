@@ -316,7 +316,7 @@ EOJSV;
 
     /**
      * Sube una imagen.
-     * @param $imgUpload
+     * @param $imgUpload UploadedFile
      * @param $fileKey
      * @param $bucketName
      * @param $antiguo
@@ -329,7 +329,7 @@ EOJSV;
 
         $imagine = new Imagine();
         $image = $imagine->open($fileName);
-        $image->resize(new Box(200, 200))->save($fileName);
+        $image->resize(new Box(400, 400))->save($fileName);
 
         if ($antiguo !== null) {
             Utility::s3Delete($antiguo, $bucketName);
@@ -338,6 +338,25 @@ EOJSV;
         $fileKey .= '.' . $imgUpload->extension;
 
         return Utility::s3Upload(file_get_contents($fileName), $fileKey, $bucketName);
+    }
+
+    /**
+     * Sube una imagen.
+     * @param $imgUpload UploadedFile
+     * @param $fileKey
+     * @param $bucketName
+     * @param $antiguo
+     * @return mixed
+     */
+    public static function upload($imgUpload, $fileKey, $bucketName, $antiguo = null)
+    {
+        if ($antiguo !== null) {
+            Utility::s3Delete($antiguo, $bucketName);
+        }
+
+        $fileKey .= '.' . $imgUpload->extension;
+
+        return Utility::s3Upload(file_get_contents($imgUpload->tempName), $fileKey, $bucketName);
     }
 
     /**
@@ -431,7 +450,7 @@ EOJSV;
     }
 
     /**
-     * Descarga una imagen de AWS S3.
+     * Descarga un fichero de AWS S3.
      * @param $name
      * @param $bucketName
      * @return \Aws\Result
@@ -447,5 +466,21 @@ EOJSV;
             'Bucket' => $bucketName,
             'Key' => $name
         ]);
+    }
+
+    /**
+     * Obtiene el enlace del .
+     * @param $name
+     * @param $bucketName
+     * @return \Aws\Result
+     */
+    public static function s3GetUrl($name, $bucketName)
+    {
+        $s3Client = new S3Client([
+            'version' => 'latest',
+            'region' => 'eu-west-3'
+        ]);
+
+        return $s3Client->getObjectUrl($bucketName, $name);
     }
 }
