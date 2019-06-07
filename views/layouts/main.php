@@ -203,7 +203,7 @@ AppAsset::register($this);
         $menu[] = [
             'label' =>
                 '<img 
-                src="' . Yii::$app->user->identity->imagen . '" 
+                src="' . Yii::$app->user->identity->getImagenLink() . '" 
                 alt="Image not found" 
                 onerror="
                     this.onerror=null;

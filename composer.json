@@ -34,7 +34,8 @@
     "kartik-v/yii2-widget-rating": "dev-master",
     "kartik-v/yii2-widgets": "dev-master",
     "ext-json": "*",
-    "npm-asset/bootstrap-notify": "*"
+    "npm-asset/bootstrap-notify": "*",
+    "aws/aws-sdk-php": "^3.99"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "dev-master",

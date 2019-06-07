@@ -39,5 +39,12 @@ tests/chromedriver
 # local environment variables
 .env
 
-# uploads
-uploads/*
+# files
+web/uploads/*
+!web/uploads/.gitkeep
+web/aws/content/*
+!web/aws/content/.gitkeep
+web/aws/user/*
+!web/aws/user/.gitkeep
+web/aws/cover/*
+!web/aws/cover/.gitkeep
