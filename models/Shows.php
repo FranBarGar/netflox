@@ -367,6 +367,34 @@ class Shows extends \yii\db\ActiveRecord
     }
 
     /**
+     * Devuelve el enlace a la imagen de portada, en caso de no tener devuelve la imagen por defecto.
+     * @return string
+     */
+    public function getMiAccion()
+    {
+        /** @var UsuariosShows $usuariosShows */
+        $usuariosShows = UsuariosShows::find()
+            ->where([
+                'usuario_id' => Yii::$app->user->id,
+                'show_id' => $this->id
+            ])
+            ->one();
+
+        if ($usuariosShows !== null) {
+            switch ($usuariosShows->accion->accion) {
+                case Accion::DROPPED:
+                    return 'glyphicon glyphicon-trash';
+                case Accion::WATCHED:
+                    return 'glyphicon glyphicon-eye-close';
+                case Accion::WATCHING:
+                    return 'glyphicon glyphicon-eye-open';
+                default:
+                    return '';
+            }
+        }
+    }
+
+    /**
      * Metodo para buscar los shows que tienen como padre id el del modelo actual.
      * @return \yii\db\ActiveQuery
      */
