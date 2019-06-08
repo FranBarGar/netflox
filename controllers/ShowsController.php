@@ -105,7 +105,7 @@ class ShowsController extends Controller
         $valoracionesProvider = $searchModel
             ->search(Yii::$app->request->queryParams)
             ->query
-            ->andFilterWhere(['show_id' => $id])
+            ->andFilterWhere(['comentarios.show_id' => $id])
             ->all();
 
         $model = $this->advancedFindModel($id);
