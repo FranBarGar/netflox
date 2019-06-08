@@ -7,8 +7,7 @@ use yii\widgets\ListView;
 /* @var $searchModel app\models\ShowsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Shows';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = $title;
 ?>
 <div class="shows-index">
 

@@ -40,136 +40,133 @@ AppAsset::register($this);
     ]);
 
 
-    $menu[] = [
-        'label' => 'Admin',
-        'items' => [
-            '<li class="dropdown-header">Personas</li>',
-            ['label' => 'Index', 'url' => ['/personas/index']],
-            ['label' => 'Crear', 'url' => ['/personas/create']],
-            '<li class="divider"></li>',
-            '<li class="dropdown-header">Roles</li>',
-            ['label' => 'Index', 'url' => ['/roles/index']],
-            ['label' => 'Crear', 'url' => ['/roles/create']],
-            '<li class="divider"></li>',
-            '<li class="dropdown-header">Generos</li>',
-            ['label' => 'Index', 'url' => ['/generos/index']],
-            ['label' => 'Crear', 'url' => ['/generos/create']],
-            '<li class="divider"></li>',
-            '<li class="dropdown-header">Tipos de shows</li>',
-            ['label' => 'Index', 'url' => ['/tipos/index']],
-            ['label' => 'Crear', 'url' => ['/tipos/create']],
-            '<li class="divider"></li>',
-            '<li class="dropdown-header">Usuarios</li>',
-            ['label' => 'Index', 'url' => ['/usuarios/index']],
-            '<li class="divider"></li>',
-            '<li class="dropdown-header">Shows</li>',
-            ['label' => 'Crear', 'url' => ['/shows/create']],
-        ],
-    ];
+    if (!Yii::$app->user->isGuest) {
+        $menu[] = [
+            'label' => 'Admin',
+            'items' => [
+                '<li class="dropdown-header">Personas</li>',
+                ['label' => 'Index', 'url' => ['/personas/index']],
+                ['label' => 'Crear', 'url' => ['/personas/create']],
+                '<li class="divider"></li>',
+                '<li class="dropdown-header">Roles</li>',
+                ['label' => 'Index', 'url' => ['/roles/index']],
+                ['label' => 'Crear', 'url' => ['/roles/create']],
+                '<li class="divider"></li>',
+                '<li class="dropdown-header">Generos</li>',
+                ['label' => 'Index', 'url' => ['/generos/index']],
+                ['label' => 'Crear', 'url' => ['/generos/create']],
+                '<li class="divider"></li>',
+                '<li class="dropdown-header">Tipos de shows</li>',
+                ['label' => 'Index', 'url' => ['/tipos/index']],
+                ['label' => 'Crear', 'url' => ['/tipos/create']],
+                '<li class="divider"></li>',
+                '<li class="dropdown-header">Usuarios</li>',
+                ['label' => 'Index', 'url' => ['/usuarios/index']],
+                '<li class="divider"></li>',
+                '<li class="dropdown-header">Shows</li>',
+                ['label' => 'Crear', 'url' => ['/shows/create']],
+            ],
+        ];
 
-    $menu = [
-        ['label' => 'Shows',
-            'items' => [
-                [
-                    'label' => 'Lo mas valorado',
-                    'url' => [
-                        '/shows/index',
-                        'ShowsSearch[orderBy]' => 'valoracionMedia',
-                        'ShowsSearch[orderType]' => 'DESC'
-                    ]
-                ],
-                [
-                    'label' => 'Lo mas comentado',
-                    'url' => [
-                        '/shows/index',
-                        'ShowsSearch[orderBy]' => 'numComentarios',
-                        'ShowsSearch[orderType]' => 'DESC',
-                    ]
-                ],
-                [
-                    'label' => 'Lo mas nuevo',
-                    'url' => [
-                        '/shows/index',
-                        'ShowsSearch[orderBy]' => 'shows.lanzamiento',
-                        'ShowsSearch[orderType]' => 'DESC'
-                    ]
-                ],
+        $menu = [
+            ['label' => 'Shows',
+                'items' => [
+                    [
+                        'label' => 'Lo mas valorado',
+                        'url' => [
+                            '/shows/index',
+                            'ShowsSearch[orderBy]' => 'valoracionMedia',
+                            'ShowsSearch[orderType]' => 'DESC'
+                        ]
+                    ],
+                    [
+                        'label' => 'Lo mas comentado',
+                        'url' => [
+                            '/shows/index',
+                            'ShowsSearch[orderBy]' => 'numComentarios',
+                            'ShowsSearch[orderType]' => 'DESC',
+                        ]
+                    ],
+                    [
+                        'label' => 'Lo mas nuevo',
+                        'url' => [
+                            '/shows/index',
+                            'ShowsSearch[orderBy]' => 'shows.lanzamiento',
+                            'ShowsSearch[orderType]' => 'DESC'
+                        ]
+                    ],
+                ]
+            ],
+            ['label' => 'Peliculas',
+                'items' => [
+                    [
+                        'label' => 'Lo mas valorado',
+                        'url' => [
+                            '/shows/index',
+                            'ShowsSearch[orderBy]' => 'valoracionMedia',
+                            'ShowsSearch[orderType]' => 'DESC',
+                            'ShowsSearch[tipo_id]' => '1'
+                        ]
+                    ],
+                    [
+                        'label' => 'Lo mas comentado',
+                        'url' => [
+                            '/shows/index',
+                            'ShowsSearch[orderBy]' => 'numComentarios',
+                            'ShowsSearch[orderType]' => 'DESC',
+                            'ShowsSearch[tipo_id]' => '1'
+                        ]
+                    ],
+                    [
+                        'label' => 'Lo mas nuevo',
+                        'url' => [
+                            '/shows/index',
+                            'ShowsSearch[orderBy]' => 'shows.lanzamiento',
+                            'ShowsSearch[orderType]' => 'DESC',
+                            'ShowsSearch[tipo_id]' => '1'
+                        ]
+                    ],
+                ]
+            ],
+            ['label' => 'Series',
+                'items' => [
+                    [
+                        'label' => 'Lo mas valorado',
+                        'url' => [
+                            '/shows/index',
+                            'ShowsSearch[orderBy]' => 'valoracionMedia',
+                            'ShowsSearch[orderType]' => 'DESC',
+                            'ShowsSearch[tipo_id]' => '2'
+                        ]
+                    ],
+                    [
+                        'label' => 'Lo mas comentado',
+                        'url' => [
+                            '/shows/index',
+                            'ShowsSearch[orderBy]' => 'numComentarios',
+                            'ShowsSearch[orderType]' => 'DESC',
+                            'ShowsSearch[tipo_id]' => '2'
+                        ]
+                    ],
+                    [
+                        'label' => 'Lo mas nuevo',
+                        'url' => [
+                            '/shows/index',
+                            'ShowsSearch[orderBy]' => 'shows.lanzamiento',
+                            'ShowsSearch[orderType]' => 'DESC',
+                            'ShowsSearch[tipo_id]' => '2'
+                        ]
+                    ],
+                ]
+            ],
+            ['label' => 'Social',
+                'items' => [
+                    ['label' => 'Usuarios', 'url' => ['/usuarios/index']],
+                    ['label' => 'Valoraciones', 'url' => ['/comentarios/index']],
+                ]
             ]
-        ],
-        ['label' => 'Peliculas',
-            'items' => [
-                [
-                    'label' => 'Lo mas valorado',
-                    'url' => [
-                        '/shows/index',
-                        'ShowsSearch[orderBy]' => 'valoracionMedia',
-                        'ShowsSearch[orderType]' => 'DESC',
-                        'ShowsSearch[tipo_id]' => '1'
-                    ]
-                ],
-                [
-                    'label' => 'Lo mas comentado',
-                    'url' => [
-                        '/shows/index',
-                        'ShowsSearch[orderBy]' => 'numComentarios',
-                        'ShowsSearch[orderType]' => 'DESC',
-                        'ShowsSearch[tipo_id]' => '1'
-                    ]
-                ],
-                [
-                    'label' => 'Lo mas nuevo',
-                    'url' => [
-                        '/shows/index',
-                        'ShowsSearch[orderBy]' => 'shows.lanzamiento',
-                        'ShowsSearch[orderType]' => 'DESC',
-                        'ShowsSearch[tipo_id]' => '1'
-                    ]
-                ],
-            ]
-        ],
-        ['label' => 'Series',
-            'items' => [
-                [
-                    'label' => 'Lo mas valorado',
-                    'url' => [
-                        '/shows/index',
-                        'ShowsSearch[orderBy]' => 'valoracionMedia',
-                        'ShowsSearch[orderType]' => 'DESC',
-                        'ShowsSearch[tipo_id]' => '2'
-                    ]
-                ],
-                [
-                    'label' => 'Lo mas comentado',
-                    'url' => [
-                        '/shows/index',
-                        'ShowsSearch[orderBy]' => 'numComentarios',
-                        'ShowsSearch[orderType]' => 'DESC',
-                        'ShowsSearch[tipo_id]' => '2'
-                    ]
-                ],
-                [
-                    'label' => 'Lo mas nuevo',
-                    'url' => [
-                        '/shows/index',
-                        'ShowsSearch[orderBy]' => 'shows.lanzamiento',
-                        'ShowsSearch[orderType]' => 'DESC',
-                        'ShowsSearch[tipo_id]' => '2'
-                    ]
-                ],
-            ]
-        ],
-        ['label' => 'Social',
-            'items' => [
-                ['label' => 'Usuarios', 'url' => ['/usuarios/index']],
-                ['label' => 'Valoraciones', 'url' => ['/comentarios/index']],
-            ]
-        ]
-    ];
+        ];
 
-    if (Yii::$app->user->isGuest) {
-        $menu[] = ['label' => 'Registrarse', 'url' => ['usuarios/create']];
-        $menu[] = ['label' => 'Login', 'url' => ['/site/login']];
-    } else {
         if (Yii::$app->user->identity->rol == 'admin') {
             $menu[] = [
                 'label' => 'Admin',
@@ -223,15 +220,13 @@ AppAsset::register($this);
             ],
         ];
     }
-
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'encodeLabels' => false,
-        'items' => array_merge([
-            ['label' => 'Home', 'url' => ['/site/index']],
-        ], $menu)
+        'items' => isset($menu) ? $menu : []
     ]);
     NavBar::end();
+
     ?>
 
     <div class="container">

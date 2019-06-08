@@ -8,6 +8,7 @@ $log = require __DIR__ . '/log.php';
 
 $config = [
     'id' => 'basic',
+    'defaultRoute' => '/site/login',
     'name' => 'Netflox',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
