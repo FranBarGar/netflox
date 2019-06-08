@@ -14,6 +14,8 @@ $css = <<<EOCSS
     }
 EOCSS;
 
+$this->title = 'Netflox';
+
 $this->registerCss($css);
 $this->registerJs(Utility::togglePassword());
 ?>

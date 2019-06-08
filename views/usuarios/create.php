@@ -5,6 +5,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Usuarios */
 
+$this->title = 'Netflox';
+
 ?>
 <div class="usuarios-create">
     <div class="col-md-12 col-xs-12">
