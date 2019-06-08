@@ -51,7 +51,7 @@ class ComentariosSearch extends Comentarios
         $query = Comentarios::find()
             ->select('
                 comentarios.*,
-                SUM(COALESCE(votacion, 0)) AS "votacionTotal"
+                SUM(votacion) AS "votacionTotal"
             ');
 
         // add conditions that should always apply here
