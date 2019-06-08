@@ -28,13 +28,23 @@ $this->params['breadcrumbs'][] = $this->title;
             ]);
             break;
         case strpos($title, 'Siguiendo') !== false:
-            echo \yii\widgets\ListView::widget([
-                'dataProvider' => $dataProvider,
-                'summary' => '',
-                'itemView' => function ($model, $key, $index, $widget) {
-                    return $this->render('_smallViewSeguidos.php', ['model' => $model]);
-                },
-            ]);
+            if (Yii::$app->user->id == $usuarioActual) {
+                echo \yii\widgets\ListView::widget([
+                    'dataProvider' => $dataProvider,
+                    'summary' => '',
+                    'itemView' => function ($model, $key, $index, $widget) {
+                        return $this->render('_smallViewMisSeguidos.php', ['model' => $model]);
+                    },
+                ]);
+            } else {
+                echo \yii\widgets\ListView::widget([
+                    'dataProvider' => $dataProvider,
+                    'summary' => '',
+                    'itemView' => function ($model, $key, $index, $widget) {
+                        return $this->render('_smallViewSeguidos.php', ['model' => $model]);
+                    },
+                ]);
+            }
             break;
         case strpos($title, 'bloqueados') !== false:
             echo \yii\widgets\ListView::widget([

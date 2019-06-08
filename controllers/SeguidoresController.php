@@ -164,17 +164,20 @@ class SeguidoresController extends Controller
         $search = Yii::$app->request->get('SeguidoresSearch');
 
         $seguidorId = isset($search['seguidor_id']) ? $search['seguidor_id'] : null;
-//        $seguidoId = isset($search['seguido_id']) ? $search['seguido_id'] : null;
+        $seguidoId = isset($search['seguido_id']) ? $search['seguido_id'] : null;
 
         if ($seguidorId != '') {
             $str = 'Siguiendo';
+            $usuarioActual = $seguidorId;
         } else {
             $str = 'Seguidores';
+            $usuarioActual = $seguidoId;
         }
 
         return $this->renderPartial('indexPartial.php', [
             'title' => $str,
             'dataProvider' => $dataProvider,
+            'usuarioActual' => $usuarioActual
         ]);
     }
 

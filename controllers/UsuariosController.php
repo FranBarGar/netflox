@@ -39,6 +39,10 @@ class UsuariosController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
+                        'actions' => ['create'],
+                        'allow' => true
+                    ],
+                    [
                         'actions' => ['delete', 'index-admin'],
                         'allow' => true,
                         'roles' => ['@'],

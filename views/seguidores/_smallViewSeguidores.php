@@ -15,14 +15,12 @@ $seguidor = $model->seguidor;
 $follow = Url::to(['seguidores/follow', 'seguido_id' => $seguidor->id]);
 $block = Url::to(['seguidores/block', 'seguido_id' => $seguidor->id]);
 
-
 if (($soySeguidor = Seguidores::soySeguidorOBloqueador($seguidor->id)) !== null) {
     $esBloqueado = $soySeguidor->blocked_at !== null;
     $soySeguidor = $soySeguidor->blocked_at === null;
 } else {
     $esBloqueado = $soySeguidor = false;
 }
-
 ?>
 <div class="usuarios-shows-view">
 
