@@ -11,6 +11,12 @@ use app\models\Comentarios;
  */
 class ComentariosSearch extends Comentarios
 {
+    /** @var string Busqueda por titulo */
+    public $literalTitulo;
+
+    /** @var string Busqueda por usuario */
+    public $literalUsuario;
+
     /**
      * {@inheritdoc}
      */
@@ -19,7 +25,7 @@ class ComentariosSearch extends Comentarios
         return [
             [['id', 'padre_id', 'show_id'], 'integer'],
             [['valoracion'], 'number'],
-            [['cuerpo', 'created_at', 'orderBy', 'orderType', 'usuario_id'], 'safe'],
+            [['cuerpo', 'created_at', 'orderBy', 'orderType', 'usuario_id', 'literalTitulo', 'literalUsuario'], 'safe'],
         ];
     }
 
@@ -45,12 +51,14 @@ class ComentariosSearch extends Comentarios
         $query = Comentarios::find()
             ->select('
                 comentarios.*,
-                SUM(COALESCE(votacion, 0)) AS "votacionTotal"
+                SUM(votacion) AS "votacionTotal"
             ');
 
         // add conditions that should always apply here
         $query
             ->andWhere(['not', ['valoracion' => null]])
+            ->joinWith('show')
+            ->joinWith('usuario')
             ->joinWith('votos')
             ->groupBy('comentarios.id');
 
@@ -78,6 +86,9 @@ class ComentariosSearch extends Comentarios
         ]);
 
         $query->andFilterWhere(['ilike', 'cuerpo', $this->cuerpo]);
+        $query->andFilterWhere(['ilike', 'titulo', $this->literalTitulo]);
+        $query->andFilterWhere(['ilike', 'nick', $this->literalUsuario]);
+
 
         if ($this->orderBy != null) {
             $query->orderBy($this->orderBy . ' ' . $this->orderType . ', created_at');
