@@ -50,7 +50,6 @@ EOCSS;
 
     const JS_BLOCK = <<<EOJSB
     var data = JSON.parse(sessionStorage.getItem('blockData'));
-    console.log(data);
     if (data != null) {
         $.notify({
             title: data.tittle,

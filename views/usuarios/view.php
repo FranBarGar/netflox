@@ -121,6 +121,7 @@ $accionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usua
                             type : 'GET',
                             url : '$block',
                             success: function(data) {
+                                sessionStorage.setItem('blockData', data);
                                 location.reload();
                             }
                         });

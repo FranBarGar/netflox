@@ -1,5 +1,6 @@
 <?php
 
+use app\helpers\Utility;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
@@ -8,6 +9,8 @@ use yii\widgets\DetailView;
 /* @var $model app\models\Seguidores */
 
 \yii\web\YiiAsset::register($this);
+
+$js = Utility::JS_BLOCK;
 
 $seguido = $model->seguido;
 $seguidor = $model->seguidor;
@@ -31,6 +34,7 @@ $block = Url::to(['seguidores/block', 'seguido_id' => $seguido->id]);
                         success: function(data) {
                             $(btn).parent().parent().remove();
                             sessionStorage.setItem('blockData', data);
+                            $js
                         }
                     });
                     return false;
