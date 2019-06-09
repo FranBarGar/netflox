@@ -137,6 +137,9 @@ $accionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usua
                 <p>Usuario desde el <?= Yii::$app->formatter->asDate($model->created_at, 'long') ?></p>
             </div>
             <h2><?= Html::encode($model->nick) ?></h2>
+            <div>
+                <label for="email">Email: </label> <?= $model->email ?>
+            </div>
             <label for="biografia">Biografía:</label>
             <p><?= Html::encode($model->biografia) ?></p>
         </div>
