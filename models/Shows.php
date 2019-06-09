@@ -95,6 +95,11 @@ class Shows extends \yii\db\ActiveRecord
     public $valoracionMedia;
 
     /**
+     * @var float Numero de descargas.
+     */
+    public $numDescargas;
+
+    /**
      * {@inheritdoc}
      */
     public static function tableName()
@@ -417,5 +422,20 @@ class Shows extends \yii\db\ActiveRecord
             return $this->show->obtenerGeneros();
         }
         return false;
+    }
+
+    /**
+     * @return Generos[]|bool
+     */
+    public function getNumDescargas()
+    {
+        if ($this->numDescargas == null) {
+            $this->numDescargas = Archivos::find()
+                ->where(['show_id' => $this->id])
+                ->groupBy('id')
+                ->sum('num_descargas');
+        }
+
+        return $this->numDescargas;
     }
 }

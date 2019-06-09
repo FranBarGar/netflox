@@ -174,11 +174,10 @@ $this->registerCss(Utility::CSS . $css);
         }
 
         if (!empty($model->archivos)) {
-//                TODO: Descargas totales y archivos en la nube.
             $str = '
             <ul class="list-group">
                 <li class="list-group-item active">
-                    <span class="badge"> Descargas totales: 0</span>
+                    <span class="badge"> Descargas totales: ' . $model->getNumDescargas() . '</span>
                     Enlaces
                 </li>';
             foreach ($model->archivos as $archivo) {
