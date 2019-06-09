@@ -42,7 +42,6 @@ class ComentariosSearch extends Comentarios
      * Creates data provider instance with search query applied
      *
      * @param $params
-     * @param array $ids
      *
      * @return ActiveDataProvider
      */

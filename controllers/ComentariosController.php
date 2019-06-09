@@ -212,15 +212,16 @@ class ComentariosController extends Controller
     /**
      * Vista parcial de las valoraciones dado unos ids.
      *
-     * @param $ids
-     *
      * @return string
      *
      * @throws \Exception
      */
     public function actionGetValoraciones()
     {
-        $ids = Yii::$app->request->get('ComentariosSearch')['usuario_id'];
+        $ids =
+            isset(Yii::$app->request->get('ComentariosSearch')['usuario_id'])
+                ? Yii::$app->request->get('ComentariosSearch')['usuario_id']
+                : '';
 
         if ($ids == '') {
             $_GET['ComentariosSearch']['usuario_id'] = Seguidores::getSeguidoresId(Yii::$app->user->id);

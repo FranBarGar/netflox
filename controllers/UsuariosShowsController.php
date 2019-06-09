@@ -133,15 +133,16 @@ class UsuariosShowsController extends Controller
     /**
      * Lists all UsuariosShows models.
      *
-     * @param $ids
-     *
      * @return string
      *
      * @throws \Exception
      */
     public function actionGetAcciones()
     {
-        $ids = Yii::$app->request->get('UsuariosShowsSearch')['usuario_id'];
+        $ids =
+            isset(Yii::$app->request->get('UsuariosShowsSearch')['usuario_id'])
+                ? Yii::$app->request->get('UsuariosShowsSearch')['usuario_id']
+                : '';
 
         if ($ids == '') {
             $_GET['UsuariosShowsSearch']['usuario_id'] = Seguidores::getSeguidoresId(Yii::$app->user->id);
