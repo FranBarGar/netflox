@@ -15,26 +15,19 @@ use yii\widgets\ActiveForm;
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'id') ?>
+    <div class="form-group col-xs-12 col-md-6">
+        <?= $form->field($model, 'nick') ?>
+    </div>
+    <div class="form-group col-xs-12 col-md-6">
+        <?= $form->field($model, 'email') ?>
+    </div>
 
-    <?= $form->field($model, 'nick') ?>
+    <div class="form-group col-xs-12 col-md-12">
+    <?= $form->field($model, 'biografia')->textarea(['rows' => 3]) ?>
+    </div>
 
-    <?= $form->field($model, 'email') ?>
-
-    <?= $form->field($model, 'biografia') ?>
-
-    <?= $form->field($model, 'imagen') ?>
-
-    <?php // echo $form->field($model, 'created_at') ?>
-
-
-    <?php // echo $form->field($model, 'token') ?>
-
-    <?php // echo $form->field($model, 'password') ?>
-
-    <div class="form-group">
-        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
+    <div class="form-group col-xs-12 col-md-12">
+        <?= Html::submitButton('Buscar', ['class' => 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
