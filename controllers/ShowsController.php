@@ -70,15 +70,11 @@ class ShowsController extends Controller
         $searchModel = new ShowsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        if (isset(Yii::$app->request->get('ShowsSearch')['tipo_id'])) {
-            $tipo_id = Yii::$app->request->get('ShowsSearch')['tipo_id'];
-        } else {
-            $tipo_id = null;
-        }
-
-        $tipo = Tipos::findOne($tipo_id);
-        if ($tipo !== null) {
-            $title = $tipo->tipo;
+        if (isset(Yii::$app->request->get('ShowsSearch')['tipo_id']) && !empty(Yii::$app->request->get('ShowsSearch')['tipo_id'])) {
+            $tipo = Tipos::findOne(Yii::$app->request->get('ShowsSearch')['tipo_id']);
+            if ($tipo !== null) {
+                $title = $tipo->tipo;
+            }
         }
 
         return $this->render('index', [
