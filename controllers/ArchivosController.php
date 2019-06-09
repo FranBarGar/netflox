@@ -64,9 +64,11 @@ class ArchivosController extends Controller
             $archivo->save();
 
             try {
-                $file = Utility::s3Download($archivo->link, 'netflox-shows-content');
                 $path = Yii::getAlias('@content/' . $archivo->link);
-                file_put_contents($path, $file['Body']);
+                if (!file_exists($path)) {
+                    $file = Utility::s3Download($archivo->link, 'netflox-shows-content');
+                    file_put_contents($path, $file['Body']);
+                }
                 return Yii::$app->response->sendFile($path);
             } catch (\Exception $exception) {
                 throw new NotFoundHttpException('El fichero no existe.');
