@@ -39,7 +39,9 @@ $block = Url::to(['seguidores/block', 'seguido_id' => $seguido->id]);
             ?>
         </div>
         <div class="col-xs-9">
-            <h3 style="margin: 0"><?= Html::a($seguido->nick, ['usuarios/view', 'id' => $seguido->id]) ?></h3>
+            <h3 style="margin: 0"><?= Html::a($seguido->nick, ['usuarios/view', 'id' => $seguido->id]) ?>
+                <small><?= Html::encode($seguido->email) ?></small>
+            </h3>
             <small>Bloqueado por <?= Html::a($seguidor->nick, ['usuarios/view', 'id' => $seguidor->id]) ?> desde el <?= Yii::$app->formatter->asDate($model->created_at, 'long') ?></small>
             <p>
                 <?= Html::encode($seguido->biografia) ?>

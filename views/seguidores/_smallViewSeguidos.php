@@ -89,7 +89,9 @@ if (($soySeguidor = Seguidores::soySeguidorOBloqueador($seguido->id)) !== null) 
             <?php endif; ?>
         </div>
         <div class="col-xs-9">
-            <h3 style="margin: 0"><?= Html::a($seguido->nick, ['usuarios/view', 'id' => $seguido->id]) ?></h3>
+            <h3 style="margin: 0"><?= Html::a($seguido->nick, ['usuarios/view', 'id' => $seguido->id]) ?>
+                <small><?= Html::encode($seguido->email) ?></small>
+            </h3>
             <small>Seguido por <?= Html::a($seguidor->nick, ['usuarios/view', 'id' => $seguidor->id]) ?> desde el <?= Yii::$app->formatter->asDate($model->created_at, 'long') ?></small>
             <p>
                 <?= Html::encode($seguido->biografia) ?>

@@ -54,11 +54,7 @@ $block = Url::to(['seguidores/block', 'seguido_id' => $model->id]);
             ?>
         </div>
 
-        <div class="row">
-            <div class="col-xs-12 text-center" style="margin-top: 5px">
-                <p>Usuario desde el <?= Yii::$app->formatter->asDate($model->created_at, 'long') ?></p>
-            </div>
-        </div>
+        <h2><?= Html::encode($model->nick) ?></h2>
     </div>
 
     <div class="col-md-9 col-xs-12 jumbotron">

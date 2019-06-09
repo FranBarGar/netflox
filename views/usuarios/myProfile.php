@@ -109,6 +109,9 @@ $accionesUrl = Url::to(['usuarios-shows/get-acciones', 'UsuariosShowsSearch[usua
                 <p>Usuario desde el <?= Yii::$app->formatter->asDate($model->created_at, 'long') ?></p>
             </div>
             <h2><?= Html::encode($model->nick) ?></h2>
+            <div>
+                <label for="email">Email: </label> <?= $model->email ?>
+            </div>
             <div class="biografia-form">
                 <?php $form = ActiveForm::begin(['action' => ['usuarios/update', 'id' => Yii::$app->user->id]]); ?>
                 <?= $form->field($model, 'biografia')->textarea(['rows' => '9']) ?>
