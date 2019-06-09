@@ -145,9 +145,9 @@ class ShowsController extends Controller
             shows.*, 
             SUM(COALESCE(valoracion, 0))/GREATEST(COUNT(valoracion), 1)::float AS "valoracionMedia"')
             ->joinWith('comentarios')
-            ->joinWith('generos')
-            ->with('tipo')
             ->with('archivos')
+            ->with('generos')
+            ->with('tipo')
             ->where(['shows.id' => $id])
             ->groupBy('shows.id')
             ->one();
