@@ -360,9 +360,11 @@ class Shows extends \yii\db\ActiveRecord
     {
         if ($this->imagen !== null) {
             try {
-                $img = Utility::s3Download($this->imagen, 'netflox-shows-images');
                 $path = Yii::getAlias('@cover/' . $this->imagen);
-                file_put_contents($path, $img['Body']);
+                if (!file_exists($path)) {
+                    $img = Utility::s3Download($this->imagen, 'netflox-shows-images');
+                    file_put_contents($path, $img['Body']);
+                }
                 return $path;
             } catch (\Exception $exception) {
             }
