@@ -12,6 +12,12 @@ return [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
         '@tests' => '@app/tests',
+        '@uploads' => 'uploads',
+        '@images' => 'images',
+        '@aws' => 'aws',
+        '@user' => '@aws/user',
+        '@cover' => '@aws/cover',
+        '@content' => '@aws/content',
     ],
     'language' => 'es-ES',
     'components' => [
@@ -26,7 +32,7 @@ return [
             'showScriptName' => true,
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            'identityClass' => 'app\models\Usuarios',
         ],
         'request' => [
             'cookieValidationKey' => 'test',
