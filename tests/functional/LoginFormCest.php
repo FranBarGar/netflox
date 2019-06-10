@@ -9,7 +9,7 @@ class LoginFormCest
 
     public function openLoginPage(\FunctionalTester $I)
     {
-        $I->see('Login', 'h1');
+        $I->see('Iniciar sesión', 'h3');
 
     }
 
@@ -24,7 +24,7 @@ class LoginFormCest
     // demonstrates `amLoggedInAs` method
     public function internalLoginByInstance(\FunctionalTester $I)
     {
-        $I->amLoggedInAs(\app\models\User::findByUsername('admin'));
+        $I->amLoggedInAs(\app\models\Usuarios::findByUsername('admin'));
         $I->amOnPage('/');
         $I->see('Logout (admin)');
     }
@@ -33,8 +33,8 @@ class LoginFormCest
     {
         $I->submitForm('#login-form', []);
         $I->expectTo('see validations errors');
-        $I->see('Username no puede estar vacío.');
-        $I->see('Password no puede estar vacío.');
+        $I->see('Nombre de usuario no puede estar vacío.');
+        $I->see('Contraseña no puede estar vacío.');
     }
 
     public function loginWithWrongCredentials(\FunctionalTester $I)
@@ -44,16 +44,16 @@ class LoginFormCest
             'LoginForm[password]' => 'wrong',
         ]);
         $I->expectTo('see validations errors');
-        $I->see('Incorrect username or password.');
+        $I->see('Nombre de usuario o contraseña incorrecta.');
     }
 
     public function loginSuccessfully(\FunctionalTester $I)
     {
         $I->submitForm('#login-form', [
-            'LoginForm[username]' => 'admin',
-            'LoginForm[password]' => 'admin',
+            'LoginForm[username]' => 'hypra',
+            'LoginForm[password]' => 'hypra',
         ]);
-        $I->see('Logout (admin)');
+        $I->see('Logout (hypra)');
         $I->dontSeeElement('form#login-form');              
     }
 }

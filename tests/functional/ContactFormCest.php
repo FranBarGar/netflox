@@ -52,6 +52,6 @@ class ContactFormCest
         ]);
         $I->seeEmailIsSent();
         $I->dontSeeElement('#contact-form');
-        $I->see('Thank you for contacting us. We will respond to you as soon as possible.');        
+        $I->see('Gracias por contactarnos. Nosotros responderemos a la mayor brevedad posible.');
     }
 }

@@ -31,7 +31,7 @@ $this->registerJs(Utility::togglePassword());
             <h3 class="panel-title">Iniciar sesión</h3>
         </div>
         <div class="panel-body panel-custom">
-            <?php $form = ActiveForm::begin(); ?>
+            <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
                 <?= $form->field($model, 'username', [
                     'inputTemplate' => Utility::inputWithIcon('user'),
                     ]) ?>
