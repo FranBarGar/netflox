@@ -83,7 +83,7 @@ $this->registerCss(Utility::CSS . $css);
         ]);
 
         if (Yii::$app->user->identity->rol == 'admin') : ?>
-            <?= Html::a('Actualizar', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+            <?= Html::a('Editar', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
             <?=
             Html::a('Eliminar', ['delete', 'id' => $model->id], [
                 'class' => 'btn btn-danger',
