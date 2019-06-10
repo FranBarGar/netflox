@@ -21,6 +21,7 @@ if (($soySeguidor = Seguidores::soySeguidorOBloqueador($seguidor->id)) !== null)
 } else {
     $esBloqueado = $soySeguidor = false;
 }
+$soyBloqueado = Seguidores::soyBloqueado($seguidor->id);
 ?>
 <div class="usuarios-shows-view">
 
@@ -90,12 +91,14 @@ if (($soySeguidor = Seguidores::soySeguidorOBloqueador($seguidor->id)) !== null)
         </div>
         <div class="col-xs-9">
             <h3 style="margin: 0"><?= Html::a($seguidor->nick, ['usuarios/view', 'id' => $seguidor->id]) ?>
-                <small><?= Html::encode($seguido->email) ?></small>
+                <small><?= $soyBloqueado ? '' : Html::encode($seguidor->email) ?></small>
             </h3>
             <small>Seguidor de <?= Html::a($seguido->nick, ['usuarios/view', 'id' => $seguido->id]) ?> desde
                 el <?= Yii::$app->formatter->asDate($model->created_at, 'long') ?></small>
             <p>
-                <?= Html::encode($seguidor->biografia) ?>
+                <?= $soyBloqueado ?
+                    '<h2 style="color: indianred"><strong>Este usuario te tiene bloqueado</strong></h2>'
+                    : Html::encode($seguidor->biografia) ?>
             </p>
         </div>
     </div>
