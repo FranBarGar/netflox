@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="language" content="en" />
         
-<link href="./assets/8254dd90/css/bootstrap.css" rel="stylesheet">
-<link href="./assets/d6f57e1a/solarized_light.css" rel="stylesheet">
-<link href="./assets/993a28ad/style.css" rel="stylesheet">
-<script src="./assets/ed3f049b/jquery.js"></script>
-<script src="./assets/8254dd90/js/bootstrap.js"></script>
-<script src="./assets/807760dc/jssearch.js"></script>    <title>Anexos - Anexos - Guía del proyecto</title>
+<link href="./assets/cf53f50e/css/bootstrap.css" rel="stylesheet">
+<link href="./assets/b2fd7dc1/solarized_light.css" rel="stylesheet">
+<link href="./assets/f1be9a86/style.css" rel="stylesheet">
+<script src="./assets/2e324dec/jquery.js"></script>
+<script src="./assets/cf53f50e/js/bootstrap.js"></script>
+<script src="./assets/aad6d58a/jssearch.js"></script>    <title>Anexos - Anexos - Guía del proyecto</title>
 </head>
 <body>
 
@@ -49,11 +49,61 @@
 <a class="list-group-item" href="#navigation-32" data-toggle="collapse" data-parent="#navigation">Conclusiones <b class="caret"></b></a><div id="navigation-32" class="submenu panel-collapse collapse"><a class="list-group-item" href="./conclusiones.html">Conclusiones</a></div>
 <a class="list-group-item active" href="#navigation-33" data-toggle="collapse" data-parent="#navigation">Anexos <b class="caret"></b></a><div id="navigation-33" class="submenu panel-collapse collapse in"><a class="list-group-item active" href="./anexos.html">Anexos</a></div></div>    </div>
     <div class="col-md-9 guide-content" role="main">
-        <h1>Anexos <span id="anexos"></span><a href="#anexos" class="hashlink">&para;</a></h1><p>Documentos específicos vinculados a determinados requisitos funcionales o
-técnicos ("prueba del seis" y similares).</p>
-<p>Poner cada uno en un apartado separado, indicando en el título de cada apartado
-el código y la descripción corta del requisito asociado (por ejemplo,
-<strong>(RF24) Prueba del seis</strong>).</p>
+        <h1>Anexos <span id="anexos"></span><a href="#anexos" class="hashlink">&para;</a></h1><h3><strong>(R68) Validación de HTML y CSS, nivel de accesibilidad AA y prueba del seis</strong> <span id="r68-validacion-de-html-y-css-nivel-de-accesibilidad-aa-y-prueba-del-seis"></span><a href="#r68-validacion-de-html-y-css-nivel-de-accesibilidad-aa-y-prueba-del-seis" class="hashlink">&para;</a></h3><hr />
+<h3>Validación de HTML y CSS <span id="validacion-de-html-y-css"></span><a href="#validacion-de-html-y-css" class="hashlink">&para;</a></h3><p><strong>HTML</strong></p>
+<p><img src="images/anexo/validacion_html.png" alt="Validación HTML" /></p>
+<p><a href="https://validator.w3.org/nu/?doc=http%3A%2F%2Fnetflox-barba.herokuapp.com%2F">Enlace a la validación HTML</a></p>
+<p><strong>CSS</strong></p>
+<p><img src="images/anexo/validacion_css.png" alt="Validación CSS" /></p>
+<p><a href="https://jigsaw.w3.org/css-validator/validator?uri=http%3A%2F%2Fnetflox-barba.herokuapp.com%2F&amp;profile=css3svg&amp;usermedium=all&amp;warning=1&amp;vextwarning=&amp;lang=es">Enlace a la validación CSS</a></p>
+<hr />
+<h3>Validación de accesibilidad <span id="validacion-de-accesibilidad"></span><a href="#validacion-de-accesibilidad" class="hashlink">&para;</a></h3><p><img src="images/anexo/validacion_acces.png" alt="Validación accesibilidad" /></p>
+<p><a href="https://achecker.ca/checker/">Enlace a la validación WCAG</a></p>
+<p>La página index cumple el nivel AA de accesibilidad, el error que presenta es por usar una etiqueta h1 dentro de un <em>Jumbotron</em> de <code>Bootstrap</code>, ya que reconoce los estilos del propio div como si fuera un h1.</p>
+<hr />
+<h3>Prueba del seis <span id="prueba-del-seis"></span><a href="#prueba-del-seis" class="hashlink">&para;</a></h3><ol>
+<li><p>¿Qué sitio es éste?</p>
+<ul>
+<li>La aplicación tiene en todo momento elementos indicativos de que sitio es. arriba en la menú de navegación está en todo momento el logotipo de la aplicación. Abajo en el pié de página, esta también el nombre de la web. El menú de navegación y el pié de página se mantienen siempre, por lo que siempre está identificado el sitio.</li>
+</ul>
+</li>
+<li><p>¿En qué página estoy?</p>
+<ul>
+<li>Todas las páginas del sitio están identificadas por las migas de pan que te sitúan en todo momento.</li>
+</ul>
+</li>
+<li><p>¿Cuales son las principales secciones del sitio?</p>
+<ul>
+<li>Las principales secciones del sitio son <em>Mi casa</em>, <em>Secciones</em>, <em>Módulos</em>, <em>Logs</em>, <em>Servidor</em>, <em>Videocámaras</em>, <em>Rutas</em> y <em>Blog</em> (algunas secciones solo serán visibles si estamos logueados en la aplicación).</li>
+</ul>
+</li>
+<li><p>¿Qué opciones tengo en este nivel?</p>
+<ul>
+<li>Aparte de las secciones descritas antes, en la barra de navegación a la derecha hay dos secciones, una de <em>Mensajes</em> y otra de <em>Perfil</em>, Cada una contiene un submenú con distintas opciones.</li>
+</ul>
+</li>
+<li><p>¿Dónde estoy en el esquema de las cosas?</p>
+<ul>
+<li>En todas las páginas existe en la zona superior un indicador de bloque con las migas de pan.</li>
+</ul>
+</li>
+<li><p>¿Cómo busco algo?</p>
+<ul>
+<li>En la seccion de <em>Blog</em> y en la de <em>Logs</em> disponemos de un buscador específico para esa sección. No existe un buscador genérico debido a la naturaleza de la propia aplicación.</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h3><strong>(R70) Comprobación en varios navegadores</strong> <span id="r70-comprobacion-en-varios-navegadores"></span><a href="#r70-comprobacion-en-varios-navegadores" class="hashlink">&para;</a></h3><h4><strong>Google Chrome</strong> <span id="google-chrome"></span><a href="#google-chrome" class="hashlink">&para;</a></h4><p><img src="images/anexo/captura_chrome.png" alt="Captura Google Chrome" /></p>
+<hr />
+<h4><strong>Mozilla Firefox</strong> <span id="mozilla-firefox"></span><a href="#mozilla-firefox" class="hashlink">&para;</a></h4><p><img src="images/anexo/captura_firefox.png" alt="Captura Mozilla Firefox" /></p>
+<hr />
+<h4><strong>Opera</strong> <span id="opera"></span><a href="#opera" class="hashlink">&para;</a></h4><p><img src="images/anexo/captura_opera.png" alt="Captura Opera" /></p>
+<hr />
+<h4><strong>Microsoft Edge</strong> <span id="microsoft-edge"></span><a href="#microsoft-edge" class="hashlink">&para;</a></h4><p><img src="images/anexo/captura_edge.png" alt="Captura Microsoft Edge" /></p>
+<hr />
+<h3><strong>(R61) Pruebas funcionales con Codeception</strong> <span id="r61-pruebas-funcionales-con-codeception"></span><a href="#r61-pruebas-funcionales-con-codeception" class="hashlink">&para;</a></h3><p><img src="images/anexo/captura_codeception.png" alt="Pruebas Codeception" /></p>
+<hr />
         <div class="toplink"><a href="#" class="h1" title="go to top"><span class="glyphicon glyphicon-arrow-up"></a></div>
     </div>
 </div>
@@ -62,7 +112,7 @@ el código y la descripción corta del requisito asociado (por ejemplo,
 </div>
 
 <footer class="footer">
-        <p class="pull-right"><small>Page generated on Sun, 21 Apr 2019 19:34:25 +0000</small></p>
+        <p class="pull-right"><small>Page generated on Sun, 09 Jun 2019 19:01:46 +0000</small></p>
     Powered by <a href="http://www.yiiframework.com/" rel="external">Yii Framework</a></footer>
 
 <script>jQuery(function ($) {

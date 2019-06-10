@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="language" content="en" />
         
-<link href="./assets/8254dd90/css/bootstrap.css" rel="stylesheet">
-<link href="./assets/d6f57e1a/solarized_light.css" rel="stylesheet">
-<link href="./assets/993a28ad/style.css" rel="stylesheet">
-<script src="./assets/ed3f049b/jquery.js"></script>
-<script src="./assets/8254dd90/js/bootstrap.js"></script>
-<script src="./assets/807760dc/jssearch.js"></script>    <title>Guía del proyecto</title>
+<link href="./assets/cf53f50e/css/bootstrap.css" rel="stylesheet">
+<link href="./assets/b2fd7dc1/solarized_light.css" rel="stylesheet">
+<link href="./assets/f1be9a86/style.css" rel="stylesheet">
+<script src="./assets/2e324dec/jquery.js"></script>
+<script src="./assets/cf53f50e/js/bootstrap.js"></script>
+<script src="./assets/aad6d58a/jssearch.js"></script>    <title>Guía del proyecto</title>
 </head>
 <body>
 
@@ -52,8 +52,63 @@
         <h1>Instrucciones de instalación y despliegue <span id="instrucciones-de-instalacion-y-despliegue"></span><a href="#instrucciones-de-instalacion-y-despliegue" class="hashlink">&para;</a></h1>
 <div class="toc"><ol><li><a href="#en-local">En local</a></li>
 <li><a href="#en-la-nube">En la nube</a></li></ol></div>
-<h2>En local <span id="en-local"></span><a href="#en-local" class="hashlink">&para;</a></h2><p>Explicar.</p>
-<h2>En la nube <span id="en-la-nube"></span><a href="#en-la-nube" class="hashlink">&para;</a></h2><p>Explicar.</p>
+<h2>En local <span id="en-local"></span><a href="#en-local" class="hashlink">&para;</a></h2><h4>Debes tener: <span id="debes-tener"></span><a href="#debes-tener" class="hashlink">&para;</a></h4><ul>
+<li><strong> PHP 7.2.0 </strong></li>
+<li><strong> PostgreSQL 9.5 o superior </strong></li>
+<li><strong> Composer </strong></li>
+<li><strong> Cuenta en Amazon S3 </strong></li>
+<li><strong> Cuenta de email </strong></li>
+</ul>
+<h4>Instalación: <span id="instalacion"></span><a href="#instalacion" class="hashlink">&para;</a></h4><ol>
+<li><p>Crear un directorio <code>netflox</code> y nos cambiamos a ese directorio.</p>
+</li>
+<li>Ejecutamos los siguientes comandos:<pre><code class="hljs nginx"><span class="hljs-attribute">git</span> clone https://github.com/FranBarGar/netflox.git .
+composer install
+</code></pre>
+</li>
+<li>Cambiar la dirección de correo en <code>./config/params.php</code><pre><code class="hljs php"><span class="hljs-string">'adminEmail'</span> =&gt; <span class="hljs-string">'nueva dirección de correo'</span>,
+</code></pre>
+</li>
+<li><p>Crear las variable de entorno en el archivo <code>.env</code> listadas en su pariente versionado <code>.env.dist</code>:</p>
+<ul>
+<li><code>SMTP_PASS</code> con la clave de aplicacion de la dirección de correo.</li>
+<li><code>AWS_ACCESS_KEY_ID</code> Con la key de Amazon S3</li>
+<li><code>AWS_SECRET_ACCESS_KEY</code> Con el password de Amazon S3</li>
+</ul>
+</li>
+<li>Creamos la base de datos y las respectivas tablas para hacer funcionar la aplicación:<pre><code class="hljs ">db/create.sh
+db/load.sh
+</code></pre>
+</li>
+<li>Ejecutamos el comando <code>make serve</code></li>
+<li>Para acceder introducimos en el navegador <code>localhost:8080</code>.</li>
+</ol>
+<h2>En la nube <span id="en-la-nube"></span><a href="#en-la-nube" class="hashlink">&para;</a></h2><h4>Requisitos: <span id="requisitos"></span><a href="#requisitos" class="hashlink">&para;</a></h4><ul>
+<li><strong> Heroku cli </strong></li>
+</ul>
+<h4>Despliegue: <span id="despliegue"></span><a href="#despliegue" class="hashlink">&para;</a></h4><ol>
+<li><p>Realizamos un fork a el proyecto en: <a href="https://github.com/FranBarGar/netflox">https://github.com/FranBarGar/netflox</a></p>
+</li>
+<li><p>Creamos una aplicación en heroku y la enlazamos con nuestro forkeo en github.</p>
+</li>
+<li><p>Añadiremos el add-on <strong>Heroku Postgres</strong></p>
+</li>
+<li>Nos vamos al directorio donde hemos clonado la aplicación y ejecutamos:<pre><code class="hljs nginx"><span class="hljs-attribute">heroku</span> login
+heroku psql &lt; db/netflox.sql -a nombre_aplicacion
+</code></pre>
+</li>
+<li><p>Configuramos las variables de entorno:</p>
+<ul>
+<li><code>YII_ENV</code> con el modo en el que se desplegará la aplicación.</li>
+<li><code>DATABASE_URL</code> con la URL de la base de datos proporcionada en el paso 3.</li>
+<li><code>SMTP_PASS</code> con la clave de aplicacion de la dirección de correo.</li>
+<li><code>AWS_ACCESS_KEY_ID</code> Con la key de Amazon S3</li>
+<li><code>AWS_SECRET_ACCESS_KEY</code> Con el password de Amazon S3</li>
+</ul>
+</li>
+<li><p>La aplicación está lista para funcionar</p>
+</li>
+</ol>
         <div class="toplink"><a href="#" class="h1" title="go to top"><span class="glyphicon glyphicon-arrow-up"></a></div>
     </div>
 </div>
@@ -62,7 +117,7 @@
 </div>
 
 <footer class="footer">
-        <p class="pull-right"><small>Page generated on Sun, 21 Apr 2019 19:34:26 +0000</small></p>
+        <p class="pull-right"><small>Page generated on Sun, 09 Jun 2019 19:01:46 +0000</small></p>
     Powered by <a href="http://www.yiiframework.com/" rel="external">Yii Framework</a></footer>
 
 <script>jQuery(function ($) {
