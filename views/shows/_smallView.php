@@ -25,20 +25,20 @@ EOCSS;
 $this->registerCss($css);
 ?>
 
-<div class="shows-view media">
+<div itemscope itemtype="http://schema.org/Movie" class="shows-view media">
 
     <div class="col-xs-4 col-md-2">
         <div>
             <div id="accion-icono" style="position: absolute;top: 0;right: 18px;">
                 <span class="<?= $model->getMiAccion() ?>" style="color: white"></span>
             </div>
-            <?= Html::img($model->getImagenLink(), ['alt' => 'Enlace roto', 'width' => '200px', 'class' => 'img-responsive']) ?>
+            <?= Html::img($model->getImagenLink(), ['alt' => 'Enlace roto', 'width' => '200px', 'class' => 'img-responsive',  'itemprop' => "image"]) ?>
         </div>
     </div>
 
 
     <div class="row col-xs-8 col-md-10">
-        <h1 class="media-heading">
+        <h1 itemprop="name" class="media-heading">
             <?= Html::a(Html::encode($model->titulo), [
                 'shows/view',
                 'id' => $model->id,
@@ -57,9 +57,9 @@ $this->registerCss($css);
         </h1>
         <div class="info">
             <p>
-                Duracion: <?= $model->duracion . ' ' . $model->tipo->tipo_duracion ?> ---
-                Estreno: <?= $formatter->asDate($model->lanzamiento, 'long') ?> ---
-                Generos:
+                <span itemprop="duration">Duracion: <?= $model->duracion . ' ' . $model->tipo->tipo_duracion ?></span> ---
+                <span itemprop="datePublished">Estreno: <?= $formatter->asDate($model->lanzamiento, 'long') ?></span> ---
+                <span itemprop="genre">Generos:
                 <?php
                 if ($generos = $model->obtenerGeneros()) {
                     echo array_shift($generos)->genero;
@@ -68,11 +68,13 @@ $this->registerCss($css);
                     }
                 }
                 ?>
+                </span>
             </p>
         </div>
-
+        <p itemprop="description">
         <?=
-        $model->sinopsis
+        Html::encode($model->sinopsis)
         ?>
+        </p>
     </div>
 </div>

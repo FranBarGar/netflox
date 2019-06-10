@@ -21,11 +21,16 @@ if (($soySeguidor = Seguidores::soySeguidorOBloqueador($model->id)) !== null) {
 }
 $soyBloqueado = Seguidores::soyBloqueado($model->id);
 ?>
-<div class="usuarios-shows-view">
+<div itemscope itemtype="https://schema.org/Person" class="usuarios-shows-view">
 
     <div class="col-md-12 col-xs-12 border-bottom-custom" style="padding-top: 5px; padding-bottom: 5px;">
         <div class="col-xs-3 text-center">
-            <?= Html::img($model->getImagenLink(), ['alt' => 'Enlace roto', 'class' => 'img-responsive img-circle', 'height' => '40px']) ?>
+            <?= Html::img($model->getImagenLink(), [
+                'alt' => 'Enlace roto',
+                'class' => 'img-responsive img-circle',
+                'height' => '40px',
+                'itemprop' => "image"
+            ]) ?>
 
             <?php if ($model->id !== Yii::$app->user->id): ?>
                 <?=
@@ -88,14 +93,14 @@ $soyBloqueado = Seguidores::soyBloqueado($model->id);
             <?php endif; ?>
         </div>
         <div class="col-xs-9">
-            <h3 style="margin: 0">
+            <h3 itemprop="name" style="margin: 0">
                 <?= Html::a($model->nick, ['usuarios/view', 'id' => $model->id]) ?>
-                <small><?= $soyBloqueado ? '' : Html::encode($model->email) ?></small>
+                <small itemprop="email"><?= $soyBloqueado ? '' : Html::encode($model->email) ?></small>
             </h3>
             <?php if (!$soyBloqueado): ?>
-                <small>Usuario desde <?= Yii::$app->formatter->asDate($model->created_at, 'long') ?></small>
+                <small itemprop="birthDate">Usuario desde <?= Yii::$app->formatter->asDate($model->created_at, 'long') ?></small>
             <?php endif; ?>
-            <p>
+            <p itemprop="description">
                 <?=
                 $soyBloqueado ?
                     '
