@@ -35,14 +35,14 @@ class Seguidores extends \yii\db\ActiveRecord
     public static function soySeguidorOBloqueador($seguido_id)
     {
         return Seguidores::find()
-                ->andFilterWhere([
-                    'seguido_id' => $seguido_id,
-                    'seguidor_id' => Yii::$app->user->id,
-                ])
-                ->andWhere([
-                    'ended_at' => null,
-                ])
-                ->one();
+            ->andFilterWhere([
+                'seguido_id' => $seguido_id,
+                'seguidor_id' => Yii::$app->user->id,
+            ])
+            ->andWhere([
+                'ended_at' => null,
+            ])
+            ->one();
     }
 
     /**
@@ -61,6 +61,18 @@ class Seguidores extends \yii\db\ActiveRecord
                 'blocked_at' => null
             ])
             ->column() ?: [0];
+    }
+
+    public static function soyBloqueado($id)
+    {
+        return Seguidores::find()
+                ->andWhere([
+                    'seguido_id' => Yii::$app->user->id,
+                    'seguidor_id' => $id,
+                    'ended_at' => null,
+                ])
+                ->andWhere(['not', ['blocked_at' => null]])
+                ->one() !== null;
     }
 
     /**
