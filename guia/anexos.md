@@ -1,6 +1,6 @@
 # Anexos
 
-### **(R68) Validación de HTML y CSS, nivel de accesibilidad AA y prueba del seis**
+### **([R34](https://github.com/FranBarGar/netflox/issues/34)) Validación HTML5, CSS3 y accesibilidad**
 ---
 ### Validación de HTML y CSS
 
@@ -31,26 +31,26 @@ La página index cumple el nivel AA de accesibilidad, el error que presenta es p
 ### Prueba del seis
 
  1. ¿Qué sitio es éste?
-- La aplicación tiene en todo momento elementos indicativos de que sitio es. arriba en la menú de navegación está en todo momento el logotipo de la aplicación. Abajo en el pié de página, esta también el nombre de la web. El menú de navegación y el pié de página se mantienen siempre, por lo que siempre está identificado el sitio.
+- La aplicación tiene en todo momento elementos indicativos de que sitio es. Arriba en la menú de navegación está en todo momento el logotipo de la aplicación. Abajo en el pié de página, esta también el nombre de la web. El menú de navegación y el pié de página se mantienen siempre, por lo que siempre está identificado el sitio.
 
  2. ¿En qué página estoy?
-- Todas las páginas del sitio están identificadas por las migas de pan que te sitúan en todo momento.
+- Todas las páginas del sitio están identificadas por las migas de pan (excepto la inicial), lo que te sitúan en todo momento.
 
  3. ¿Cuales son las principales secciones del sitio?
-- Las principales secciones del sitio son *Mi casa*, *Secciones*, *Módulos*, *Logs*, *Servidor*, *Videocámaras*, *Rutas* y *Blog* (algunas secciones solo serán visibles si estamos logueados en la aplicación).
+- Las principales secciones del sitio son *Shows*, *Peliculas*, *Series*, *Social* y *Mi perfil* (solo serán visibles si estamos logueados en la aplicación).
 
  4. ¿Qué opciones tengo en este nivel?
-- Aparte de las secciones descritas antes, en la barra de navegación a la derecha hay dos secciones, una de *Mensajes* y otra de *Perfil*, Cada una contiene un submenú con distintas opciones.
+- Dentro de las secciones *Shows*, *Peliculas* y *Series* tienes para elegir en forma de menu desplegable las formas de ordenacion mas comunes. En *Social* tienes 2 opciones a elegir, *Valoraciones* y *Usuarios*.
 
  5. ¿Dónde estoy en el esquema de las cosas?
 - En todas las páginas existe en la zona superior un indicador de bloque con las migas de pan.
 
  6. ¿Cómo busco algo?
-- En la seccion de *Blog* y en la de *Logs* disponemos de un buscador específico para esa sección. No existe un buscador genérico debido a la naturaleza de la propia aplicación.
+- Cada seccion tiene su buscador especifico, excepto *Mi perfil*.
 
 ---
 
-### **(R70) Comprobación en varios navegadores**
+### **([R36](https://github.com/FranBarGar/netflox/issues/36)) Varios navegadores**
 
 #### **Google Chrome**
 
@@ -76,8 +76,25 @@ La página index cumple el nivel AA de accesibilidad, el error que presenta es p
 
 ---
 
-### **(R61) Pruebas funcionales con Codeception**
+### **([R25](https://github.com/FranBarGar/netflox/issues/25)) Codeception**
 
 ![Pruebas Codeception](images/anexo/captura_codeception.png)
+
+---
+
+### **(RXX)) Tecnologias usadas**
+
+- VirtualBox para iniciar el SO Ubuntu
+- Ubuntu 18.0.4 como sistema operativo
+- Heroku como alojamiento cloud
+- Yii2 como framework
+- GIT, GITHUB y GIT-FLOW para el control de versiones
+- Git-Kraken como asistente grafico a GIT-FLOW
+- PhpStorm como IDE
+- Google Chrome como navegador principal
+- Dbeaver como interfaz grafico SQL
+- Umlet como editor de diagramas
+- Codeception para las pruebas unitarias
+- AWS S3 como almacenamiento cloud de archivos
 
 ---
