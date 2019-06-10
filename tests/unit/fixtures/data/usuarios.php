@@ -2,9 +2,9 @@
 
 return [
     [
-        'nick' => 'vaca.roberto',
-        'password' => '$2y$13$AbFTOYb9VlhAT9B5HsTIh.EyojYnHPlXkJBB/ifYg6F/sHa/9SvKS',
-        'email' => 'SuZOf8aEastmBX_AQyWNsvAeFqgwoTDY',
+        'nick' => 'pepe',
+        'password' => Yii::$app->security->generatePasswordHash('pepe'),
+        'email' => 'pepe@pepe.com',
     ],
     [
         'nick' => 'alberto19',
