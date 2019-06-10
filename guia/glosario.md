@@ -17,3 +17,9 @@
 - **Unfollow**: Accion de dejar de seguir a un usuario previamente seguido.
 
 - **Accion**: Accion que ejecuta un usuario sobre un show, como por ejemplo abandonarlo.
+
+- **DROPPPED**: Accion de abandonar un show.
+
+- **WATCHING**: Accion de estar siguiendo un show.
+
+- **WATCHED**: Accion de ya haber visto un show.
